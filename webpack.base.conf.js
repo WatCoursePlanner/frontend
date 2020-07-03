@@ -11,12 +11,12 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
-                use: 'babel-loader',
+                test: /\.(js|jsx)$/,
+                use: ['babel-loader'],
                 exclude: /node_modules/,
 
             },
-            { test: /\.css$/, use: 'css-loader' },
+            { test: /\.css$/, loader: 'style-loader!css-loader' },
         ]
     },
     plugins: [
