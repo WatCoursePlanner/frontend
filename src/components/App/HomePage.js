@@ -1,9 +1,10 @@
 import React from "react";
-import {Link, Route, Switch, useLocation, Redirect} from "react-router-dom";
+import {Link, Redirect, Route, Switch, useLocation} from "react-router-dom";
 import {Drawer, DrawerAppContent, DrawerContent} from '@rmwc/drawer';
-import {List, ListItem} from '@rmwc/list';
+import {List, ListItem, ListItemGraphic, ListItemText} from '@rmwc/list';
 import SchedulePage from "../Schedule/SchedulePage";
 import DiscoverPage from "../Discover/DiscoverPage";
+import '../../index.scss'
 import '@rmwc/drawer/styles';
 import '@rmwc/list/styles';
 import '@rmwc/button/styles';
@@ -15,30 +16,38 @@ const HomePage = () => {
   const customListItemStyle = {
     marginLeft: 0,
     borderRadius: '0 100px 100px 0',
-    paddingLeft: '16px',
+    paddingLeft: 24,
     textTransform: 'capitalize'
   };
 
-  return (
-    <>
-      <div style={{height: '100%', overflow: 'hidden', position: 'relative'}}>
+  const tabIcons = [
+    'schedule',
+    'explore'
+  ];
 
-          <Drawer dismissible open={drawerOpen}>
-            <DrawerContent>
-              <List>
-                {['schedule', 'discover'].map((route, index) => (
-                  <Link key={route} to={'/home/' + route} style={{textDecoration: 'none'}}>
-                    <ListItem
-                      activated={location.pathname === '/home/' + route}
-                      style={customListItemStyle}>
-                      {route}
-                    </ListItem>
+  return (
+    <div style={{height: '100%', overflow: 'hidden', position: 'relative'}}>
+      <Drawer dismissible open={drawerOpen}>
+        <DrawerContent>
+          <List>
+            {['schedule', 'discover'].map((route, index) => (
+              <Link key={route} to={'/home/' + route} style={{textDecoration: 'none'}}>
+                <ListItem
+                  activated={location.pathname === '/home/' + route}
+                  style={customListItemStyle}>
+                  <ListItemGraphic
+                    className={"material-icons-outlined"}
+                    style={{marginRight: 24}}
+                    icon={tabIcons[index]}/>
+                  <ListItemText>
+                    {route}
+                  </ListItemText>
+                </ListItem>
                   </Link>
                 ))}
               </List>
             </DrawerContent>
           </Drawer>
-
           <DrawerAppContent style={{minHeight: '100%', padding: '1rem'}}>
             <Switch>
               <Route path="/home/schedule">
@@ -53,7 +62,6 @@ const HomePage = () => {
             </Switch>
           </DrawerAppContent>
       </div>
-    </>
   );
 }
 

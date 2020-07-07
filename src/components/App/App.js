@@ -1,9 +1,18 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
+import {ThemeProvider} from "@rmwc/theme"
 import HomePage from "./HomePage";
+import '@rmwc/theme/styles';
 
 const App = () => {
     return (
+      <ThemeProvider
+        options={{
+          primary: '#2196F3',
+          secondary: 'blue'
+        }}
+        style={{height: '100%'}}
+      >
       <Router>
           <Switch>
               <Route path="/" exact>
@@ -14,6 +23,7 @@ const App = () => {
               </Route>
           </Switch>
       </Router>
+      </ThemeProvider>
     )
 }
 
