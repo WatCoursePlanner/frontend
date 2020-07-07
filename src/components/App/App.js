@@ -1,26 +1,20 @@
 import React from 'react';
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import Discover from "../Discover/Discover";
-import Schedule from "../Schedule/Schedule";
+import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
+import HomePage from "./HomePage";
 
-class App extends React.Component {
-    render () {
-        return (
-          <Router>
-              <Switch>
-                  <Route path="/schedule">
-                      <Schedule/>
-                  </Route>
-                  <Route path="/discover">
-                      <Discover/>
-                  </Route>
-                  <Route path="/">
-                      <Schedule/>
-                  </Route>
-              </Switch>
-          </Router>
-        )
-    }
+const App = () => {
+    return (
+      <Router>
+          <Switch>
+              <Route path="/" exact>
+                  <Redirect to="/home"/>
+              </Route>
+              <Route path="/home">
+                  <HomePage/>
+              </Route>
+          </Switch>
+      </Router>
+    )
 }
 
 export default App;
