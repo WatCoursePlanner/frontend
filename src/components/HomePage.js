@@ -168,7 +168,8 @@ const HomePage = () => {
                       </MenuSurfaceAnchor>
                   </TopAppBarSection>
                 </TopAppBarRow>
-            </TopAppBar>
+              <ListDivider style={{margin: '5px 0 8px 0'}}/>
+          </TopAppBar>
             <TopAppBarFixedAdjust/>
             <Drawer dismissible open={drawerOpen} style={{borderColor: 'transparent', marginTop: 8}}>
                 <DrawerContent>
