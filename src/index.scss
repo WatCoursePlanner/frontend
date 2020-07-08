@@ -41,3 +41,16 @@ html {
   }
 }
 
+.shortlist-button {
+  height: 54px !important;
+  width: 54px !important;
+  margin-left: auto !important;
+  padding-left: 32px !important;
+  border-radius: 100px 0 0 100px !important;
+  background-color: #e3f2fd !important;
+  color: #2196F3 !important;
+  & div {
+    border-radius: 100px 0 0 100px !important;
+  }
+}
+

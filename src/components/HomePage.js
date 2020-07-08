@@ -11,7 +11,7 @@ import {
     ListItemSecondaryText,
     ListItemText
 } from '@rmwc/list';
-import {TopAppBar, TopAppBarFixedAdjust, TopAppBarRow, TopAppBarSection, TopAppBarTitle} from '@rmwc/top-app-bar';
+import {TopAppBar, TopAppBarRow, TopAppBarSection, TopAppBarTitle} from '@rmwc/top-app-bar';
 import {MenuSurface, MenuSurfaceAnchor} from '@rmwc/menu';
 import {Badge, BadgeAnchor} from '@rmwc/badge';
 import {IconButton} from '@rmwc/icon-button';
@@ -30,6 +30,7 @@ import '@rmwc/badge/styles';
 import '@rmwc/avatar/styles';
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
+import {Button} from "@rmwc/button";
 
 const useFocus = () => {
     const htmlElRef = useRef(null)
@@ -65,21 +66,21 @@ const HomePage = () => {
     ];
 
     return (
-      <div style={{height: '100%', overflow: 'hidden', position: 'relative'}}>
+      <div style={{height: '100%', position: 'relative', display: 'flex'}}>
           <TopAppBar
             fixed
             theme={['surface']}
-            style={{border: "1px solid #e0e0e0"}}
+            style={{borderBottom: "1px solid #e0e0e0"}}
           >
               <TopAppBarRow>
                   <TopAppBarSection alignStart>
                       <IconButton
                         style={styles.appBarButtonStyle}
                         icon="menu"
-                        onClick={(e) => {
-                            e.target.blur();
-                            setDrawerOpen(!drawerOpen)
-                        }}/>
+                        onMouseDown={(e) => {
+                            e.preventDefault()
+                        }}
+                        onClick={() => setDrawerOpen(!drawerOpen)}/>
                       <svg width="36" height="36" style={{marginLeft: 8}}>
                           <circle cx="18" cy="18" r="18" fill="#0069B5"/>
                       </svg>
@@ -123,9 +124,9 @@ const HomePage = () => {
                                   <h4 style={{margin: 0}}>Degree Requirement Not Met</h4>
                                   <p>Your schedule does not meet the following requirements:</p>
                                   <List twoLine>
-                                      {Array(10).join(0).split(0).map((value) => (
+                                      {Array(10).join(0).split(0).map((value, index) => (
                                         <ListItem
-                                          key={value}
+                                          key={index}
                                           onClick={() => {}}
                                         >
                                             <ListItemText>
@@ -167,66 +168,72 @@ const HomePage = () => {
                             onClick={() => setAccountMenuOpen(!accountMenuOpen)}/>
                       </MenuSurfaceAnchor>
                   </TopAppBarSection>
-                </TopAppBarRow>
+              </TopAppBarRow>
           </TopAppBar>
-            <TopAppBarFixedAdjust/>
-            <Drawer dismissible open={drawerOpen} style={{borderColor: 'transparent', marginTop: 8}}>
-                <DrawerContent>
-                    <List>
-                        {['schedule', 'discover'].map((route, index) => (
-                            <Link key={route} to={'/home/' + route} style={{textDecoration: 'none',}}>
-                                <ListItem
-                                  activated={location.pathname === '/home/' + route}
-                                  style={styles.customListItemStyle}>
-                                    <ListItemGraphic
-                                      className={"material-icons-outlined"}
-                                      style={{marginRight: 24}}
-                                      icon={tabIcons[index]}/>
-                                    <ListItemText>
-                                        {route}
-                                    </ListItemText>
-                                </ListItem>
-                            </Link>
-                        ))}
-                        <ListDivider style={{margin: '8px 0 8px 0'}}/>
-                        <ListItem style={styles.customListItemStyle}>
-                            <ListItemGraphic
-                              className={"material-icons-outlined"}
-                              style={{marginRight: 24}}
-                              icon={'upload'}/>
-                            <ListItemText>Import</ListItemText>
-                        </ListItem>
-                        <ListItem style={styles.customListItemStyle}>
-                            <ListItemGraphic
-                              className={"material-icons-outlined"}
-                              style={{marginRight: 24}}
-                              icon={'cloud_download'}/>
-                            <ListItemText>Export</ListItemText>
-                        </ListItem>
-                        <ListItem style={styles.customListItemStyle}>
-                            <ListItemGraphic
-                              className={"material-icons-outlined"}
-                              style={{marginRight: 24}}
-                              icon={'share'}/>
-                            <ListItemText>Share my Schedule</ListItemText>
-                        </ListItem>
-                    </List>
-                </DrawerContent>
-            </Drawer>
-            <DrawerAppContent style={{padding: '1rem'}}>
-                <Switch>
-                    <Route path="/home/schedule">
-                        <SchedulePage/>
-                    </Route>
-                    <Route path="/home/discover">
-                        <DiscoverPage/>
-                    </Route>
-                    <Route path="/home" exact>
-                        <Redirect to="/home/schedule"/>
-                    </Route>
-                </Switch>
-            </DrawerAppContent>
-        </div>
+          <Drawer
+            dismissible
+            open={drawerOpen}
+            style={{
+                borderColor: 'transparent',
+                paddingTop: 72,
+                zIndex: 3
+            }}>
+              <DrawerContent>
+                  <List>
+                      {['schedule', 'discover'].map((route, index) => (
+                        <Link key={route} to={'/home/' + route} style={{textDecoration: 'none',}}>
+                            <ListItem
+                              activated={location.pathname === '/home/' + route}
+                              style={styles.customListItemStyle}>
+                                <ListItemGraphic
+                                  className={"material-icons-outlined"}
+                                  style={{marginRight: 24}}
+                                  icon={tabIcons[index]}/>
+                                <ListItemText>
+                                    {route}
+                                </ListItemText>
+                            </ListItem>
+                        </Link>
+                      ))}
+                      <ListDivider style={{margin: '8px 0 8px 0'}}/>
+                      <ListItem style={styles.customListItemStyle}>
+                          <ListItemGraphic
+                            className={"material-icons-outlined"}
+                            style={{marginRight: 24}}
+                            icon={'upload'}/>
+                          <ListItemText>Import</ListItemText>
+                      </ListItem>
+                      <ListItem style={styles.customListItemStyle}>
+                          <ListItemGraphic
+                            className={"material-icons-outlined"}
+                            style={{marginRight: 24}}
+                            icon={'cloud_download'}/>
+                          <ListItemText>Export</ListItemText>
+                      </ListItem>
+                      <ListItem style={styles.customListItemStyle}>
+                          <ListItemGraphic
+                            className={"material-icons-outlined"}
+                            style={{marginRight: 24}}
+                            icon={'share'}/>
+                          <ListItemText>Share my Schedule</ListItemText>
+                      </ListItem>
+                  </List>
+              </DrawerContent>
+          </Drawer>
+          <DrawerAppContent style={{marginTop: 64, width: '100%'}}>
+              <Switch>
+                  <Route path="/home/schedule">
+                      <SchedulePage/>
+                  </Route>
+                  <Route path="/home/discover">
+                      <DiscoverPage/>
+                  </Route>
+                  <Route path="/home" exact>
+                      <Redirect to="/home/schedule"/>
+                  </Route>
+              </Switch>
+          </DrawerAppContent>
+      </div>
     );
 }
 
