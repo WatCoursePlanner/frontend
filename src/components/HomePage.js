@@ -15,6 +15,7 @@ import {TopAppBar, TopAppBarFixedAdjust, TopAppBarRow, TopAppBarSection, TopAppB
 import {MenuSurface, MenuSurfaceAnchor} from '@rmwc/menu';
 import {Badge, BadgeAnchor} from '@rmwc/badge';
 import {IconButton} from '@rmwc/icon-button';
+import {Avatar} from '@rmwc/avatar';
 import SchedulePage from "./SchedulePage";
 import DiscoverPage from "./DiscoverPage";
 import '../index.scss'
@@ -26,6 +27,7 @@ import '@rmwc/icon-button/styles';
 import '@rmwc/top-app-bar/styles';
 import '@rmwc/menu/styles';
 import '@rmwc/badge/styles';
+import '@rmwc/avatar/styles';
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 
@@ -40,11 +42,11 @@ const useFocus = () => {
 
 const HomePage = () => {
     const [drawerOpen, setDrawerOpen] = React.useState(true);
-    const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(true);
+    const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
+    const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
     const [searchText, setSearchText] = React.useState('');
     const [inputRef, setInputFocus] = useFocus()
     const location = useLocation();
-
 
     const styles = {
         customListItemStyle: {
@@ -67,7 +69,7 @@ const HomePage = () => {
           <TopAppBar
             fixed
             theme={['surface']}
-            // style={{border: "1px solid #e0e0e0"}}
+            style={{border: "1px solid #e0e0e0"}}
           >
               <TopAppBarRow>
                   <TopAppBarSection alignStart>
@@ -114,7 +116,6 @@ const HomePage = () => {
                       <MenuSurfaceAnchor>
                           <MenuSurface
                             renderToPortal
-                            style={{zIndex: 10}}
                             open={degreeMenuOpen}
                             anchorCorner={'bottomLeft'}
                             onClose={() => setDegreeMenuOpen(false)}>
@@ -138,13 +139,32 @@ const HomePage = () => {
                               </div>
                           </MenuSurface>
                           <BadgeAnchor>
-                          <IconButton
-                            className={"material-icons-outlined"}
-                            style={styles.appBarButtonStyle}
-                            icon="info"
-                            onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>
-                            <Badge inset="0.75rem" label={10} />
+                              <IconButton
+                                className={"material-icons-outlined"}
+                                style={Object.assign({}, styles.appBarButtonStyle, {
+                                    marginRight: 30
+                                })}
+                                icon="info"
+                                onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>
+                              <Badge style={{marginRight: 40}} inset="0.75rem" label={10}/>
                           </BadgeAnchor>
+                      </MenuSurfaceAnchor>
+                      <MenuSurfaceAnchor>
+                          <MenuSurface
+                            renderToPortal
+                            open={accountMenuOpen}
+                            anchorCorner={'bottomLeft'}
+                            onClose={() => setAccountMenuOpen(false)}>
+                              <div style={{padding: '1.5rem', width: '15rem'}}>
+                                  <h4 style={{margin: 0}}>Account</h4>
+                              </div>
+                          </MenuSurface>
+                          <Avatar
+                            ripple
+                            name="John Doe"
+                            size={'large'}
+                            style={{backgroundColor: "#32b9c1"}}
+                            onClick={() => setAccountMenuOpen(!accountMenuOpen)}/>
                       </MenuSurfaceAnchor>
                   </TopAppBarSection>
                 </TopAppBarRow>
