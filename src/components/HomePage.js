@@ -1,8 +1,19 @@
 import React, {useRef} from "react";
 import {Link, Redirect, Route, Switch, useLocation} from "react-router-dom";
 import {Drawer, DrawerAppContent, DrawerContent} from '@rmwc/drawer';
-import {List, ListDivider, ListItem, ListItemGraphic, ListItemText} from '@rmwc/list';
+import {
+    List,
+    ListDivider,
+    ListItem,
+    ListItemGraphic,
+    ListItemMeta,
+    ListItemPrimaryText,
+    ListItemSecondaryText,
+    ListItemText
+} from '@rmwc/list';
 import {TopAppBar, TopAppBarFixedAdjust, TopAppBarRow, TopAppBarSection, TopAppBarTitle} from '@rmwc/top-app-bar';
+import {MenuSurface, MenuSurfaceAnchor} from '@rmwc/menu';
+import {Badge, BadgeAnchor} from '@rmwc/badge';
 import {IconButton} from '@rmwc/icon-button';
 import SchedulePage from "./SchedulePage";
 import DiscoverPage from "./DiscoverPage";
@@ -13,6 +24,8 @@ import '@rmwc/list/styles';
 import '@rmwc/button/styles';
 import '@rmwc/icon-button/styles';
 import '@rmwc/top-app-bar/styles';
+import '@rmwc/menu/styles';
+import '@rmwc/badge/styles';
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 
@@ -27,6 +40,7 @@ const useFocus = () => {
 
 const HomePage = () => {
     const [drawerOpen, setDrawerOpen] = React.useState(true);
+    const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(true);
     const [searchText, setSearchText] = React.useState('');
     const [inputRef, setInputFocus] = useFocus()
     const location = useLocation();
@@ -74,7 +88,6 @@ const HomePage = () => {
                           marginRight: 30,
                           color: '#5f6368',
                       }}>WatCourses</TopAppBarTitle>
-
                       <Paper className={'search-bar'} elevation={0}>
                           <IconButton style={styles.appBarButtonStyle} icon={'search'}/>
                           <InputBase
@@ -96,17 +109,44 @@ const HomePage = () => {
                                 setInputFocus()
                             }}/>
                       </Paper>
-
                   </TopAppBarSection>
                   <TopAppBarSection alignEnd>
-                      <IconButton
-                        className={"material-icons-outlined"}
-                        style={styles.appBarButtonStyle}
-                        icon="info"
-                        onClick={() => {
-
-                        }}/>
-                    </TopAppBarSection>
+                      <MenuSurfaceAnchor>
+                          <MenuSurface
+                            renderToPortal
+                            style={{zIndex: 10}}
+                            open={degreeMenuOpen}
+                            anchorCorner={'bottomLeft'}
+                            onClose={() => setDegreeMenuOpen(false)}>
+                              <div style={{padding: '1.5rem', width: '20rem'}}>
+                                  <h4 style={{margin: 0}}>Degree Requirement Not Met</h4>
+                                  <p>Your schedule does not meet the following requirements:</p>
+                                  <List twoLine>
+                                      {Array(10).join(0).split(0).map((value) => (
+                                        <ListItem
+                                          key={value}
+                                          onClick={() => {}}
+                                        >
+                                            <ListItemText>
+                                                <ListItemPrimaryText>Choose 1 of</ListItemPrimaryText>
+                                                <ListItemSecondaryText>CS 123, CS 234</ListItemSecondaryText>
+                                            </ListItemText>
+                                            <ListItemMeta icon="keyboard_arrow_right"/>
+                                        </ListItem>
+                                      ))}
+                                  </List>
+                              </div>
+                          </MenuSurface>
+                          <BadgeAnchor>
+                          <IconButton
+                            className={"material-icons-outlined"}
+                            style={styles.appBarButtonStyle}
+                            icon="info"
+                            onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>
+                            <Badge inset="0.75rem" label={10} />
+                          </BadgeAnchor>
+                      </MenuSurfaceAnchor>
+                  </TopAppBarSection>
                 </TopAppBarRow>
             </TopAppBar>
             <TopAppBarFixedAdjust/>
@@ -153,7 +193,7 @@ const HomePage = () => {
                     </List>
                 </DrawerContent>
             </Drawer>
-            <DrawerAppContent style={{minHeight: '100%', padding: '1rem'}}>
+            <DrawerAppContent style={{padding: '1rem'}}>
                 <Switch>
                     <Route path="/home/schedule">
                         <SchedulePage/>
