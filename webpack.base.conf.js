@@ -20,32 +20,11 @@ module.exports = {
             { test: /\.css$/, loader: 'style-loader!css-loader' },
             {
                 test: /\.scss$/,
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'style-loader',
-                    },
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            sourceMap: true,
-                            modules: true,
-                        },
-                    },
-                    {
-                        loader: 'sass-loader',
-                        options: {
-                            // Prefer Dart Sass
-                            implementation: require('sass'),
-
-                            // See https://github.com/webpack-contrib/sass-loader/issues/804
-                            webpackImporter: false,
-                            sassOptions: {
-                                includePaths: ['./node_modules'],
-                            },
-                        },
-                    },
-                ],
+                loader: [
+                    require.resolve('style-loader'),
+                    require.resolve('css-loader'),
+                    require.resolve('sass-loader')
+                ]
             }
         ]
     },

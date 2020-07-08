@@ -9,7 +9,7 @@ const App = () => {
         <ThemeProvider
             options={{
                 primary: '#2196F3',
-                secondary: 'white'
+                secondary: '#0069B5'
             }}
             style={{height: '100%'}}
         >
