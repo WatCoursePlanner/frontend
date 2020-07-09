@@ -5,8 +5,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import '../index.scss';
 
 const DiscoverPage = () => {
-    {/* July 9 TODO: Adjusting the Postion for Popular Courses */}
-    {/* TODO: Adding Course Cards/Navigate Next Icon */}
+    {/* TODO: Adding Filters */}
 
     return(
         <div>
@@ -17,19 +16,12 @@ const DiscoverPage = () => {
             fontWeight: 700,
             paddingLeft: 60,
         }}>
-            <span >
-                <WhatshotIcon
-                className={'popular_courses'}
-            >
-            </WhatshotIcon>
-             Popular Courses
-            </span>
+            <br/><h3>Find Your Courses</h3>
         </div>
-
         <div style={{
             paddingLeft: 60,
         }}>
-        <NavigateNextIcon className={'more_courses'}>
+        <NavigateNextIcon className={'courses_more'}>
         </NavigateNextIcon>
         </div>
     </div>
