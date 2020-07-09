@@ -3,7 +3,7 @@ import {Button} from "@rmwc/button";
 import '../index.scss';
 import '@rmwc/button/styles';
 
-const SchedulePage = () => {
+const Schedule = () => {
 
   const [shortlistOpen, setShortlistOpen] = useState(false)
 
@@ -42,4 +42,4 @@ const SchedulePage = () => {
 )
 }
 
-export default SchedulePage
+export default Schedule

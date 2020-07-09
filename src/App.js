@@ -1,7 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
 import {ThemeProvider} from "@rmwc/theme"
-import HomePage from "./sections/HomePage";
+import Home from "./sections/Home";
 import '@rmwc/theme/styles';
 
 const App = () => {
@@ -19,7 +19,7 @@ const App = () => {
                         <Redirect to="/home"/>
                     </Route>
                     <Route path="/home">
-                        <HomePage/>
+                        <Home/>
                     </Route>
                 </Switch>
             </Router>

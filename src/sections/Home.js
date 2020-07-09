@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {Redirect, Route, Switch, useLocation} from "react-router-dom";
 import {DrawerAppContent} from '@rmwc/drawer';
-import SchedulePage from "./SchedulePage";
-import DiscoverPage from "./DiscoverPage";
+import Schedule from "./Schedule";
+import Discover from "./Discover";
 import styled from "styled-components";
 import Drawer from "../components/Drawer";
 import TopNav from "../components/TopNav";
@@ -14,7 +14,7 @@ const Container = styled.div`
       display: flex;
     `
 
-const HomePage = () => {
+const Home = () => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
@@ -30,10 +30,10 @@ const HomePage = () => {
           <DrawerAppContent style={{marginTop: 64, width: '100%'}}>
               <Switch>
                   <Route path="/home/schedule">
-                      <SchedulePage/>
+                      <Schedule/>
                   </Route>
                   <Route path="/home/discover">
-                      <DiscoverPage/>
+                      <Discover/>
                   </Route>
                   <Route path="/home" exact>
                       <Redirect to="/home/schedule"/>
@@ -44,4 +44,4 @@ const HomePage = () => {
     );
 }
 
-export default HomePage
+export default Home

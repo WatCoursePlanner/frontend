@@ -2,7 +2,7 @@ import React from 'react'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import '../index.scss';
 
-const DiscoverPage = () => {
+const Discover = () => {
     /* TODO: Adding Filters */
 
     return(
@@ -22,4 +22,4 @@ const DiscoverPage = () => {
     )
 }
 
-export default DiscoverPage
+export default Discover
