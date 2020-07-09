@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {Button} from "@rmwc/button";
 import '../index.scss';
+import '@rmwc/button/styles';
 
 const SchedulePage = () => {
 

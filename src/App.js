@@ -1,7 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
 import {ThemeProvider} from "@rmwc/theme"
-import HomePage from "./HomePage";
+import HomePage from "./sections/HomePage";
 import '@rmwc/theme/styles';
 
 const App = () => {
