@@ -1,24 +1,18 @@
 import React from 'react'
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import CourseTable from "../components/CourseTable";
 
 
 const Discover = () => {
-    /* TODO: Adding Filters */
 
     return(
-        <div>
             <div style={{
                 paddingLeft: 60,
+                paddingRight: 60,
             }}>
-                <br/><h3>Find Your Courses</h3>
+                <CourseTable/>
             </div>
-            <div style={{
-                paddingLeft: 60,
-            }}>
-                <NavigateNextIcon className={'courses_more'}>
-                </NavigateNextIcon>
-            </div>
-        </div>
+
+
     )
 }
 
