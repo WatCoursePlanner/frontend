@@ -15,7 +15,6 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
 function createData(name, coursename, ratings, useful, easy, liked) {
@@ -23,19 +22,19 @@ function createData(name, coursename, ratings, useful, easy, liked) {
 }
 
 const rows = [
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 125', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
     createData('ECE 123', 'A Random CS Course', 222, '50%', '22%','22%'),
     createData('CS 235', 'Computer Science 1', 42, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 115', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 135', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 145', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 155', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 165', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 175', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 185', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 195', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 105', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 315', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 415', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
 ];
 
 function descendingComparator(a, b, orderBy) {
