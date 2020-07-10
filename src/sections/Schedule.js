@@ -38,7 +38,7 @@ const ScheduleContainer = styled.div`
 
 const ShortListContainer = styled.div`
     display: flex;
-    width: ${props => props.open ? 320 : 0};
+    width: ${props => props.open ? '320px' : 0};
     transition: 0.3s;
     border-left: 1px solid #e0e0e0;
 `
