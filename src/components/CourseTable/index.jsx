@@ -74,7 +74,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-    const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { classes, order, orderBy, rowCount, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -152,23 +152,13 @@ const EnhancedTableToolbar = (props) => {
                 [classes.highlight]: numSelected > 0,
             })}
         >
-            {numSelected > 0 ? (
-                <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
-                    {numSelected} selected
-                </Typography>
-            ) : (
+            {(
                 <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
                     Find Your Courses
                 </Typography>
             )}
 
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton aria-label="delete">
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            ) : (
+            {(
                 <Tooltip title="Filter list">
                     <IconButton aria-label="filter list">
                         <FilterListIcon />
@@ -294,7 +284,6 @@ export default function EnhancedTable() {
                                         <TableRow
                                             hover
                                             onClick={(event) => handleClick(event, row.name)}
-                                            role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
                                             key={row.name}
