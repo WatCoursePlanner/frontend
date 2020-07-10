@@ -29,7 +29,7 @@ const tabIcons = [
 const MyDrawer = (props) => (
   <StyledDrawer
     dismissible
-    open={props.drawerOpen}>
+    open={props.open}>
     <DrawerContent>
       <List>
         {['schedule', 'discover'].map((route, index) => (

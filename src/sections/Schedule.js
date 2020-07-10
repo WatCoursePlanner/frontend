@@ -1,8 +1,7 @@
 import React, {useState} from 'react'
 import {Button} from "@rmwc/button";
-import '../index.scss';
-import '@rmwc/button/styles';
 import styled from "styled-components";
+import '@rmwc/button/styles';
 
 const ShortListButton = styled(Button)`
   height: 54px !important;
@@ -39,7 +38,7 @@ const ScheduleContainer = styled.div`
 
 const ShortListContainer = styled.div`
     display: flex;
-    width: ${props => props.shortlistOpen ? 320 : 0};
+    width: ${props => props.open ? 320 : 0};
     transition: 0.3s;
     border-left: 1px solid #e0e0e0;
 `
@@ -60,7 +59,7 @@ const Schedule = () => {
           icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}>
         </ShortListButton>
       </ScheduleContainer>
-      <ShortListContainer shortlistOpen={shortlistOpen}>
+      <ShortListContainer open={shortlistOpen}>
       </ShortListContainer>
     </OuterContainer>
   )

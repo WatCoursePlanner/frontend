@@ -6,13 +6,17 @@ import Discover from "./Discover";
 import styled from "styled-components";
 import Drawer from "../components/Drawer";
 import TopNav from "../components/TopNav";
-import '../index.scss'
 
 const Container = styled.div`
       height: 100%;
       position: relative;
       display: flex;
     `
+
+const AppContainer = styled(DrawerAppContent)`
+    margin-top: 64px;
+    width: 100%;
+`
 
 const Home = () => {
 
@@ -26,8 +30,8 @@ const Home = () => {
             toggleDrawer={() => setDrawerOpen(!drawerOpen)}
             searchText={searchText}
             setSearchText={setSearchText}/>
-          <Drawer drawerOpen={drawerOpen} location={location}/>
-          <DrawerAppContent style={{marginTop: 64, width: '100%'}}>
+          <Drawer open={drawerOpen} location={location}/>
+          <AppContainer>
               <Switch>
                   <Route path="/home/schedule">
                       <Schedule/>
@@ -39,7 +43,7 @@ const Home = () => {
                       <Redirect to="/home/schedule"/>
                   </Route>
               </Switch>
-          </DrawerAppContent>
+          </AppContainer>
       </Container>
     );
 }
