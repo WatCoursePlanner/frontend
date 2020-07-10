@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { lighten, makeStyles } from '@material-ui/core/styles';
+import {lighten, makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -17,27 +17,33 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
-function createData(name, coursename, ratings, useful, easy, liked) {
-    return { name, coursename, ratings, useful, easy, liked };
+type CourseRowProp = {
+    code: string,
+    courseName: string,
+    ratings: number,
+    useful: string,
+    easy: string,
+    liked: string
+}
+
+function createData({code, courseName, ratings, useful, easy, liked}: CourseRowProp) {
+    return {code, courseName, ratings, useful, easy, liked};
 }
 
 const rows = [
-    createData('CS 125', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('ECE 123', 'A Random CS Course', 222, '50%', '22%','22%'),
-    createData('CS 235', 'Computer Science 1', 42, '21%', '9%','22%'),
-    createData('CS 135', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 145', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 155', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 165', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 175', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 185', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 195', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 105', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 315', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 415', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-];
+    Array(10).join().split('').map(() => (
+        createData({
+            code: 'CS 125',
+            courseName: 'Introduction to Computer Science 1',
+            ratings: 2042,
+            useful: '21%',
+            easy: '9%',
+            liked: '22%'
+        })
+    ))
+]
 
-function descendingComparator(a, b, orderBy) {
+function descendingComparator(a: number, b: number, orderBy: number) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
     }
@@ -47,7 +53,7 @@ function descendingComparator(a, b, orderBy) {
     return 0;
 }
 
-function getComparator(order, orderBy) {
+function getComparator(order: string, orderBy: number) {
     return order === 'desc'
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);
