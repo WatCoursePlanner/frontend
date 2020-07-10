@@ -27,7 +27,9 @@
     "redux-thunk": "^2.3.0",
     "rmwc": "^6.1.3",
     "styled-components": "^5.1.1",
-    "ts-protoc-gen": "^0.12.0"
+    "ts-protoc-gen": "^0.12.0",
+    "prop-types": "latest",
+    "clsx": "latest"
   },
   "scripts": {
     "webpack": "webpack --config config/webpack.prod.conf.js",
