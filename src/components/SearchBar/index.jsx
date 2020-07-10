@@ -16,6 +16,22 @@ const AppBarButton = styled(IconButton)`
         color: #5f6368;
     `
 
+const StyledSearchBar = styled(Paper)`
+  margin: 0 30px 0 25px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  width: 500px;
+  box-shadow: none;
+  background-color: rgb(241, 243, 244) !important;
+  &:focus-within {
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    background-color: white !important;
+  }
+`
+
 const useFocus = () => {
   const htmlElRef = useRef(null)
   const setFocus = () => {
@@ -27,7 +43,7 @@ const useFocus = () => {
 const SearchBar = (props) => {
   const [inputRef, setInputFocus] = useFocus()
   return (
-    <Paper className={'search-bar'} elevation={0}>
+    <StyledSearchBar elevation={0}>
       <AppBarButton icon={'search'}/>
       <StyledInputBase
         inputProps={{'ref': inputRef}}
@@ -42,7 +58,7 @@ const SearchBar = (props) => {
           props.setSearchText('')
           setInputFocus()
         }}/>
-    </Paper>
+    </StyledSearchBar>
   )
 }
 export default SearchBar
