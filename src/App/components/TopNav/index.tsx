@@ -1,10 +1,10 @@
-import {TopAppBar, TopAppBarRow, TopAppBarSection, TopAppBarTitle} from "@rmwc/top-app-bar";
+import {TopAppBar, TopAppBarProps, TopAppBarRow, TopAppBarSection, TopAppBarTitle} from "@rmwc/top-app-bar";
 import {MenuSurface, MenuSurfaceAnchor} from "@rmwc/menu";
 import {Badge, BadgeAnchor} from "@rmwc/badge";
 import {Avatar} from "@rmwc/avatar";
 import React from "react";
 import styled from "styled-components";
-import {IconButton} from "@rmwc/icon-button";
+import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
 import SearchBar from "../SearchBar"
 import DegreeRequirementPopup from "./DegreeRequirementPopup";
 import Popup from "../Popup";
@@ -14,7 +14,7 @@ import '@rmwc/menu/styles';
 import '@rmwc/badge/styles';
 import '@rmwc/avatar/styles';
 
-const StyledAppBar = styled(TopAppBar)`
+const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
       border-bottom: 1px solid #e0e0e0;
     `
 
@@ -26,7 +26,7 @@ const StyledAppBarTitle = styled(TopAppBarTitle)`
       color: #5f6368;
     `
 
-export const AppBarButton = styled(IconButton)`
+const AppBarButton = styled(IconButton)<IconButtonHTMLProps & IconButtonProps>`
         color: #5f6368;
     `
 
@@ -34,7 +34,13 @@ const InfoButton = styled(AppBarButton)`
         margin-right: 30px;
     `
 
-const TopNav = (props) => {
+type TopNavProps = {
+  toggleDrawer: () => void,
+  searchText: string,
+  setSearchText: ((text: string) => void),
+}
+
+const TopNav = ({toggleDrawer, searchText, setSearchText}: TopNavProps) => {
   const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
   return (
@@ -46,13 +52,13 @@ const TopNav = (props) => {
             onMouseDown={(e) => {
               e.preventDefault()
             }}
-            onClick={props.toggleDrawer}
+            onClick={toggleDrawer}
           />
           <svg width="36" height="36" style={{marginLeft: 8}}>
             <circle cx="18" cy="18" r="18" fill="#0069B5"/>
           </svg>
           <StyledAppBarTitle>WatCourses</StyledAppBarTitle>
-          <SearchBar searchText={props.searchText} setSearchText={props.setSearchText}/>
+          <SearchBar searchText={searchText} setSearchText={setSearchText}/>
         </TopAppBarSection>
         <TopAppBarSection alignEnd>
           <MenuSurfaceAnchor>

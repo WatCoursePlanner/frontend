@@ -10,12 +10,18 @@ const PopupTitle = styled.h4`
         margin: 0;
     `
 
-const Popup = (props) => {
+type PopupProps = {
+    title: string,
+    message?: string,
+    children?: React.ReactNode
+}
+
+const Popup = ({title, message, children}: PopupProps) => {
   return (
     <PopupContainer>
-      <PopupTitle>{props.title}</PopupTitle>
-      <p>{props.message}</p>
-      {props.children}
+      <PopupTitle>{title}</PopupTitle>
+      <p>{message}</p>
+      {children}
     </PopupContainer>
   )
 }

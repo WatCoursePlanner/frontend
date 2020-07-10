@@ -9,7 +9,7 @@ const DegreeRequirementPopup = () => {
       title={'Degree Requirement Not Met'}
       message={'Your schedule does not meet the following requirements:'}>
       <List twoLine>
-        {Array(10).join(0).split(0).map((value, index) => (
+        {Array(10).join().split('').map((value, index) => (
           <ListItem key={index} onClick={() => {
           }}>
             <ListItemText>
