@@ -1,5 +1,4 @@
 import React from 'react'
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 
 
 const Discover = () => {
@@ -15,8 +14,7 @@ const Discover = () => {
             <div style={{
                 paddingLeft: 60,
             }}>
-                <NavigateNextIcon className={'courses_more'}>
-                </NavigateNextIcon>
+
             </div>
         </div>
     )
