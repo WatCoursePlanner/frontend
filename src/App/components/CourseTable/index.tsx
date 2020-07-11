@@ -115,9 +115,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     return (
         <TableHead>
             <TableRow>
-                <TableCell style={{
-                    paddingLeft: 60,
-                }}>
+                <TableCell >
                 </TableCell>
                 {headCells.map((headCell) => (
                     <TableCell
@@ -138,7 +136,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                             ) : null}
                         </TableSortLabel>
                     </TableCell>
+
                 ))}
+                <TableCell style={{
+                    paddingLeft: 50,
+                }}>
+                </TableCell>
             </TableRow>
         </TableHead>
     );
@@ -271,11 +274,10 @@ export default function EnhancedTable() {
                                             hover
                                             tabIndex={-1}
                                             key={row.name}
-                                        >
-                                            <TableCell style={{
-                                                paddingLeft: 60,
-                                            }}>
-                                            </TableCell>
+                                        > <TableCell style={{
+                                            paddingLeft: 50,
+                                        }}>
+                                        </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {row.name}
                                             </TableCell>
@@ -284,6 +286,10 @@ export default function EnhancedTable() {
                                             <TableCell align="right">{row.useful}</TableCell>
                                             <TableCell align="right">{row.easy}</TableCell>
                                             <TableCell align="right">{row.liked}</TableCell>
+                                            <TableCell style={{
+                                                paddingRight: 50,
+                                            }}>
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}
