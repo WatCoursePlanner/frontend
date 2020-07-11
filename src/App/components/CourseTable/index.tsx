@@ -1,5 +1,4 @@
 import React from 'react';
-import clsx from 'clsx';
 import {createStyles, lighten, makeStyles, Theme} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -20,38 +19,36 @@ interface Data {
     name: string,
     coursename: string,
     ratings: number,
-    useful: string,
-    easy: string,
-    liked: string,
+    useful: number,
+    easy: number,
+    liked: number,
 }
 
 function createData(
     name: string,
     coursename: string,
     ratings: number,
-    useful: string,
-    easy: string,
-    liked: string,
+    useful: number,
+    easy: number,
+    liked: number,
 ): Data {
     return { name, coursename, ratings, useful, easy, liked };
 }
 
-//Keep this to debug/improve the sorting function
-//"100%" > "22%" > "12%" instead of "22%">"12%">"100%"
 const rows = [
-    createData('CS 125', 'Introduction to Computer Science 1', 2042, '21%', '9%','12%'),
-    createData('ECE 123', 'A Random CS Course', 222, '50%', '22%','100%'),
-    createData('CS 235', 'Computer Science 1', 42, '21%', '9%','22%'),
-    createData('CS 135', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 145', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 155', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 165', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 175', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 185', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 195', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 105', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 315', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('CS 415', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
+    createData('CS 125', 'Introduction to Computer Science 1', 2042, 21, 9,12),
+    createData('ECE 123', 'A Random CS Course', 222, 50, 22,100),
+    createData('CS 235', 'Computer Science 1', 42, 21, 9,22),
+    createData('CS 135', 'Introduction to Computer Science 1', 2042, 21, 9,22),
+    createData('CS 145', 'Introduction to Computer Science 1', 2042, 21, 9,22),
+    createData('CS 155', 'Introduction to Computer Science 1', 2042, 21, 9,22),
+    createData('CS 165', 'Introduction to Computer Science 1', 2042, 21, 9,22),
+    createData('CS 175', 'Introduction to Computer Science 1', 2042, 21, 9,22),
+    createData('CS 185', 'Introduction to Computer Science 1', 2042, 21, 9,22),
+    createData('CS 195', 'Introduction to Computer Science 1', 2042, 21, 9,22),
+    createData('CS 105', 'Introduction to Computer Science 1', 2042, 21, 9,22),
+    createData('CS 315', 'Introduction to Computer Science 1', 2042, 21, 9,22),
+    createData('CS 415', 'Introduction to Computer Science 1', 2042, 21, 9,22),
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -95,9 +92,9 @@ const headCells: HeadCell[] = [
     { id: 'name', numeric: false, label: 'Code' },
     { id: 'coursename', numeric: true, label: 'Name' },
     { id: 'ratings', numeric: true,label: 'Ratings' },
-    { id: 'useful', numeric: true, label: 'Useful' },
-    { id: 'easy', numeric: true, label: 'Easy' },
-    { id: 'liked', numeric: true, label: 'Liked' },
+    { id: 'useful', numeric: true, label: 'Useful (%)' },
+    { id: 'easy', numeric: true, label: 'Easy (%)' },
+    { id: 'liked', numeric: true, label: 'Liked (%)' },
 ];
 
 
