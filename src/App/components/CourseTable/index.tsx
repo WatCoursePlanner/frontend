@@ -90,7 +90,7 @@ interface HeadCell {
 
 const headCells: HeadCell[] = [
     { id: 'name', numeric: false, label: 'Code' },
-    { id: 'coursename', numeric: true, label: 'Name' },
+    { id: 'coursename', numeric: false, label: 'Name' },
     { id: 'ratings', numeric: true,label: 'Ratings' },
     { id: 'useful', numeric: true, label: 'Useful (%)' },
     { id: 'easy', numeric: true, label: 'Easy (%)' },
@@ -279,7 +279,7 @@ export default function EnhancedTable() {
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {row.name}
                                             </TableCell>
-                                            <TableCell align="right">{row.coursename}</TableCell>
+                                            <TableCell align="left">{row.coursename}</TableCell>
                                             <TableCell align="right">{row.ratings}</TableCell>
                                             <TableCell align="right">{row.useful}</TableCell>
                                             <TableCell align="right">{row.easy}</TableCell>
