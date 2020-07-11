@@ -37,8 +37,8 @@ function createData(
 }
 
 const rows = [
-    createData('CS 125', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
-    createData('ECE 123', 'A Random CS Course', 222, '50%', '22%','22%'),
+    createData('CS 125', 'Introduction to Computer Science 1', 2042, '21%', '9%','12%'),
+    createData('ECE 123', 'A Random CS Course', 222, '50%', '22%','100%'),
     createData('CS 235', 'Computer Science 1', 42, '21%', '9%','22%'),
     createData('CS 135', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
     createData('CS 145', 'Introduction to Computer Science 1', 2042, '21%', '9%','22%'),
@@ -174,14 +174,9 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const classes = useToolbarStyles();
-    const {numSelected} = props;
 
     return (
-        <Toolbar
-            className={clsx(classes.root, {
-                [classes.highlight]: numSelected > 0,
-            })}
-        >
+        <Toolbar>
             {(
                 <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
                     Find Your Courses
@@ -251,6 +246,7 @@ export default function EnhancedTable() {
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
+                <EnhancedTableToolbar numSelected={0} />
                 <TableContainer>
                     <Table
                         className={classes.table}
