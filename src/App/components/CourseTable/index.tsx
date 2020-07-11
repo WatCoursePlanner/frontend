@@ -36,6 +36,8 @@ function createData(
     return { name, coursename, ratings, useful, easy, liked };
 }
 
+//Keep this to debug/improve the sorting function
+//"100%" > "22%" > "12%" instead of "22%">"12%">"100%"
 const rows = [
     createData('CS 125', 'Introduction to Computer Science 1', 2042, '21%', '9%','12%'),
     createData('ECE 123', 'A Random CS Course', 222, '50%', '22%','100%'),
