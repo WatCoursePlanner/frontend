@@ -39,8 +39,8 @@
     "clsx": "latest"
   },
   "scripts": {
-    "webpack": "webpack --config config/webpack.prod.conf.js",
-    "start": "webpack-dev-server --open --config config/webpack.dev.conf.js",
+    "webpack": "webpack --config webpack.prod.conf.js",
+    "start": "webpack-dev-server --open --config webpack.dev.conf.js",
     "build": "npm run clean && npm run sass && npm run webpack",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
