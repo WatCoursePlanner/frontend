@@ -16,6 +16,7 @@ const Container = styled.div`
 const AppContainer = styled(DrawerAppContent)`
     margin-top: 64px;
     width: 100%;
+    overflow: auto;
 `
 
 const Home = () => {
