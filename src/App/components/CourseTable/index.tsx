@@ -14,6 +14,8 @@ import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
+import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
 
 interface Data {
     name: string,
@@ -203,6 +205,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     paper: {
         width: '100%',
+        marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
     },
     table: {
@@ -224,7 +227,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function EnhancedTable() {
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('coursename');
+    const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -244,6 +247,8 @@ export default function EnhancedTable() {
     };
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+    /*实现鼠标到行上时outline icon出现 点击icon时成为红心 再点击取消*/
 
     return (
         <div className={classes.root}>
@@ -286,9 +291,11 @@ export default function EnhancedTable() {
                                             <TableCell align="right">{row.useful}</TableCell>
                                             <TableCell align="right">{row.easy}</TableCell>
                                             <TableCell align="right">{row.liked}</TableCell>
-                                            <TableCell style={{
-                                                paddingRight: 50,
-                                            }}>
+                                            <TableCell>
+                                                <Tooltip title="Add to Shortlist" enterDelay={300} leaveDelay={100}>
+                                                    <IconButton><FavoriteBorderOutlinedIcon color="action"/>
+                                                    </IconButton>
+                                                </Tooltip>
                                             </TableCell>
                                         </TableRow>
                                     );
