@@ -1,0 +1,116 @@
+package com.watcourses.wat_courses.proto;
+
+enum Term {
+  SPRING = 0;
+  WINTER = 1;
+  FALL = 2;
+}
+
+message CourseInfo {
+  optional string name = 1;
+  optional string code = 2;
+  optional string description = 3;
+  optional string faculty = 4;
+  repeated Term offering_terms = 5;
+  optional string id = 6;
+  optional string pre_requisite_logic_str = 7;
+  optional string co_requisite_logic_str = 8;
+  optional string anti_requisite_logic_str = 9;
+  optional string pre_requisite = 10;
+  optional string co_requisite = 11;
+  optional string anti_requisite = 12;
+}
+
+message Courses {
+  optional string name = 1;
+  repeated string courses = 2;
+}
+
+message PaginationInfoRequest {
+  optional int32 zero_based_page = 1;
+  optional int32 limit = 2;
+}
+
+message PaginationInfoResponse {
+  optional int32 total_pages = 1;
+  optional int32 current_page = 2;
+  optional int32 limit = 3;
+}
+
+message SearchCourseRequest {
+  optional PaginationInfoRequest pagination = 1;
+}
+
+message SearchCourseResponse {
+  optional PaginationInfoResponse pagination = 1;
+  repeated CourseInfo results = 2;
+}
+
+message ReParseConditionsResponse {
+  optional int32 total = 1;
+  optional int32 success = 2;
+  map<string, string> succeed_results = 3;
+  map<string, string> failed_results = 4;
+  optional bool dry_run = 5;
+}
+
+enum ConditionType {
+  TRUE = 0;
+  FALSE = 1;
+  AND = 2;
+  OR = 3;
+  NOT = 4;
+  HAS_COURSE = 5;
+  HAS_LABEL = 6;
+  SATISFIES_LIST = 7;
+}
+
+message Schedule {
+  message TermSchedule {
+    repeated string course_codes = 1;
+    optional string term_name = 2; // e.g. 1A, 2B
+  }
+  repeated TermSchedule terms = 1;
+}
+
+message StudentProfile {
+  optional Schedule schedule = 1;
+  repeated string labels = 2;
+  repeated string degrees = 3;
+}
+
+message CheckResults {
+  message Issue {
+    enum Type {
+      PRE_REQUISITE_NOT_MET = 1;
+      CO_REQUISITE_NOT_MET = 2;
+      ANTI_REQUISITE_NOT_MET = 3;
+      DEGREE_REQUIREMENTS_NOT_MET = 4;
+    }
+    optional Type type = 1;
+    optional string subject_name = 2; // Either the code of the course or the name of the cond
+    optional string related_cond = 3; // Condition that failed in the check (string, logical expression).
+    optional string related_cond_raw = 4; // The raw condition, if applicable
+    repeated string related_course = 5; // courses in the cond.
+    repeated string related_courses = 6; // courses in the cond.
+  }
+  repeated Issue issues = 1;
+}
+
+message ReservedEnrolInfo{
+  optional string reserve = 1;
+  optional int32 cap = 2;
+  optional int32 total = 3;
+}
+
+message CourseSection{
+  optional string section = 1;
+  optional string location = 2;
+  optional int32 enrol_cap = 3;
+  optional int32 enrol_total = 4;
+  repeated string time = 5;
+  optional string room = 6;
+  optional string instructor = 7;
+  optional int32 sectionId = 8;
+  repeated ReservedEnrolInfo reserved_enrol_info = 9;
+}
