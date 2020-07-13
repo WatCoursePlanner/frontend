@@ -1,8 +1,8 @@
-import {StudentProfile} from "../../proto/courses_pb";
+import {StudentProfile} from "../../proto/courses";
 import {Dispatch} from "redux";
-import {snakeToCamelCase} from "../../utils/apiUtils";
 import {fetchCourseAction, shouldFetchCourse} from "./courses";
 import {store} from "../store";
+import {URL_BASE} from "../../constants/api";
 
 export const STUDENT_PROFILE_INIT = 'STUDENT_PROFILE_INIT';
 export const STUDENT_PROFILE_SUCCESS = 'STUDENT_PROFILE_SUCCESS';
@@ -17,9 +17,9 @@ export const studentProfileInit = (): StudentProfileInit => ({
 
 type StudentProfileSuccess = {
     type: typeof STUDENT_PROFILE_SUCCESS,
-    payload: StudentProfile.AsObject,
+    payload: StudentProfile,
 };
-export const studentProfileSuccess = (studentProfile: StudentProfile.AsObject): StudentProfileSuccess => ({
+export const studentProfileSuccess = (studentProfile: StudentProfile): StudentProfileSuccess => ({
     type: STUDENT_PROFILE_SUCCESS,
     payload: studentProfile
 });
@@ -36,11 +36,12 @@ export const studentProfileError = (error: string): StudentProfileError => ({
 export const fetchStudentProfileAction = () => {
     return (dispatch: Dispatch) => {
         dispatch(studentProfileInit());
-        fetch('https://watcourses.com/api/profile/default?program=Software%20Engineering')
+        fetch(URL_BASE +
+            '/profile/default?program=Software%20Engineering')
             .then(res => res.json())
             .then(res => {
+                console.log(res)
                 if (res.error) throw(res.error);
-                res = snakeToCamelCase(res) as StudentProfile.AsObject
                 if (res.schedule.terms.length > 0) {
                     for (const term of res.schedule.terms) {
                         for (const code of term.courseCodes) {

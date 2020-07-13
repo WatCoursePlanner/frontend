@@ -1,7 +1,7 @@
-import {CourseInfo} from "../../proto/courses_pb";
+import {CourseInfo} from "../../proto/courses";
 import {Dispatch} from "redux";
-import {snakeToCamelCase} from "../../utils/apiUtils";
 import {RootState} from "../types";
+import {URL_BASE} from "../../constants/api";
 
 export const ADD_COURSE = 'ADD_COURSE';
 export const COURSE_INIT = 'COURSE_INIT';
@@ -11,9 +11,9 @@ export const COURSE_ERROR = 'COURSE_ERROR';
 
 type AddCourse = {
     type: typeof ADD_COURSE,
-    payload: CourseInfo.AsObject,
+    payload: CourseInfo,
 };
-export const addCourse = (story: CourseInfo.AsObject) => ({ type: ADD_COURSE, payload: story });
+export const addCourse = (story: CourseInfo) => ({type: ADD_COURSE, payload: story});
 
 type CourseInit = {
     type: typeof COURSE_INIT,
@@ -25,15 +25,18 @@ export const courseInit = (): CourseInit => ({
 export const fetchCourseAction = (code: string) => {
     return (dispatch: Dispatch) => {
         dispatch(courseInit());
-        fetch('https://watcourses.com/api/course/' + encodeURI(code))
+        fetch(URL_BASE +
+            '/course/' + encodeURI(code))
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw(res.error);
-                res = snakeToCamelCase(res) as CourseInfo.AsObject
+                // res = snakeToCamelCase(res) as CourseInfo
                 dispatch(addCourse(res));
                 return res;
             })
-            .catch(error => {throw(error)});
+            .catch(error => {
+                throw(error)
+            });
     }
 }
 
