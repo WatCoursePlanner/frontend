@@ -1,4 +1,4 @@
-export const sampleReduxAction = (text: string) => ({
-  type: 'SAMPLE_REDUX_ACTION',
-  text
-})
+import { StudentProfileTypes } from './studentProfile';
+
+export type RootAction =
+    | StudentProfileTypes;

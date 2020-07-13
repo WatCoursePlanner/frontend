@@ -24,6 +24,8 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/styled-components": "^5.1.1",
     "babel-preset-es2015": "^6.24.1",
+    "clsx": "latest",
+    "prop-types": "latest",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.21",
@@ -31,12 +33,11 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "rmwc": "^6.1.3",
     "styled-components": "^5.1.1",
-    "ts-protoc-gen": "^0.12.0",
-    "prop-types": "latest",
-    "clsx": "latest"
+    "ts-protoc-gen": "^0.12.0"
   },
   "scripts": {
     "webpack": "webpack --config config/webpack.prod.conf.js",

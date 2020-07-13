@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import sampleReducer from './sample'
+import studentProfile from './studentProfile'
 
 export default combineReducers({
-  sampleReducer
+  studentProfile
 })

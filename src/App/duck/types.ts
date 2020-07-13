@@ -1,8 +1,5 @@
-export const SAMPLE_REDUX_ACTION = 'SAMPLE_REDUX_ACTION'
+import {StudentProfileState} from "./reducers/studentProfile";
 
-interface SampleAction {
-    type: typeof SAMPLE_REDUX_ACTION
-    text: string
-}
-
-export type ActionTypes = SampleAction
+export type RootState = {
+    readonly studentProfile: StudentProfileState,
+};
