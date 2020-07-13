@@ -106,7 +106,7 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-    const { classes, order, orderBy, onRequestSort } = props;
+    const {classes, order, orderBy, onRequestSort} = props;
     const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
         onRequestSort(event, property);
     };
@@ -137,7 +137,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                     </TableCell>
 
                 ))}
-                <TableCell >
+                <TableCell>
                     <Tooltip title="Filter list">
                         <IconButton aria-label="filter list">
                             <FilterListIcon />
@@ -247,7 +247,7 @@ export default function EnhancedTable() {
                                     );
                                 })}
                             {emptyRows > 0 && (
-                                <TableRow style={{ height: (53) * emptyRows }}>
+                                <TableRow style={{height: (53) * emptyRows}}>
                                     <TableCell colSpan={6} />
                                 </TableRow>
                             )}
