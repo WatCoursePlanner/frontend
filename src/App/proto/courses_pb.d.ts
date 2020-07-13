@@ -24,9 +24,9 @@ export class CourseInfo extends jspb.Message {
   getFaculty(): string | undefined;
   setFaculty(value: string): void;
 
-  clearOfferingTermsList(): void;
-  getOfferingTermsList(): Array<TermMap[keyof TermMap]>;
-  setOfferingTermsList(value: Array<TermMap[keyof TermMap]>): void;
+  clearOfferingTerms(): void;
+  getOfferingTerms(): Array<TermMap[keyof TermMap]>;
+  setOfferingTerms(value: Array<TermMap[keyof TermMap]>): void;
   addOfferingTerms(value: TermMap[keyof TermMap], index?: number): TermMap[keyof TermMap];
 
   hasId(): boolean;
@@ -80,7 +80,7 @@ export namespace CourseInfo {
     code?: string,
     description?: string,
     faculty?: string,
-    offeringTermsList: Array<TermMap[keyof TermMap]>,
+    offeringTerms: Array<TermMap[keyof TermMap]>,
     id?: string,
     preRequisiteLogicStr?: string,
     coRequisiteLogicStr?: string,
@@ -97,9 +97,9 @@ export class Courses extends jspb.Message {
   getName(): string | undefined;
   setName(value: string): void;
 
-  clearCoursesList(): void;
-  getCoursesList(): Array<string>;
-  setCoursesList(value: Array<string>): void;
+  clearCourses(): void;
+  getCourses(): Array<string>;
+  setCourses(value: Array<string>): void;
   addCourses(value: string, index?: number): string;
 
   serializeBinary(): Uint8Array;
@@ -115,7 +115,7 @@ export class Courses extends jspb.Message {
 export namespace Courses {
   export type AsObject = {
     name?: string,
-    coursesList: Array<string>,
+    courses: Array<string>,
   }
 }
 
@@ -209,9 +209,9 @@ export class SearchCourseResponse extends jspb.Message {
   getPagination(): PaginationInfoResponse | undefined;
   setPagination(value?: PaginationInfoResponse): void;
 
-  clearResultsList(): void;
-  getResultsList(): Array<CourseInfo>;
-  setResultsList(value: Array<CourseInfo>): void;
+  clearResults(): void;
+  getResults(): Array<CourseInfo>;
+  setResults(value: Array<CourseInfo>): void;
   addResults(value?: CourseInfo, index?: number): CourseInfo;
 
   serializeBinary(): Uint8Array;
@@ -227,7 +227,7 @@ export class SearchCourseResponse extends jspb.Message {
 export namespace SearchCourseResponse {
   export type AsObject = {
     pagination?: PaginationInfoResponse.AsObject,
-    resultsList: Array<CourseInfo.AsObject>,
+    results: Array<CourseInfo.AsObject>,
   }
 }
 
@@ -242,10 +242,10 @@ export class ReParseConditionsResponse extends jspb.Message {
   getSuccess(): number | undefined;
   setSuccess(value: number): void;
 
-  getSucceedResultsMap(): jspb.Map<string, string>;
-  clearSucceedResultsMap(): void;
-  getFailedResultsMap(): jspb.Map<string, string>;
-  clearFailedResultsMap(): void;
+  getSucceedResults(): jspb.Map<string, string>;
+  clearSucceedResults(): void;
+  getFailedResults(): jspb.Map<string, string>;
+  clearFailedResults(): void;
   hasDryRun(): boolean;
   clearDryRun(): void;
   getDryRun(): boolean | undefined;
@@ -265,16 +265,16 @@ export namespace ReParseConditionsResponse {
   export type AsObject = {
     total?: number,
     success?: number,
-    succeedResultsMap: Array<[string, string]>,
-    failedResultsMap: Array<[string, string]>,
+    succeedResults: Array<[string, string]>,
+    failedResults: Array<[string, string]>,
     dryRun?: boolean,
   }
 }
 
 export class Schedule extends jspb.Message {
-  clearTermsList(): void;
-  getTermsList(): Array<Schedule.TermSchedule>;
-  setTermsList(value: Array<Schedule.TermSchedule>): void;
+  clearTerms(): void;
+  getTerms(): Array<Schedule.TermSchedule>;
+  setTerms(value: Array<Schedule.TermSchedule>): void;
   addTerms(value?: Schedule.TermSchedule, index?: number): Schedule.TermSchedule;
 
   serializeBinary(): Uint8Array;
@@ -289,13 +289,13 @@ export class Schedule extends jspb.Message {
 
 export namespace Schedule {
   export type AsObject = {
-    termsList: Array<Schedule.TermSchedule.AsObject>,
+    terms: Array<Schedule.TermSchedule.AsObject>,
   }
 
   export class TermSchedule extends jspb.Message {
-    clearCourseCodesList(): void;
-    getCourseCodesList(): Array<string>;
-    setCourseCodesList(value: Array<string>): void;
+    clearCourseCodes(): void;
+    getCourseCodes(): Array<string>;
+    setCourseCodes(value: Array<string>): void;
     addCourseCodes(value: string, index?: number): string;
 
     hasTermName(): boolean;
@@ -315,7 +315,7 @@ export namespace Schedule {
 
   export namespace TermSchedule {
     export type AsObject = {
-      courseCodesList: Array<string>,
+      courseCodes: Array<string>,
       termName?: string,
     }
   }
@@ -327,14 +327,14 @@ export class StudentProfile extends jspb.Message {
   getSchedule(): Schedule | undefined;
   setSchedule(value?: Schedule): void;
 
-  clearLabelsList(): void;
-  getLabelsList(): Array<string>;
-  setLabelsList(value: Array<string>): void;
+  clearLabels(): void;
+  getLabels(): Array<string>;
+  setLabels(value: Array<string>): void;
   addLabels(value: string, index?: number): string;
 
-  clearDegreesList(): void;
-  getDegreesList(): Array<string>;
-  setDegreesList(value: Array<string>): void;
+  clearDegrees(): void;
+  getDegrees(): Array<string>;
+  setDegrees(value: Array<string>): void;
   addDegrees(value: string, index?: number): string;
 
   serializeBinary(): Uint8Array;
@@ -350,15 +350,15 @@ export class StudentProfile extends jspb.Message {
 export namespace StudentProfile {
   export type AsObject = {
     schedule?: Schedule.AsObject,
-    labelsList: Array<string>,
-    degreesList: Array<string>,
+    labels: Array<string>,
+    degrees: Array<string>,
   }
 }
 
 export class CheckResults extends jspb.Message {
-  clearIssuesList(): void;
-  getIssuesList(): Array<CheckResults.Issue>;
-  setIssuesList(value: Array<CheckResults.Issue>): void;
+  clearIssues(): void;
+  getIssues(): Array<CheckResults.Issue>;
+  setIssues(value: Array<CheckResults.Issue>): void;
   addIssues(value?: CheckResults.Issue, index?: number): CheckResults.Issue;
 
   serializeBinary(): Uint8Array;
@@ -373,7 +373,7 @@ export class CheckResults extends jspb.Message {
 
 export namespace CheckResults {
   export type AsObject = {
-    issuesList: Array<CheckResults.Issue.AsObject>,
+    issues: Array<CheckResults.Issue.AsObject>,
   }
 
   export class Issue extends jspb.Message {
@@ -397,14 +397,14 @@ export namespace CheckResults {
     getRelatedCondRaw(): string | undefined;
     setRelatedCondRaw(value: string): void;
 
-    clearRelatedCourseList(): void;
-    getRelatedCourseList(): Array<string>;
-    setRelatedCourseList(value: Array<string>): void;
+    clearRelatedCourse(): void;
+    getRelatedCourse(): Array<string>;
+    setRelatedCourse(value: Array<string>): void;
     addRelatedCourse(value: string, index?: number): string;
 
-    clearRelatedCoursesList(): void;
-    getRelatedCoursesList(): Array<string>;
-    setRelatedCoursesList(value: Array<string>): void;
+    clearRelatedCourses(): void;
+    getRelatedCourses(): Array<string>;
+    setRelatedCourses(value: Array<string>): void;
     addRelatedCourses(value: string, index?: number): string;
 
     serializeBinary(): Uint8Array;
@@ -423,8 +423,8 @@ export namespace CheckResults {
       subjectName?: string,
       relatedCond?: string,
       relatedCondRaw?: string,
-      relatedCourseList: Array<string>,
-      relatedCoursesList: Array<string>,
+      relatedCourse: Array<string>,
+      relatedCourses: Array<string>,
     }
 
     export interface TypeMap {
@@ -493,9 +493,9 @@ export class CourseSection extends jspb.Message {
   getEnrolTotal(): number | undefined;
   setEnrolTotal(value: number): void;
 
-  clearTimeList(): void;
-  getTimeList(): Array<string>;
-  setTimeList(value: Array<string>): void;
+  clearTime(): void;
+  getTime(): Array<string>;
+  setTime(value: Array<string>): void;
   addTime(value: string, index?: number): string;
 
   hasRoom(): boolean;
@@ -513,9 +513,9 @@ export class CourseSection extends jspb.Message {
   getSectionid(): number | undefined;
   setSectionid(value: number): void;
 
-  clearReservedEnrolInfoList(): void;
-  getReservedEnrolInfoList(): Array<ReservedEnrolInfo>;
-  setReservedEnrolInfoList(value: Array<ReservedEnrolInfo>): void;
+  clearReservedEnrolInfo(): void;
+  getReservedEnrolInfo(): Array<ReservedEnrolInfo>;
+  setReservedEnrolInfo(value: Array<ReservedEnrolInfo>): void;
   addReservedEnrolInfo(value?: ReservedEnrolInfo, index?: number): ReservedEnrolInfo;
 
   serializeBinary(): Uint8Array;
@@ -534,11 +534,11 @@ export namespace CourseSection {
     location?: string,
     enrolCap?: number,
     enrolTotal?: number,
-    timeList: Array<string>,
+    time: Array<string>,
     room?: string,
     instructor?: string,
     sectionid?: number,
-    reservedEnrolInfoList: Array<ReservedEnrolInfo.AsObject>,
+    reservedEnrolInfo: Array<ReservedEnrolInfo.AsObject>,
   }
 }
 

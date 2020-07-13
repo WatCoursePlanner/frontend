@@ -5,6 +5,7 @@ import '@rmwc/button/styles';
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../duck/types";
 import {bindActionCreators, Dispatch} from "redux";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
   height: 54px !important;
@@ -52,20 +53,64 @@ const Schedule = ({studentProfile, loading}: ScheduleProps) => {
 
     const [shortlistOpen, setShortlistOpen] = useState(false)
 
+    const onDragEnd = (result: any) => {
+        // dropped outside the list
+        if (!result.destination) {
+            return;
+        }
+
+        // const items = reorder(
+        //     this.state.items,
+        //     result.source.index,
+        //     result.destination.index
+        // );
+        //
+        // this.setState({
+        //     items
+        // });
+    }
+
     return (
         <OuterContainer>
-            <ScheduleContainer>
-
-                <ShortListButton
-                    unelevated
-                    onMouseDown={(e) => {
-                        e.preventDefault()
-                    }}
-                    onClick={() => setShortlistOpen(!shortlistOpen)}
-                    icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}/>
-            </ScheduleContainer>
-            <ShortListContainer open={shortlistOpen}>
-            </ShortListContainer>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <ScheduleContainer>
+                    {(studentProfile && studentProfile.schedule)
+                        ? studentProfile.schedule.terms.map((term, index) => (
+                            <Droppable key={term.termName} droppableId={index.toString()}>
+                                {(provided, snapshot) => (
+                                    <div
+                                        {...provided.droppableProps}
+                                        ref={provided.innerRef}
+                                    >
+                                        {term.courseCodes.map((code, index) => (
+                                            <Draggable key={code} draggableId={code} index={index}>
+                                                {(provided, snapshot) => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                    >
+                                                        {code}
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                        )) : <div/>}
+                    <ShortListButton
+                        unelevated
+                        onMouseDown={(e) => {
+                            e.preventDefault()
+                        }}
+                        onClick={() => setShortlistOpen(!shortlistOpen)}
+                        icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}/>
+                </ScheduleContainer>
+                <ShortListContainer open={shortlistOpen}>
+                </ShortListContainer>
+            </DragDropContext>
         </OuterContainer>
     )
 }
