@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {makeStyles, Theme} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,8 +13,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
-import './coursetable.css'
-
 
 interface Data {
     name: string,
@@ -182,11 +180,10 @@ export default function EnhancedTable() {
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [clicked, setClicked] = useState(100);
+    const [clicked, setClicked] = React.useState(100);
 
     const handleIconClick = (id: React.SetStateAction<number>) => ()=>{
         setClicked(id);
-        // change <AddCircleIcon /> to <BlockIcon /> at "id"
     };
 
 
@@ -207,7 +204,7 @@ export default function EnhancedTable() {
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-    /*实现鼠标到行上时outline icon出现 点击icon时成为红心 再点击取消*/
+    /*TODO：not adding favorite at the same time*/
 
     return (
         <div className={classes.root}>
