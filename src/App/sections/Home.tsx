@@ -7,11 +7,9 @@ import styled from "styled-components";
 import Drawer from "../components/Drawer";
 import TopNav from "../components/TopNav";
 import {connect, ConnectedProps} from "react-redux";
-import {StudentProfileState} from "../duck/reducers/studentProfile";
-import fetchStudentProfileAction from "../services/fetchStudentProfile";
 import {bindActionCreators, Dispatch} from "redux";
-import {Simulate} from "react-dom/test-utils";
 import {RootState} from "../duck/types";
+import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
 
 const Container = styled.div`
       height: 100%;
@@ -25,9 +23,9 @@ const AppContainer = styled(DrawerAppContent)`
     overflow: auto;
 `
 
-type HomeProps = ConnectedProps<typeof connector> & {}
+type HomeProps = ConnectedProps<typeof connector>
 
-const Home = ({studentProfile, loading, fetchStudentProfile}: HomeProps) => {
+const Home = ({loading, fetchStudentProfile}: HomeProps) => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
@@ -62,16 +60,13 @@ const Home = ({studentProfile, loading, fetchStudentProfile}: HomeProps) => {
 }
 
 const mapState = (state: RootState) => ({
-    studentProfile: state.studentProfile.studentProfile,
     loading: state.studentProfile.loading
 })
 
-const mapDispatch = (dispatch: Dispatch) =>bindActionCreators( {
-    fetchStudentProfile: fetchStudentProfileAction
+const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
+    fetchStudentProfile: fetchStudentProfileAction,
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)
 
 export default connector(Home)
-
-// export default Home

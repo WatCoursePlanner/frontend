@@ -1,4 +1,6 @@
-import { StudentProfileTypes } from './studentProfile';
+import {StudentProfileTypes} from './studentProfile';
+import {CourseTypes} from "./courses";
 
 export type RootAction =
-    | StudentProfileTypes;
+    | StudentProfileTypes
+    | CourseTypes;

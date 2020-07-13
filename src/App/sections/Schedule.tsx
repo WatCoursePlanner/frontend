@@ -2,6 +2,9 @@ import React, {useState} from 'react'
 import {Button, ButtonHTMLProps, ButtonProps} from "@rmwc/button";
 import styled from "styled-components";
 import '@rmwc/button/styles';
+import {connect, ConnectedProps} from "react-redux";
+import {RootState} from "../duck/types";
+import {bindActionCreators, Dispatch} from "redux";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
   height: 54px !important;
@@ -36,32 +39,45 @@ const ScheduleContainer = styled.div`
     align-items: center;
 `
 
-const ShortListContainer = styled.div<{open: boolean}>`
+const ShortListContainer = styled.div<{ open: boolean }>`
     display: flex;
     width: ${props => props.open ? '320px' : 0};
     transition: 0.3s;
     border-left: 1px solid #e0e0e0;
 `
 
-const Schedule = () => {
+type ScheduleProps = ConnectedProps<typeof connector>
 
-  const [shortlistOpen, setShortlistOpen] = useState(false)
+const Schedule = ({studentProfile, loading}: ScheduleProps) => {
 
-  return (
-    <OuterContainer>
-      <ScheduleContainer>
-        <ShortListButton
-          unelevated
-          onMouseDown={(e) => {
-            e.preventDefault()
-          }}
-          onClick={() => setShortlistOpen(!shortlistOpen)}
-          icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}/>
-      </ScheduleContainer>
-      <ShortListContainer open={shortlistOpen}>
-      </ShortListContainer>
-    </OuterContainer>
-  )
+    const [shortlistOpen, setShortlistOpen] = useState(false)
+
+    return (
+        <OuterContainer>
+            <ScheduleContainer>
+
+                <ShortListButton
+                    unelevated
+                    onMouseDown={(e) => {
+                        e.preventDefault()
+                    }}
+                    onClick={() => setShortlistOpen(!shortlistOpen)}
+                    icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}/>
+            </ScheduleContainer>
+            <ShortListContainer open={shortlistOpen}>
+            </ShortListContainer>
+        </OuterContainer>
+    )
 }
+const mapState = (state: RootState) => ({
+    studentProfile: state.studentProfile.content,
+    loading: state.studentProfile.loading
+})
 
-export default Schedule
+const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
+    // fetchStudentProfile: fetchStudentProfileAction,
+}, dispatch)
+
+const connector = connect(mapState, mapDispatch)
+
+export default connector(Schedule)

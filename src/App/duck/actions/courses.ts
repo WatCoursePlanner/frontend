@@ -38,16 +38,12 @@ export const fetchCourseAction = (code: string) => {
 }
 
 
-// function shouldFetchCourse(state: RootState, code: string) {
-//     const posts = state.courses[code]
-//     if (!posts) {
-//         return true
-//     } else if (posts.isFetching) {
-//         return false
-//     } else {
-//         return posts.didInvalidate
-//     }
-// }
+export const shouldFetchCourse = (state: RootState, code: string) => {
+    const course = state.courses.content[code]
+    if (!course) {
+        return true
+    } else return !state.courses.loading;
+}
 
 export type CourseTypes =
     | AddCourse

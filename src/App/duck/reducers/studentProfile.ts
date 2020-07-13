@@ -3,13 +3,13 @@ import {StudentProfile} from "../../proto/courses_pb";
 import {STUDENT_PROFILE_ERROR, STUDENT_PROFILE_INIT, STUDENT_PROFILE_SUCCESS} from "../actions/studentProfile";
 
 export type StudentProfileState = {
-  readonly studentProfile: StudentProfile.AsObject | null,
+  readonly content: StudentProfile.AsObject | null,
   readonly error: string | null,
   readonly loading: boolean,
 };
 
 const initialState = {
-  studentProfile: null,
+  content: null,
   error: null,
   loading: false,
 };
@@ -30,7 +30,7 @@ const studentProfileReducer = (
         return {
           ...state,
           loading: false,
-          studentProfile: studentProfile,
+          content: studentProfile,
         };
       }
       return state;
