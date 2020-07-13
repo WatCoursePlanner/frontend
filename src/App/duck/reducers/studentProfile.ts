@@ -1,9 +1,9 @@
 import {RootAction} from "../actions";
-import {StudentProfile} from "../../proto/courses_pb";
+import {StudentProfile} from "../../proto/courses";
 import {STUDENT_PROFILE_ERROR, STUDENT_PROFILE_INIT, STUDENT_PROFILE_SUCCESS} from "../actions/studentProfile";
 
 export type StudentProfileState = {
-  readonly content: StudentProfile.AsObject | null,
+  readonly content: StudentProfile | null,
   readonly error: string | null,
   readonly loading: boolean,
 };
@@ -25,7 +25,7 @@ const studentProfileReducer = (
       return {...state, loading: true};
 
     case STUDENT_PROFILE_SUCCESS:
-      const studentProfile: StudentProfile.AsObject = action.payload;
+      const studentProfile: StudentProfile = action.payload;
       if (studentProfile) {
         return {
           ...state,
