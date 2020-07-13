@@ -8,14 +8,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
+import './coursetable.css'
+
 
 interface Data {
     name: string,
@@ -140,9 +140,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                     </TableCell>
 
                 ))}
-                <TableCell style={{
-                    paddingLeft: 50,
-                }}>
+                <TableCell >
+                    <Tooltip title="Filter list">
+                        <IconButton aria-label="filter list">
+                            <FilterListIcon />
+                        </IconButton>
+                    </Tooltip>
                 </TableCell>
             </TableRow>
         </TableHead>
@@ -170,33 +173,6 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
         },
     }),
 );
-
-
-interface EnhancedTableToolbarProps {
-    numSelected: number;
-}
-
-const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-    const classes = useToolbarStyles();
-
-    return (
-        <Toolbar>
-            {(
-                <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-                    Find Your Courses
-                </Typography>
-            )}
-
-            {(
-                <Tooltip title="Filter list">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
-        </Toolbar>
-    );
-};
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -253,7 +229,6 @@ export default function EnhancedTable() {
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={0} />
                 <TableContainer>
                     <Table
                         className={classes.table}
