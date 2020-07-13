@@ -1,5 +1,5 @@
 import React from 'react';
-import {createStyles, lighten, makeStyles, Theme} from '@material-ui/core/styles';
+import {makeStyles, Theme} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -8,9 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -140,64 +137,17 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                     </TableCell>
 
                 ))}
-                <TableCell style={{
-                    paddingLeft: 50,
-                }}>
+                <TableCell >
+                    <Tooltip title="Filter list">
+                        <IconButton aria-label="filter list">
+                            <FilterListIcon />
+                        </IconButton>
+                    </Tooltip>
                 </TableCell>
             </TableRow>
         </TableHead>
     );
 }
-
-const useToolbarStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(1),
-        },
-        highlight:
-            theme.palette.type === 'light'
-                ? {
-                    color: theme.palette.secondary.main,
-                    backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-                }
-                : {
-                    color: theme.palette.text.primary,
-                    backgroundColor: theme.palette.secondary.dark,
-                },
-        title: {
-            flex: '1 1 100%',
-        },
-    }),
-);
-
-
-interface EnhancedTableToolbarProps {
-    numSelected: number;
-}
-
-const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-    const classes = useToolbarStyles();
-
-    return (
-        <Toolbar>
-            {(
-                <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-                    Find Your Courses
-                </Typography>
-            )}
-
-            {(
-                <Tooltip title="Filter list">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
-        </Toolbar>
-    );
-};
-
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -230,6 +180,7 @@ export default function EnhancedTable() {
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [isFavorite, setIsFavorite] = React.useState(false);
 
     const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -248,12 +199,10 @@ export default function EnhancedTable() {
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-    /*实现鼠标到行上时outline icon出现 点击icon时成为红心 再点击取消*/
+    /*TODO：not adding favorite at the same time*/
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={0} />
                 <TableContainer>
                     <Table
                         className={classes.table}
@@ -279,9 +228,7 @@ export default function EnhancedTable() {
                                             hover
                                             tabIndex={-1}
                                             key={row.name}
-                                        > <TableCell style={{
-                                            paddingLeft: 50,
-                                        }}>
+                                        > <TableCell>
                                         </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {row.name}
@@ -292,10 +239,9 @@ export default function EnhancedTable() {
                                             <TableCell align="right">{row.easy}</TableCell>
                                             <TableCell align="right">{row.liked}</TableCell>
                                             <TableCell>
-                                                <Tooltip title="Add to Shortlist" enterDelay={300} leaveDelay={100}>
-                                                    <IconButton><FavoriteBorderOutlinedIcon color="action"/>
+                                                    <IconButton onClick={() => setIsFavorite(!isFavorite)}>
+                                                        {isFavorite ? <FavoriteOutlinedIcon color="secondary"/> :  <FavoriteBorderOutlinedIcon color="action"/> }
                                                     </IconButton>
-                                                </Tooltip>
                                             </TableCell>
                                         </TableRow>
                                     );
@@ -317,7 +263,6 @@ export default function EnhancedTable() {
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
-            </Paper>
         </div>
     );
 }
