@@ -180,12 +180,7 @@ export default function EnhancedTable() {
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [clicked, setClicked] = React.useState(100);
-
-    const handleIconClick = (id: React.SetStateAction<number>) => ()=>{
-        setClicked(id);
-    };
-
+    const [isFavorite, setIsFavorite] = React.useState(false);
 
     const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -233,9 +228,7 @@ export default function EnhancedTable() {
                                             hover
                                             tabIndex={-1}
                                             key={row.name}
-                                        > <TableCell style={{
-                                            paddingLeft: 50,
-                                        }}>
+                                        > <TableCell>
                                         </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {row.name}
@@ -246,11 +239,9 @@ export default function EnhancedTable() {
                                             <TableCell align="right">{row.easy}</TableCell>
                                             <TableCell align="right">{row.liked}</TableCell>
                                             <TableCell>
-                                                <Tooltip title="Add to Shortlist" enterDelay={300} leaveDelay={100}>
-                                                    <IconButton onClick={handleIconClick(101)}>
-                                                        {clicked ===100 ? <FavoriteBorderOutlinedIcon color="action"/> : <FavoriteOutlinedIcon color="secondary"/> }
+                                                    <IconButton onClick={() => setIsFavorite(!isFavorite)}>
+                                                        {isFavorite ? <FavoriteOutlinedIcon color="secondary"/> :  <FavoriteBorderOutlinedIcon color="action"/> }
                                                     </IconButton>
-                                                </Tooltip>
                                             </TableCell>
                                         </TableRow>
                                     );
