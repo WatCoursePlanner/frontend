@@ -40,18 +40,16 @@ export const fetchStudentProfileAction = () => {
             '/profile/default?program=Software%20Engineering')
             .then(res => res.json())
             .then(res => {
-                console.log(res)
                 if (res.error) throw(res.error);
+                dispatch(studentProfileSuccess(res));
                 if (res.schedule.terms.length > 0) {
                     for (const term of res.schedule.terms) {
                         for (const code of term.courseCodes) {
                             if (shouldFetchCourse(store.getState(), code))
-                                // @ts-ignore
-                                dispatch(fetchCourseAction(code));
+                                fetchCourseAction(code)(dispatch);
                         }
                     }
                 }
-                dispatch(studentProfileSuccess(res));
                 return res
             })
             .catch(error => dispatch(studentProfileError(error)));

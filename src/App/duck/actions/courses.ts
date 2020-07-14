@@ -30,7 +30,6 @@ export const fetchCourseAction = (code: string) => {
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw(res.error);
-                // res = snakeToCamelCase(res) as CourseInfo
                 dispatch(addCourse(res));
                 return res;
             })

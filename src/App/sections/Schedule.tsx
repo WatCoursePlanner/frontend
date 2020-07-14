@@ -5,9 +5,14 @@ import '@rmwc/button/styles';
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../duck/types";
 import {bindActionCreators, Dispatch} from "redux";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {DragDropContext} from "react-beautiful-dnd";
+import {ScheduleTerm} from "../components/ScheduleList";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
+position:absolute;
+  top: 50%;
+  right: 0;
+  margin-top: -28px;
   height: 54px !important;
   width: 54px !important;
   margin-left: auto !important;
@@ -31,6 +36,7 @@ const OuterContainer = styled.div`
     display: flex;
     width: 100%;
     height: 100%;
+    overflow: hidden;
     flex-direction: row;
 `
 
@@ -38,18 +44,29 @@ const ScheduleContainer = styled.div`
     display: flex;
     flex-grow: 1;
     align-items: center;
+    overflow-x: auto;
+    position: relative;
+    width: auto;
+`
+
+const ScheduleListContainer = styled.div`
+    display: flex;
+    height: 100%;
+    overflow: auto;
+    flex-direction: row;
+    align-items: start;
 `
 
 const ShortListContainer = styled.div<{ open: boolean }>`
     display: flex;
-    width: ${props => props.open ? '320px' : 0};
+    min-width: ${props => props.open ? '320px' : 0};
     transition: 0.3s;
     border-left: 1px solid #e0e0e0;
 `
 
 type ScheduleProps = ConnectedProps<typeof connector>
 
-const Schedule = ({studentProfile, loading}: ScheduleProps) => {
+const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
 
     const [shortlistOpen, setShortlistOpen] = useState(false)
 
@@ -74,32 +91,20 @@ const Schedule = ({studentProfile, loading}: ScheduleProps) => {
         <OuterContainer>
             <DragDropContext onDragEnd={onDragEnd}>
                 <ScheduleContainer>
-                    {(studentProfile && studentProfile.schedule)
-                        ? studentProfile.schedule.terms.map((term, index) => (
-                            <Droppable key={term.termName} droppableId={index.toString()}>
-                                {(provided, snapshot) => (
-                                    <div
-                                        {...provided.droppableProps}
-                                        ref={provided.innerRef}
-                                    >
-                                        {term.courseCodes.map((code, index) => (
-                                            <Draggable key={code} draggableId={code} index={index}>
-                                                {(provided, snapshot) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                    >
-                                                        {code}
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        ))}
-                                        {provided.placeholder}
-                                    </div>
-                                )}
-                            </Droppable>
-                        )) : <div/>}
+                    <ScheduleListContainer>
+                        {
+                            (studentProfile && studentProfile.schedule)
+                                ? studentProfile.schedule.terms
+                                    .map((term, index) => (
+                                        <ScheduleTerm
+                                            key={term.termName}
+                                            term={term}
+                                            index={index}
+                                            courses={courses}/>
+                                    )) : <div/>
+                        }
+                        <div style={{minWidth: 60, height: '100%'}}/>
+                    </ScheduleListContainer>
                     <ShortListButton
                         unelevated
                         onMouseDown={(e) => {
@@ -116,6 +121,7 @@ const Schedule = ({studentProfile, loading}: ScheduleProps) => {
 }
 const mapState = (state: RootState) => ({
     studentProfile: state.studentProfile.content,
+    courses: state.courses.content,
     loading: state.studentProfile.loading
 })
 
