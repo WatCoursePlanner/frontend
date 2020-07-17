@@ -93,6 +93,7 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
             <DragDropContext onDragEnd={onDragEnd}>
                 <ScheduleContainer>
                     <ScheduleListContainer>
+                        <div style={{minWidth: 16, height: '100%'}}/>
                         {(studentProfile && studentProfile.schedule)
                             ? studentProfile.schedule.terms
                                 .map((term, index) => (

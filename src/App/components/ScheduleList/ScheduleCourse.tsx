@@ -28,8 +28,8 @@ const CardContainer = styled.div`
 `
 
 const CourseCode = styled.span`
-    font-size: 20px;
-     font-weight: 600
+    font-size: 18px;
+    font-weight: 500
 `
 const CourseName = styled.span`
     font-size: 14px;

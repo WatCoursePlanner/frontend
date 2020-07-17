@@ -17,3 +17,9 @@ html {
 .hidden {
   display: none !important
 }
+
+.mdc-button, .mdc-button__ripple {
+  border-radius: 20px !important;
+  -webkit-mask-image: radial-gradient(white, black);
+}
+

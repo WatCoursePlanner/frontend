@@ -11,7 +11,7 @@ type ScheduleTermProps = {
 }
 
 const RootContainer = styled.div`
-    margin-left: 40px;
+    margin-left: 56px;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -19,8 +19,9 @@ const RootContainer = styled.div`
 
 const StyledContainer = styled.div`
     flex-grow: 1;
-    min-width: 289px;
+    min-width: 280px;
     overflow-y: auto;
+    scrollbar-color: #ececec transparent;
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -36,11 +37,23 @@ const StyledContainer = styled.div`
     }
 `
 
+const Year = styled.span`
+    font-size: 14px;
+    font-weight: 500;
+    margin: 48px 0 48px 0;
+`
+
+const TermName = styled.span`
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 28px;
+`
+
 const ScheduleTerm = ({term, index, courses}: ScheduleTermProps) => {
     return (
         <RootContainer>
-            <h1>{2019}</h1>
-            <h1>{term.termName}</h1>
+            <Year>{2019}</Year>
+            <TermName>Fall</TermName>
             <StyledContainer>
                 <Container groupName={'terms'}>
                     {term.courseCodes.map((code, index) => (

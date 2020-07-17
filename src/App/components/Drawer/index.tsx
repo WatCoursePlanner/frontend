@@ -16,6 +16,7 @@ const StyledDrawer = styled(Drawer)<DrawerProps & React.HTMLProps<HTMLDivElement
 
 const CustomListItem = styled(ListItem)<ListItemProps & React.HTMLProps<HTMLDivElement>>`
        margin: 4px 0 4px 0 !important;
+       -webkit-mask-image: radial-gradient(white, black);
        border-radius: 0 100px 100px 0 !important;
        padding-left: 24px !important;
        text-transform: capitalize !important;
