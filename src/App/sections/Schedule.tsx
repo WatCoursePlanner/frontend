@@ -7,6 +7,7 @@ import {RootState} from "../duck/types";
 import {bindActionCreators, Dispatch} from "redux";
 import {DragDropContext} from "react-beautiful-dnd";
 import {ScheduleTerm} from "../components/ScheduleList";
+import {Container} from "react-smooth-dnd";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
 position:absolute;
@@ -52,7 +53,8 @@ const ScheduleContainer = styled.div`
 const ScheduleListContainer = styled.div`
     display: flex;
     height: 100%;
-    overflow: auto;
+    overflow-y: hidden;
+    overflow-x: auto;
     flex-direction: row;
     align-items: start;
 `
@@ -92,18 +94,21 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
             <DragDropContext onDragEnd={onDragEnd}>
                 <ScheduleContainer>
                     <ScheduleListContainer>
-                        {
-                            (studentProfile && studentProfile.schedule)
-                                ? studentProfile.schedule.terms
-                                    .map((term, index) => (
-                                        <ScheduleTerm
-                                            key={term.termName}
-                                            term={term}
-                                            index={index}
-                                            courses={courses}/>
-                                    )) : <div/>
-                        }
-                        <div style={{minWidth: 60, height: '100%'}}/>
+                        <Container orientation={"horizontal"} style={{height: '100%'}}>
+                            {
+                                (studentProfile && studentProfile.schedule)
+                                    ? studentProfile.schedule.terms
+                                        .map((term, index) => (
+                                            <ScheduleTerm
+                                                key={term.termName}
+                                                term={term}
+                                                index={index}
+                                                courses={courses}
+                                            />
+                                        )) : <div/>
+                            }
+                            <div style={{minWidth: 60, height: '100%'}}/>
+                        </Container>
                     </ScheduleListContainer>
                     <ShortListButton
                         unelevated

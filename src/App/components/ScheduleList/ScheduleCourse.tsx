@@ -1,5 +1,5 @@
 import React from "react";
-import {Draggable} from "react-beautiful-dnd";
+import { Container, Draggable } from 'react-smooth-dnd';
 import {Card, CardPrimaryAction} from "@rmwc/card";
 import {Typography} from "@rmwc/typography";
 
@@ -14,19 +14,16 @@ type ScheduleCourseProps = {
 
 const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
     return (
-        <Draggable draggableId={code} index={index} >
-            {(provided, snapshot) => (
+        <Draggable>
                 <div
-                    style={{margin: '8px'}}>
-                <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
+                    style={{
+                        margin: '0 0 16px 0',
+                    }}
                 >
                     <Card outlined style={{width: '265px', height: 'auto'}}>
                         <CardPrimaryAction>
                             <div style={{display: 'flex', flexDirection: 'column', padding: '18px'}}>
-                                <span style={{fontSize: 20, fontWeight: 700}}>
+                                <span style={{fontSize: 20, fontWeight: 600}}>
                                     {code}
                                 </span>
                                 <span style={{fontSize: 14, marginTop: 6}}>
@@ -36,8 +33,6 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                         </CardPrimaryAction>
                     </Card>
                 </div>
-                </div>
-            )}
         </Draggable>
     )
 }

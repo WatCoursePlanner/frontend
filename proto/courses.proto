@@ -69,6 +69,8 @@ message Schedule {
   message TermSchedule {
     repeated string courseCodes = 1;
     optional string termName = 2; // e.g. 1A, 2B
+    optional string year = 3;
+    optional Term term = 4;
   }
   repeated TermSchedule terms = 1;
 }
