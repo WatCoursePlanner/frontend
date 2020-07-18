@@ -88,22 +88,36 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
         // });
     }
 
+    const TermList = () => {
+        let shownYears: number[] = []
+        return (studentProfile && studentProfile.schedule)
+            ? <>
+                {studentProfile.schedule.terms
+                    .map((term, index) => {
+                        const showYear = !shownYears.includes(term.year)
+                        if (showYear)
+                            shownYears.push(term.year)
+                        return (
+                            <ScheduleTerm
+                                key={term.termName}
+                                term={term}
+                                index={index}
+                                courses={courses}
+                                showYear={showYear}
+                            />
+                        )
+                    })}
+            </>
+            : <div/>
+    }
+
     return (
         <OuterContainer>
             <DragDropContext onDragEnd={onDragEnd}>
                 <ScheduleContainer>
                     <ScheduleListContainer>
                         <div style={{minWidth: 16, height: '100%'}}/>
-                        {(studentProfile && studentProfile.schedule)
-                            ? studentProfile.schedule.terms
-                                .map((term, index) => (
-                                    <ScheduleTerm
-                                        key={term.termName}
-                                        term={term}
-                                        index={index}
-                                        courses={courses}
-                                    />
-                                )) : <div/>}
+                        <TermList/>
                         <div style={{minWidth: 60, height: '100%'}}/>
                     </ScheduleListContainer>
                     <ShortListButton

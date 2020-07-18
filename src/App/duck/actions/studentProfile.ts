@@ -1,4 +1,4 @@
-import {StudentProfile} from "../../proto/courses";
+import {CreateStudentProfileRequest, StudentProfile} from "../../proto/courses";
 import {Dispatch} from "redux";
 import {fetchCourseAction, shouldFetchCourse} from "./courses";
 import {store} from "../store";
@@ -33,11 +33,14 @@ export const studentProfileError = (error: string): StudentProfileError => ({
     payload: error
 });
 
-export const fetchStudentProfileAction = () => {
+export const fetchStudentProfileAction = (request: CreateStudentProfileRequest) => {
     return (dispatch: Dispatch) => {
         dispatch(studentProfileInit());
-        fetch(URL_BASE +
-            '/profile/default?program=Software%20Engineering')
+        fetch(URL_BASE + '/profile/create', {
+            method: 'post',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(CreateStudentProfileRequest.toJSON(request))
+        })
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw(res.error);

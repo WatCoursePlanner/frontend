@@ -1,10 +1,11 @@
 import React from "react";
 import {Container} from 'react-smooth-dnd';
-import {CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
+import {CourseInfo, Schedule_TermSchedule, Term} from "../../proto/courses";
 import ScheduleCourse from "./ScheduleCourse";
 import styled from "styled-components";
 
 type ScheduleTermProps = {
+    showYear: boolean,
     term: Schedule_TermSchedule,
     courses: { [courseCode: string]: CourseInfo }
     index: number
@@ -40,20 +41,22 @@ const StyledContainer = styled.div`
 const Year = styled.span`
     font-size: 14px;
     font-weight: 500;
+    min-height: 18px;
     margin: 48px 0 48px 0;
 `
 
 const TermName = styled.span`
     font-size: 20px;
     font-weight: 500;
+    text-transform: capitalize;
     margin-bottom: 28px;
 `
 
-const ScheduleTerm = ({term, index, courses}: ScheduleTermProps) => {
+const ScheduleTerm = ({term, index, courses, showYear}: ScheduleTermProps) => {
     return (
         <RootContainer>
-            <Year>{2019}</Year>
-            <TermName>Fall</TermName>
+            <Year>{showYear ? term.year : ''}</Year>
+            <TermName>{term.term.toString().toLowerCase()}</TermName>
             <StyledContainer>
                 <Container groupName={'terms'}>
                     {term.courseCodes.map((code, index) => (
