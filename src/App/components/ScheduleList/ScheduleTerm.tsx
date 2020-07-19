@@ -1,6 +1,6 @@
 import React from "react";
 import {Container} from 'react-smooth-dnd';
-import {CourseInfo, Schedule_TermSchedule, Term} from "../../proto/courses";
+import {CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
 import ScheduleCourse from "./ScheduleCourse";
 import styled from "styled-components";
 
@@ -49,6 +49,19 @@ const TermName = styled.span`
     font-size: 20px;
     font-weight: 500;
     text-transform: capitalize;
+`
+
+const TermCode = styled.span`
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-left: 16px;
+`
+
+const Row = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
     margin-bottom: 2vh;
 `
 
@@ -56,9 +69,12 @@ const ScheduleTerm = ({term, index, courses, showYear}: ScheduleTermProps) => {
     return (
         <RootContainer>
             <Year>{showYear ? term.year : ''}</Year>
-            <TermName>{term.term.toString().toLowerCase()}</TermName>
+            <Row>
+                <TermName>{term.term.toString().toLowerCase()}</TermName>
+                <TermCode>{term.termName}</TermCode>
+            </Row>
             <StyledContainer>
-                <Container groupName={'terms'}>
+                <Container groupName={'terms'} style={{height: '100%'}}>
                     {term.courseCodes.map((code, index) => (
                         <ScheduleCourse
                             key={code}

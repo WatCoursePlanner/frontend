@@ -2,6 +2,7 @@ import {CourseInfo} from "../../proto/courses";
 import {Dispatch} from "redux";
 import {RootState} from "../types";
 import {URL_BASE} from "../../constants/api";
+import {bool} from "prop-types";
 
 export const ADD_COURSE = 'ADD_COURSE';
 export const COURSE_INIT = 'COURSE_INIT';
@@ -22,15 +23,15 @@ export const courseInit = (): CourseInit => ({
     type: COURSE_INIT
 });
 
-export const fetchCourseAction = (code: string) => {
+export const fetchCourseAction = (code: string[]) => {
     return (dispatch: Dispatch) => {
         dispatch(courseInit());
         fetch(URL_BASE +
-            '/course/' + encodeURI(code))
+            '/courses/' + encodeURI(code.filter(Boolean).join(',')))
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw(res.error);
-                dispatch(addCourse(res));
+                res.forEach((course: CourseInfo) => dispatch(addCourse(course)))
                 return res;
             })
             .catch(error => {

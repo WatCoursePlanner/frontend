@@ -1,4 +1,4 @@
-import {CreateStudentProfileRequest, StudentProfile} from "../../proto/courses";
+import {CreateStudentProfileRequest, Schedule_TermSchedule, StudentProfile} from "../../proto/courses";
 import {Dispatch} from "redux";
 import {fetchCourseAction, shouldFetchCourse} from "./courses";
 import {store} from "../store";
@@ -46,12 +46,12 @@ export const fetchStudentProfileAction = (request: CreateStudentProfileRequest) 
                 if (res.error) throw(res.error);
                 dispatch(studentProfileSuccess(res));
                 if (res.schedule.terms.length > 0) {
-                    for (const term of res.schedule.terms) {
-                        for (const code of term.courseCodes) {
-                            if (shouldFetchCourse(store.getState(), code))
-                                fetchCourseAction(code)(dispatch);
-                        }
-                    }
+                    const coursesToFetch =
+                        // Flattening array with concat
+                        Array.prototype.concat.apply([],
+                            res.schedule.terms.map((term: Schedule_TermSchedule) => term.courseCodes))
+                        .filter((code: string) => shouldFetchCourse(store.getState(), code))
+                    fetchCourseAction(coursesToFetch)(dispatch);
                 }
                 return res
             })
