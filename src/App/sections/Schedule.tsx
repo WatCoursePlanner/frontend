@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import {Button, ButtonHTMLProps, ButtonProps} from "@rmwc/button";
+import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
 import '@rmwc/button/styles';
 import {connect, ConnectedProps} from "react-redux";
@@ -7,6 +8,9 @@ import {RootState} from "../duck/types";
 import {bindActionCreators, Dispatch} from "redux";
 import {DragDropContext} from "react-beautiful-dnd";
 import {ScheduleTerm} from "../components/ScheduleList";
+
+import '@rmwc/fab/styles';
+import Spacer from "../components/Spacer";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
 position:absolute;
@@ -65,6 +69,14 @@ const ShortListContainer = styled.div<{ open: boolean }>`
     border-left: 1px solid #e0e0e0;
 `
 
+const StyledFab = styled(Fab)<FabProps>`
+    letter-spacing: normal !important;
+    text-transform: initial;
+    position: absolute !important;
+    bottom: 9vh !important;
+    right: 6vw !important;
+`
+
 type ScheduleProps = ConnectedProps<typeof connector>
 
 const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
@@ -97,15 +109,12 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
                         const showYear = !shownYears.includes(term.year)
                         if (showYear)
                             shownYears.push(term.year)
-                        return (
-                            <ScheduleTerm
+                        return (<ScheduleTerm
                                 key={term.termName}
                                 term={term}
                                 index={index}
                                 courses={courses}
-                                showYear={showYear}
-                            />
-                        )
+                                showYear={showYear}/>)
                     })}
             </>
             : <div/>
@@ -116,9 +125,10 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
             <DragDropContext onDragEnd={onDragEnd}>
                 <ScheduleContainer>
                     <ScheduleListContainer>
-                        <div style={{minWidth: 16, height: '100%'}}/>
+                        <Spacer minWidth={'16px'} minHeight={'100%'}/>
                         <TermList/>
-                        <div style={{minWidth: 60, height: '100%'}}/>
+                        <Spacer minWidth={'240px'} minHeight={'100%'}/>
+                        <StyledFab icon="add" label="Add Term" />
                     </ScheduleListContainer>
                     <ShortListButton
                         unelevated
