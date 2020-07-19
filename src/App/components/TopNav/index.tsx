@@ -63,7 +63,6 @@ const TopNav = ({toggleDrawer, searchText, setSearchText}: TopNavProps) => {
         <TopAppBarSection alignEnd>
           <MenuSurfaceAnchor>
             <MenuSurface
-              renderToPortal
               open={degreeMenuOpen}
               anchorCorner={'bottomLeft'}
               onClose={() => setDegreeMenuOpen(false)}>
@@ -79,7 +78,6 @@ const TopNav = ({toggleDrawer, searchText, setSearchText}: TopNavProps) => {
           </MenuSurfaceAnchor>
           <MenuSurfaceAnchor>
             <MenuSurface
-              renderToPortal
               open={accountMenuOpen}
               anchorCorner={'bottomLeft'}
               onClose={() => setAccountMenuOpen(false)}>

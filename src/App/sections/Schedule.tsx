@@ -84,27 +84,17 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
     const [shortlistOpen, setShortlistOpen] = useState(false)
 
     const onDragEnd = (result: any) => {
-        // dropped outside the list
         if (!result.destination) {
             return;
         }
-
-        // const items = reorder(
-        //     this.state.items,
-        //     result.source.index,
-        //     result.destination.index
-        // );
-        //
-        // this.setState({
-        //     items
-        // });
+        // TODO Re-order courses
+        // see https://github.com/kutlugsahin/react-smooth-dnd#ondragend
     }
 
     const TermList = () => {
         let shownYears: number[] = []
         return (studentProfile && studentProfile.schedule)
-            ? <>
-                {studentProfile.schedule.terms
+            ? <>{studentProfile.schedule.terms
                     .map((term, index) => {
                         const showYear = !shownYears.includes(term.year)
                         if (showYear)
@@ -114,9 +104,7 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
                                 term={term}
                                 index={index}
                                 courses={courses}
-                                showYear={showYear}/>)
-                    })}
-            </>
+                                showYear={showYear}/>)})} </>
             : <div/>
     }
 
@@ -144,15 +132,14 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
         </OuterContainer>
     )
 }
+
 const mapState = (state: RootState) => ({
     studentProfile: state.studentProfile.content,
     courses: state.courses.content,
     loading: state.studentProfile.loading
 })
 
-const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    // fetchStudentProfile: fetchStudentProfileAction,
-}, dispatch)
+const mapDispatch = (dispatch: Dispatch) => bindActionCreators({}, dispatch)
 
 const connector = connect(mapState, mapDispatch)
 
