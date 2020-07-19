@@ -42,14 +42,14 @@ const Year = styled.span`
     font-size: 14px;
     font-weight: 500;
     min-height: 18px;
-    margin: 48px 0 48px 0;
+    margin: 5vh 0 5vh 0;
 `
 
 const TermName = styled.span`
     font-size: 20px;
     font-weight: 500;
     text-transform: capitalize;
-    margin-bottom: 28px;
+    margin-bottom: 2vh;
 `
 
 const ScheduleTerm = ({term, index, courses, showYear}: ScheduleTermProps) => {

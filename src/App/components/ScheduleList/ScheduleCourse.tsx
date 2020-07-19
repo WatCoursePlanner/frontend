@@ -18,13 +18,23 @@ const RootContainer = styled.div`
 
 const StyledCard = styled(Card)<CardProps | React.HTMLProps<HTMLDivElement>>`
     width: 265px; 
-    height: auto;
+    max-height: 60px;
+    transition: max-height ease-in-out .25s !important;
+    -webkit-transition: max-height ease-in-out .25s !important;
+    :hover {
+      max-height: 500px;
+    }
+    :hover .CardContainer .CourseName {
+      opacity: 1;
+    }
+    
 `
 
 const CardContainer = styled.div`
     display: flex;
     flex-direction: column;
     padding: 18px;
+    :hover {opacity: 0}
 `
 
 const CourseCode = styled.span`
@@ -34,6 +44,7 @@ const CourseCode = styled.span`
 const CourseName = styled.span`
     font-size: 14px;
     margin-top: 6px;
+    opacity: 0;
 `
 
 const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
