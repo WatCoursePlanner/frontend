@@ -9,6 +9,7 @@ import EnhancedTableHead from "./EnhancedTableHead";
 import CourseTableRow from "./CourseTableRow";
 import styled from "styled-components";
 import {CourseDisplayData, getComparator, Order, stableSort} from "./CourseTableUtils";
+import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
 
 const Root = styled.div`
   width: 100%;
@@ -19,11 +20,18 @@ const Root = styled.div`
 
 const StyledTable = styled(TableContainer)`
   flex-grow: 1;
+  width: auto !important;
   min-width: 750px;
+  padding-right: 48px;
+`
+
+export const StyledIconButton = styled(IconButton)<IconButtonHTMLProps & IconButtonProps>`
+  color: #5f6368;
 `
 
 const PaginationWrapper = styled.div`
   min-height: 52px;
+  padding-right: 48px;
 `
 
 const CourseTable = () => {
@@ -35,7 +43,7 @@ const CourseTable = () => {
     const [order, setOrder] = React.useState<Order>("asc");
     const [orderBy, setOrderBy] = React.useState<keyof CourseDisplayData>("name");
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [rows, setRows] = React.useState<CourseInfo[]>([]);
 
     const fetchCourses = async (request: SearchCourseRequest) => {

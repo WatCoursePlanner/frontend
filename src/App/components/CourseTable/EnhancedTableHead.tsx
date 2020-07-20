@@ -8,6 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import styled from "styled-components";
 import {CourseDisplayData, Order} from "./CourseTableUtils";
+import {StyledIconButton} from "./index";
 
 const VisuallyHidden = styled.span`
     border: 0;
@@ -74,10 +75,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                     </TableCell>
                 ))}
                 <TableCell align="right">
-                    <Tooltip title="Filter list">
-                        <IconButton aria-label="filter list">
-                            <FilterListIcon/>
-                        </IconButton>
+                    <Tooltip title="Filter Courses">
+                        <StyledIconButton icon={'filter_list'}/>
                     </Tooltip>
                 </TableCell>
             </TableRow>

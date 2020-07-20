@@ -23,3 +23,7 @@ html {
   -webkit-mask-image: radial-gradient(white, black);
 }
 
+.mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
+  margin-left: 276px;
+}
+
