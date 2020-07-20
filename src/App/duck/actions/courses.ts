@@ -18,11 +18,12 @@ export const addCourse = (story: CourseInfo[]) => ({type: ADD_COURSE, payload: s
 type CourseInit = {
     type: typeof COURSE_INIT,
 };
+
 export const courseInit = (): CourseInit => ({
     type: COURSE_INIT
 });
 
-export const fetchCourseAction = (request: BatchGetCourseRequest) => {
+export const fetchBatchCourseAction = (request: BatchGetCourseRequest) => {
     return (dispatch: Dispatch) => {
         dispatch(courseInit());
         fetch(URL_BASE + '/course/batch/', {
@@ -41,7 +42,6 @@ export const fetchCourseAction = (request: BatchGetCourseRequest) => {
             });
     }
 }
-
 
 export const shouldFetchCourse = (state: RootState, code: string) => {
     const course = state.courses.content[code]

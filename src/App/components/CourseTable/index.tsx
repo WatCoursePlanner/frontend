@@ -1,298 +1,55 @@
-import React from "react";
-import { makeStyles, Theme } from "@material-ui/core/styles";
+import React, {useEffect} from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import FavoriteBorderOutlinedIcon from "@material-ui/icons/FavoriteBorderOutlined";
-import FavoriteOutlinedIcon from "@material-ui/icons/FavoriteOutlined";
+import {CourseInfo, SearchCourseRequest, SearchCourseResponse} from "../../proto/courses";
+import {URL_BASE} from "../../constants/api";
+import EnhancedTableHead from "./EnhancedTableHead";
+import CourseTableRow from "./CourseTableRow";
+import styled from "styled-components";
+import {CourseDisplayData, getComparator, Order, stableSort} from "./CourseTableUtils";
 
-interface Data {
-    name: string;
-    coursename: string;
-    ratings: number;
-    useful: number;
-    easy: number;
-    liked: number;
-    isFavorite: boolean;
-}
+const Root = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`
 
-function createData(
-    name: string,
-    coursename: string,
-    ratings: number,
-    useful: number,
-    easy: number,
-    liked: number,
-    isFavorite: boolean
-): Data {
-    return { name, coursename, ratings, useful, easy, liked, isFavorite };
-}
+const StyledTable = styled(TableContainer)`
+  flex-grow: 1;
+  min-width: 750px;
+`
 
-const rows = [
-    createData(
-        "CS 125",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        12,
-        false
-    ),
-    createData("ECE 123", "A Random CS Course", 222, 50, 22, 100, false),
-    createData("CS 235", "Computer Science 1", 42, 21, 9, 22, false),
-    createData(
-        "CS 135",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    ),
-    createData(
-        "CS 145",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    ),
-    createData(
-        "CS 155",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    ),
-    createData(
-        "CS 165",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    ),
-    createData(
-        "CS 175",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    ),
-    createData(
-        "CS 185",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    ),
-    createData(
-        "CS 195",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    ),
-    createData(
-        "CS 105",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    ),
-    createData(
-        "CS 315",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    ),
-    createData(
-        "CS 415",
-        "Introduction to Computer Science 1",
-        2042,
-        21,
-        9,
-        22,
-        false
-    )
-];
+const PaginationWrapper = styled.div`
+  min-height: 52px;
+`
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
+const CourseTable = () => {
 
-type Order = "asc" | "desc";
+    useEffect(() => {
+        fetchCourses(SearchCourseRequest.fromJSON(""))
+    }, [])
 
-function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key
-): (
-    a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string }
-) => number {
-    return order === "desc"
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
-    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map(el => el[0]);
-}
-
-interface HeadCell {
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-}
-
-const headCells: HeadCell[] = [
-    { id: "name", numeric: false, label: "Code" },
-    { id: "coursename", numeric: false, label: "Name" },
-    { id: "ratings", numeric: true, label: "Ratings" },
-    { id: "useful", numeric: true, label: "Useful (%)" },
-    { id: "easy", numeric: true, label: "Easy (%)" },
-    { id: "liked", numeric: true, label: "Liked (%)" }
-];
-
-interface EnhancedTableProps {
-    classes: ReturnType<typeof useStyles>;
-    onRequestSort: (
-        event: React.MouseEvent<unknown>,
-        property: keyof Data
-    ) => void;
-    order: Order;
-    orderBy: string;
-    rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-    const { classes, order, orderBy, onRequestSort } = props;
-    const createSortHandler = (property: keyof Data) => (
-        event: React.MouseEvent<unknown>
-    ) => {
-        onRequestSort(event, property);
-    };
-
-    return (
-        <TableHead>
-            <TableRow>
-                <TableCell />
-                {headCells.map(headCell => (
-                    <TableCell
-                        key={headCell.id}
-                        align={headCell.numeric ? "right" : "left"}
-                        sortDirection={orderBy === headCell.id ? order : false}
-                    >
-                        <TableSortLabel
-                            active={orderBy === headCell.id}
-                            direction={orderBy === headCell.id ? order : "asc"}
-                            onClick={createSortHandler(headCell.id)}
-                        >
-                            {headCell.label}
-                            {orderBy === headCell.id ? (
-                                <span className={classes.visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </span>
-                            ) : null}
-                        </TableSortLabel>
-                    </TableCell>
-                ))}
-                <TableCell>
-                    <Tooltip title="Filter list">
-                        <IconButton aria-label="filter list">
-                            <FilterListIcon />
-                        </IconButton>
-                    </Tooltip>
-                </TableCell>
-            </TableRow>
-        </TableHead>
-    );
-}
-
-const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        width: "100%"
-    },
-    paper: {
-        width: "100%",
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2)
-    },
-    table: {
-        minWidth: 750
-    },
-    visuallyHidden: {
-        border: 0,
-        clip: "rect(0 0 0 0)",
-        height: 1,
-        margin: -1,
-        overflow: "hidden",
-        padding: 0,
-        position: "absolute",
-        top: 20,
-        width: 1
-    }
-}));
-
-export default function EnhancedTable() {
-    const classes = useStyles();
     const [order, setOrder] = React.useState<Order>("asc");
-    const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
+    const [orderBy, setOrderBy] = React.useState<keyof CourseDisplayData>("name");
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [data, setData] = React.useState(rows);
+    const [rows, setRows] = React.useState<CourseInfo[]>([]);
 
-    console.log(data);
-
-    const handleFavoriteToggle = (name: string) => {
-        console.log(name);
-        let updatedData = data.map(row => {
-            if (row.name === name) {
-                row.isFavorite = !row.isFavorite;
-            }
-            return row;
-        });
-        setData(updatedData);
-    };
+    const fetchCourses = async (request: SearchCourseRequest) => {
+        const response = await fetch(URL_BASE + "/course/search/")
+        const res = await response.json()
+        if (res.error) {
+            setRows([])
+        }
+        setRows(SearchCourseResponse.fromJSON(res).results)
+    }
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
-        property: keyof Data
+        property: keyof CourseDisplayData
     ) => {
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
@@ -310,82 +67,43 @@ export default function EnhancedTable() {
         setPage(0);
     };
 
-    const emptyRows =
-        rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-
     /*TODO：not adding favorite at the same time*/
 
     return (
-        <div className={classes.root}>
-            <TableContainer>
+        <Root>
+            <StyledTable>
                 <Table
-                    className={classes.table}
+                    stickyHeader
                     aria-labelledby="tableTitle"
-                    size={"medium"}
                     aria-label="enhanced table"
                 >
                     <EnhancedTableHead
-                        classes={classes}
                         order={order}
                         orderBy={orderBy}
                         onRequestSort={handleRequestSort}
                         rowCount={rows.length}
                     />
                     <TableBody>
-                        {stableSort(data, getComparator(order, orderBy))
+                        {stableSort(rows, getComparator(order, orderBy))
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row, index) => {
-                                //console.log("row", row);
-                                const labelId = `enhanced-table-checkbox-${index}`;
-
-                                return (
-                                    <TableRow hover tabIndex={-1} key={row.name}>
-                                        {" "}
-                                        <TableCell />
-                                        <TableCell
-                                            component="th"
-                                            id={labelId}
-                                            scope="row"
-                                            padding="none"
-                                        >
-                                            {row.name}
-                                        </TableCell>
-                                        <TableCell align="left">{row.coursename}</TableCell>
-                                        <TableCell align="right">{row.ratings}</TableCell>
-                                        <TableCell align="right">{row.useful}</TableCell>
-                                        <TableCell align="right">{row.easy}</TableCell>
-                                        <TableCell align="right">{row.liked}</TableCell>
-                                        <TableCell>
-                                            <IconButton
-                                                onClick={() => handleFavoriteToggle(row.name)}
-                                            >
-                                                {row.isFavorite ? (
-                                                    <FavoriteOutlinedIcon color="secondary" />
-                                                ) : (
-                                                    <FavoriteBorderOutlinedIcon color="action" />
-                                                )}
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 53 * emptyRows }}>
-                                <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
+                            .map((row, index) =>
+                                <CourseTableRow key={row.code} row={row}/>
+                            )}
                     </TableBody>
                 </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-            />
-        </div>
+            </StyledTable>
+            <PaginationWrapper>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}/>
+            </PaginationWrapper>
+        </Root>
     );
 }
+
+export default CourseTable
