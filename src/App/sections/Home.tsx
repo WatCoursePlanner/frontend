@@ -10,6 +10,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import {RootState} from "../duck/types";
 import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
+import {CoopStream, CreateStudentProfileRequest} from "../proto/courses";
 
 const Container = styled.div`
       height: 100%;
@@ -32,7 +33,11 @@ const Home = ({loading, fetchStudentProfile}: HomeProps) => {
     const location = useLocation();
 
     useEffect(() => {
-        fetchStudentProfile()
+        fetchStudentProfile(CreateStudentProfileRequest.fromJSON({
+            degrees: ["Software Engineering"],
+            startingYear: 2019,
+            coopStream: CoopStream.STREAM_8
+        }))
     }, [])
 
     return (

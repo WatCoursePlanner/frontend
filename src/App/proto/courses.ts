@@ -2,6 +2,12 @@
 import { Writer, Reader } from 'protobufjs/minimal';
 
 
+export interface RuleInfo {
+  rawString: string;
+  logicString: string;
+  fullyResolved: boolean;
+}
+
 export interface CourseInfo {
   name: string;
   code: string;
@@ -9,12 +15,9 @@ export interface CourseInfo {
   faculty: string;
   offeringTerms: Term[];
   id: string;
-  preRequisiteLogicStr: string;
-  coRequisiteLogicStr: string;
-  antiRequisiteLogicStr: string;
-  preRequisite: string;
-  coRequisite: string;
-  antiRequisite: string;
+  preRequisite: RuleInfo | undefined;
+  coRequisite: RuleInfo | undefined;
+  antiRequisite: RuleInfo | undefined;
 }
 
 export interface CourseList {
@@ -42,24 +45,6 @@ export interface SearchCourseResponse {
   results: CourseInfo[];
 }
 
-export interface ReParseConditionsResponse {
-  total: number;
-  success: number;
-  succeedResults: { [key: string]: string };
-  failedResults: { [key: string]: string };
-  dryRun: boolean;
-}
-
-export interface ReParseConditionsResponse_SucceedResultsEntry {
-  key: string;
-  value: string;
-}
-
-export interface ReParseConditionsResponse_FailedResultsEntry {
-  key: string;
-  value: string;
-}
-
 export interface Schedule {
   terms: Schedule_TermSchedule[];
 }
@@ -70,12 +55,30 @@ export interface Schedule_TermSchedule {
    *  e.g. 1A, 2B
    */
   termName: string;
+  /**
+   *  e.g. 2020
+   */
+  year: number;
+  /**
+   *  e.g. Spring
+   */
+  term: Term;
 }
 
 export interface StudentProfile {
   schedule: Schedule | undefined;
   labels: string[];
   degrees: string[];
+}
+
+export interface CreateStudentProfileRequest {
+  degrees: string[];
+  startingYear: number;
+  /**
+   *  not used for now.
+   */
+  coopStream: CoopStream;
+  schedule: Schedule | undefined;
 }
 
 export interface CheckResults {
@@ -106,23 +109,36 @@ export interface CheckResults_Issue {
   relatedCourseList: string[];
 }
 
-export interface ReservedEnrolInfo {
-  reserve: string;
-  cap: number;
-  total: number;
+export interface FindSlotRequest {
+  profile: StudentProfile | undefined;
+  courseCode: string;
 }
 
-export interface CourseSection {
-  section: string;
-  location: string;
-  enrolCap: number;
-  enrolTotal: number;
-  time: string[];
-  room: string;
-  instructor: string;
-  sectionId: number;
-  reservedEnrolInfo: ReservedEnrolInfo[];
+export interface FindSlotResponse {
+  /**
+   *  The term name and check results of the corresponding slot
+   */
+  slot: { [key: string]: CheckResults };
 }
+
+export interface FindSlotResponse_SlotEntry {
+  key: string;
+  value: CheckResults | undefined;
+}
+
+export interface BatchGetCourseRequest {
+  courseCodes: string[];
+}
+
+export interface BatchGetCourseResponse {
+  results: CourseInfo[];
+}
+
+const baseRuleInfo: object = {
+  rawString: "",
+  logicString: "",
+  fullyResolved: false,
+};
 
 const baseCourseInfo: object = {
   name: "",
@@ -131,12 +147,6 @@ const baseCourseInfo: object = {
   faculty: "",
   offeringTerms: 0,
   id: "",
-  preRequisiteLogicStr: "",
-  coRequisiteLogicStr: "",
-  antiRequisiteLogicStr: "",
-  preRequisite: "",
-  coRequisite: "",
-  antiRequisite: "",
 };
 
 const baseCourseList: object = {
@@ -161,33 +171,25 @@ const baseSearchCourseRequest: object = {
 const baseSearchCourseResponse: object = {
 };
 
-const baseReParseConditionsResponse: object = {
-  total: 0,
-  success: 0,
-  dryRun: false,
-};
-
-const baseReParseConditionsResponse_SucceedResultsEntry: object = {
-  key: "",
-  value: "",
-};
-
-const baseReParseConditionsResponse_FailedResultsEntry: object = {
-  key: "",
-  value: "",
-};
-
 const baseSchedule: object = {
 };
 
 const baseSchedule_TermSchedule: object = {
   courseCodes: "",
   termName: "",
+  year: 0,
+  term: 0,
 };
 
 const baseStudentProfile: object = {
   labels: "",
   degrees: "",
+};
+
+const baseCreateStudentProfileRequest: object = {
+  degrees: "",
+  startingYear: 0,
+  coopStream: 0,
 };
 
 const baseCheckResults: object = {
@@ -202,21 +204,22 @@ const baseCheckResults_Issue: object = {
   relatedCourseList: "",
 };
 
-const baseReservedEnrolInfo: object = {
-  reserve: "",
-  cap: 0,
-  total: 0,
+const baseFindSlotRequest: object = {
+  courseCode: "",
 };
 
-const baseCourseSection: object = {
-  section: "",
-  location: "",
-  enrolCap: 0,
-  enrolTotal: 0,
-  time: "",
-  room: "",
-  instructor: "",
-  sectionId: 0,
+const baseFindSlotResponse: object = {
+};
+
+const baseFindSlotResponse_SlotEntry: object = {
+  key: "",
+};
+
+const baseBatchGetCourseRequest: object = {
+  courseCodes: "",
+};
+
+const baseBatchGetCourseResponse: object = {
 };
 
 export const Term = {
@@ -325,6 +328,44 @@ export const ConditionType = {
 
 export type ConditionType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | -1;
 
+export const CoopStream = {
+  NO_COOP: 0 as const,
+  STREAM_4: 1 as const,
+  STREAM_8: 2 as const,
+  UNRECOGNIZED: -1 as const,
+  fromJSON(object: any): CoopStream {
+    switch (object) {
+      case 0:
+      case "NO_COOP":
+        return CoopStream.NO_COOP;
+      case 1:
+      case "STREAM_4":
+        return CoopStream.STREAM_4;
+      case 2:
+      case "STREAM_8":
+        return CoopStream.STREAM_8;
+      case -1:
+      case "UNRECOGNIZED":
+      default:
+        return CoopStream.UNRECOGNIZED;
+    }
+  },
+  toJSON(object: CoopStream): string {
+    switch (object) {
+      case CoopStream.NO_COOP:
+        return "NO_COOP";
+      case CoopStream.STREAM_4:
+        return "STREAM_4";
+      case CoopStream.STREAM_8:
+        return "STREAM_8";
+      default:
+        return "UNKNOWN";
+    }
+  },
+}
+
+export type CoopStream = 0 | 1 | 2 | -1;
+
 export const CheckResults_Issue_Type = {
   PRE_REQUISITE_NOT_MET: 1 as const,
   CO_REQUISITE_NOT_MET: 2 as const,
@@ -369,6 +410,83 @@ export const CheckResults_Issue_Type = {
 
 export type CheckResults_Issue_Type = 1 | 2 | 3 | 4 | -1;
 
+export const RuleInfo = {
+  encode(message: RuleInfo, writer: Writer = Writer.create()): Writer {
+    writer.uint32(10).string(message.rawString);
+    writer.uint32(18).string(message.logicString);
+    writer.uint32(24).bool(message.fullyResolved);
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): RuleInfo {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseRuleInfo } as RuleInfo;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.rawString = reader.string();
+          break;
+        case 2:
+          message.logicString = reader.string();
+          break;
+        case 3:
+          message.fullyResolved = reader.bool();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): RuleInfo {
+    const message = { ...baseRuleInfo } as RuleInfo;
+    if (object.rawString !== undefined && object.rawString !== null) {
+      message.rawString = String(object.rawString);
+    } else {
+      message.rawString = "";
+    }
+    if (object.logicString !== undefined && object.logicString !== null) {
+      message.logicString = String(object.logicString);
+    } else {
+      message.logicString = "";
+    }
+    if (object.fullyResolved !== undefined && object.fullyResolved !== null) {
+      message.fullyResolved = Boolean(object.fullyResolved);
+    } else {
+      message.fullyResolved = false;
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<RuleInfo>): RuleInfo {
+    const message = { ...baseRuleInfo } as RuleInfo;
+    if (object.rawString !== undefined && object.rawString !== null) {
+      message.rawString = object.rawString;
+    } else {
+      message.rawString = "";
+    }
+    if (object.logicString !== undefined && object.logicString !== null) {
+      message.logicString = object.logicString;
+    } else {
+      message.logicString = "";
+    }
+    if (object.fullyResolved !== undefined && object.fullyResolved !== null) {
+      message.fullyResolved = object.fullyResolved;
+    } else {
+      message.fullyResolved = false;
+    }
+    return message;
+  },
+  toJSON(message: RuleInfo): unknown {
+    const obj: any = {};
+    obj.rawString = message.rawString || "";
+    obj.logicString = message.logicString || "";
+    obj.fullyResolved = message.fullyResolved || false;
+    return obj;
+  },
+};
+
 export const CourseInfo = {
   encode(message: CourseInfo, writer: Writer = Writer.create()): Writer {
     writer.uint32(10).string(message.name);
@@ -381,12 +499,15 @@ export const CourseInfo = {
     }
     writer.ldelim();
     writer.uint32(50).string(message.id);
-    writer.uint32(58).string(message.preRequisiteLogicStr);
-    writer.uint32(66).string(message.coRequisiteLogicStr);
-    writer.uint32(74).string(message.antiRequisiteLogicStr);
-    writer.uint32(82).string(message.preRequisite);
-    writer.uint32(90).string(message.coRequisite);
-    writer.uint32(98).string(message.antiRequisite);
+    if (message.preRequisite !== undefined && message.preRequisite !== undefined) {
+      RuleInfo.encode(message.preRequisite, writer.uint32(58).fork()).ldelim();
+    }
+    if (message.coRequisite !== undefined && message.coRequisite !== undefined) {
+      RuleInfo.encode(message.coRequisite, writer.uint32(66).fork()).ldelim();
+    }
+    if (message.antiRequisite !== undefined && message.antiRequisite !== undefined) {
+      RuleInfo.encode(message.antiRequisite, writer.uint32(74).fork()).ldelim();
+    }
     return writer;
   },
   decode(input: Uint8Array | Reader, length?: number): CourseInfo {
@@ -423,22 +544,13 @@ export const CourseInfo = {
           message.id = reader.string();
           break;
         case 7:
-          message.preRequisiteLogicStr = reader.string();
+          message.preRequisite = RuleInfo.decode(reader, reader.uint32());
           break;
         case 8:
-          message.coRequisiteLogicStr = reader.string();
+          message.coRequisite = RuleInfo.decode(reader, reader.uint32());
           break;
         case 9:
-          message.antiRequisiteLogicStr = reader.string();
-          break;
-        case 10:
-          message.preRequisite = reader.string();
-          break;
-        case 11:
-          message.coRequisite = reader.string();
-          break;
-        case 12:
-          message.antiRequisite = reader.string();
+          message.antiRequisite = RuleInfo.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -480,35 +592,20 @@ export const CourseInfo = {
     } else {
       message.id = "";
     }
-    if (object.preRequisiteLogicStr !== undefined && object.preRequisiteLogicStr !== null) {
-      message.preRequisiteLogicStr = String(object.preRequisiteLogicStr);
-    } else {
-      message.preRequisiteLogicStr = "";
-    }
-    if (object.coRequisiteLogicStr !== undefined && object.coRequisiteLogicStr !== null) {
-      message.coRequisiteLogicStr = String(object.coRequisiteLogicStr);
-    } else {
-      message.coRequisiteLogicStr = "";
-    }
-    if (object.antiRequisiteLogicStr !== undefined && object.antiRequisiteLogicStr !== null) {
-      message.antiRequisiteLogicStr = String(object.antiRequisiteLogicStr);
-    } else {
-      message.antiRequisiteLogicStr = "";
-    }
     if (object.preRequisite !== undefined && object.preRequisite !== null) {
-      message.preRequisite = String(object.preRequisite);
+      message.preRequisite = RuleInfo.fromJSON(object.preRequisite);
     } else {
-      message.preRequisite = "";
+      message.preRequisite = undefined;
     }
     if (object.coRequisite !== undefined && object.coRequisite !== null) {
-      message.coRequisite = String(object.coRequisite);
+      message.coRequisite = RuleInfo.fromJSON(object.coRequisite);
     } else {
-      message.coRequisite = "";
+      message.coRequisite = undefined;
     }
     if (object.antiRequisite !== undefined && object.antiRequisite !== null) {
-      message.antiRequisite = String(object.antiRequisite);
+      message.antiRequisite = RuleInfo.fromJSON(object.antiRequisite);
     } else {
-      message.antiRequisite = "";
+      message.antiRequisite = undefined;
     }
     return message;
   },
@@ -545,35 +642,20 @@ export const CourseInfo = {
     } else {
       message.id = "";
     }
-    if (object.preRequisiteLogicStr !== undefined && object.preRequisiteLogicStr !== null) {
-      message.preRequisiteLogicStr = object.preRequisiteLogicStr;
-    } else {
-      message.preRequisiteLogicStr = "";
-    }
-    if (object.coRequisiteLogicStr !== undefined && object.coRequisiteLogicStr !== null) {
-      message.coRequisiteLogicStr = object.coRequisiteLogicStr;
-    } else {
-      message.coRequisiteLogicStr = "";
-    }
-    if (object.antiRequisiteLogicStr !== undefined && object.antiRequisiteLogicStr !== null) {
-      message.antiRequisiteLogicStr = object.antiRequisiteLogicStr;
-    } else {
-      message.antiRequisiteLogicStr = "";
-    }
     if (object.preRequisite !== undefined && object.preRequisite !== null) {
-      message.preRequisite = object.preRequisite;
+      message.preRequisite = RuleInfo.fromPartial(object.preRequisite);
     } else {
-      message.preRequisite = "";
+      message.preRequisite = undefined;
     }
     if (object.coRequisite !== undefined && object.coRequisite !== null) {
-      message.coRequisite = object.coRequisite;
+      message.coRequisite = RuleInfo.fromPartial(object.coRequisite);
     } else {
-      message.coRequisite = "";
+      message.coRequisite = undefined;
     }
     if (object.antiRequisite !== undefined && object.antiRequisite !== null) {
-      message.antiRequisite = object.antiRequisite;
+      message.antiRequisite = RuleInfo.fromPartial(object.antiRequisite);
     } else {
-      message.antiRequisite = "";
+      message.antiRequisite = undefined;
     }
     return message;
   },
@@ -589,12 +671,9 @@ export const CourseInfo = {
       obj.offeringTerms = [];
     }
     obj.id = message.id || "";
-    obj.preRequisiteLogicStr = message.preRequisiteLogicStr || "";
-    obj.coRequisiteLogicStr = message.coRequisiteLogicStr || "";
-    obj.antiRequisiteLogicStr = message.antiRequisiteLogicStr || "";
-    obj.preRequisite = message.preRequisite || "";
-    obj.coRequisite = message.coRequisite || "";
-    obj.antiRequisite = message.antiRequisite || "";
+    obj.preRequisite = message.preRequisite ? RuleInfo.toJSON(message.preRequisite) : undefined;
+    obj.coRequisite = message.coRequisite ? RuleInfo.toJSON(message.coRequisite) : undefined;
+    obj.antiRequisite = message.antiRequisite ? RuleInfo.toJSON(message.antiRequisite) : undefined;
     return obj;
   },
 };
@@ -931,257 +1010,6 @@ export const SearchCourseResponse = {
   },
 };
 
-export const ReParseConditionsResponse = {
-  encode(message: ReParseConditionsResponse, writer: Writer = Writer.create()): Writer {
-    writer.uint32(8).int32(message.total);
-    writer.uint32(16).int32(message.success);
-    Object.entries(message.succeedResults).forEach(([key, value]) => {
-      ReParseConditionsResponse_SucceedResultsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).ldelim();
-    })
-    Object.entries(message.failedResults).forEach(([key, value]) => {
-      ReParseConditionsResponse_FailedResultsEntry.encode({ key: key as any, value }, writer.uint32(34).fork()).ldelim();
-    })
-    writer.uint32(40).bool(message.dryRun);
-    return writer;
-  },
-  decode(input: Uint8Array | Reader, length?: number): ReParseConditionsResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseReParseConditionsResponse } as ReParseConditionsResponse;
-    message.succeedResults = {};
-    message.failedResults = {};
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.total = reader.int32();
-          break;
-        case 2:
-          message.success = reader.int32();
-          break;
-        case 3:
-          const entry3 = ReParseConditionsResponse_SucceedResultsEntry.decode(reader, reader.uint32());
-          if (entry3.value !== undefined) {
-            message.succeedResults[entry3.key] = entry3.value;
-          }
-          break;
-        case 4:
-          const entry4 = ReParseConditionsResponse_FailedResultsEntry.decode(reader, reader.uint32());
-          if (entry4.value !== undefined) {
-            message.failedResults[entry4.key] = entry4.value;
-          }
-          break;
-        case 5:
-          message.dryRun = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): ReParseConditionsResponse {
-    const message = { ...baseReParseConditionsResponse } as ReParseConditionsResponse;
-    message.succeedResults = {};
-    message.failedResults = {};
-    if (object.total !== undefined && object.total !== null) {
-      message.total = Number(object.total);
-    } else {
-      message.total = 0;
-    }
-    if (object.success !== undefined && object.success !== null) {
-      message.success = Number(object.success);
-    } else {
-      message.success = 0;
-    }
-    if (object.succeedResults !== undefined && object.succeedResults !== null) {
-      Object.entries(object.succeedResults).forEach(([key, value]) => {
-        message.succeedResults[key] = String(value);
-      })
-    }
-    if (object.failedResults !== undefined && object.failedResults !== null) {
-      Object.entries(object.failedResults).forEach(([key, value]) => {
-        message.failedResults[key] = String(value);
-      })
-    }
-    if (object.dryRun !== undefined && object.dryRun !== null) {
-      message.dryRun = Boolean(object.dryRun);
-    } else {
-      message.dryRun = false;
-    }
-    return message;
-  },
-  fromPartial(object: DeepPartial<ReParseConditionsResponse>): ReParseConditionsResponse {
-    const message = { ...baseReParseConditionsResponse } as ReParseConditionsResponse;
-    message.succeedResults = {};
-    message.failedResults = {};
-    if (object.total !== undefined && object.total !== null) {
-      message.total = object.total;
-    } else {
-      message.total = 0;
-    }
-    if (object.success !== undefined && object.success !== null) {
-      message.success = object.success;
-    } else {
-      message.success = 0;
-    }
-    if (object.succeedResults !== undefined && object.succeedResults !== null) {
-      Object.entries(object.succeedResults).forEach(([key, value]) => {
-        if (value !== undefined) {
-          message.succeedResults[key] = String(value);
-        }
-      })
-    }
-    if (object.failedResults !== undefined && object.failedResults !== null) {
-      Object.entries(object.failedResults).forEach(([key, value]) => {
-        if (value !== undefined) {
-          message.failedResults[key] = String(value);
-        }
-      })
-    }
-    if (object.dryRun !== undefined && object.dryRun !== null) {
-      message.dryRun = object.dryRun;
-    } else {
-      message.dryRun = false;
-    }
-    return message;
-  },
-  toJSON(message: ReParseConditionsResponse): unknown {
-    const obj: any = {};
-    obj.total = message.total || 0;
-    obj.success = message.success || 0;
-    obj.succeedResults = message.succeedResults || undefined;
-    obj.failedResults = message.failedResults || undefined;
-    obj.dryRun = message.dryRun || false;
-    return obj;
-  },
-};
-
-export const ReParseConditionsResponse_SucceedResultsEntry = {
-  encode(message: ReParseConditionsResponse_SucceedResultsEntry, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.key);
-    writer.uint32(18).string(message.value);
-    return writer;
-  },
-  decode(input: Uint8Array | Reader, length?: number): ReParseConditionsResponse_SucceedResultsEntry {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseReParseConditionsResponse_SucceedResultsEntry } as ReParseConditionsResponse_SucceedResultsEntry;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.key = reader.string();
-          break;
-        case 2:
-          message.value = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): ReParseConditionsResponse_SucceedResultsEntry {
-    const message = { ...baseReParseConditionsResponse_SucceedResultsEntry } as ReParseConditionsResponse_SucceedResultsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = String(object.key);
-    } else {
-      message.key = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = String(object.value);
-    } else {
-      message.value = "";
-    }
-    return message;
-  },
-  fromPartial(object: DeepPartial<ReParseConditionsResponse_SucceedResultsEntry>): ReParseConditionsResponse_SucceedResultsEntry {
-    const message = { ...baseReParseConditionsResponse_SucceedResultsEntry } as ReParseConditionsResponse_SucceedResultsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = object.key;
-    } else {
-      message.key = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
-    } else {
-      message.value = "";
-    }
-    return message;
-  },
-  toJSON(message: ReParseConditionsResponse_SucceedResultsEntry): unknown {
-    const obj: any = {};
-    obj.key = message.key || "";
-    obj.value = message.value || "";
-    return obj;
-  },
-};
-
-export const ReParseConditionsResponse_FailedResultsEntry = {
-  encode(message: ReParseConditionsResponse_FailedResultsEntry, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.key);
-    writer.uint32(18).string(message.value);
-    return writer;
-  },
-  decode(input: Uint8Array | Reader, length?: number): ReParseConditionsResponse_FailedResultsEntry {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseReParseConditionsResponse_FailedResultsEntry } as ReParseConditionsResponse_FailedResultsEntry;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.key = reader.string();
-          break;
-        case 2:
-          message.value = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): ReParseConditionsResponse_FailedResultsEntry {
-    const message = { ...baseReParseConditionsResponse_FailedResultsEntry } as ReParseConditionsResponse_FailedResultsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = String(object.key);
-    } else {
-      message.key = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = String(object.value);
-    } else {
-      message.value = "";
-    }
-    return message;
-  },
-  fromPartial(object: DeepPartial<ReParseConditionsResponse_FailedResultsEntry>): ReParseConditionsResponse_FailedResultsEntry {
-    const message = { ...baseReParseConditionsResponse_FailedResultsEntry } as ReParseConditionsResponse_FailedResultsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = object.key;
-    } else {
-      message.key = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
-    } else {
-      message.value = "";
-    }
-    return message;
-  },
-  toJSON(message: ReParseConditionsResponse_FailedResultsEntry): unknown {
-    const obj: any = {};
-    obj.key = message.key || "";
-    obj.value = message.value || "";
-    return obj;
-  },
-};
-
 export const Schedule = {
   encode(message: Schedule, writer: Writer = Writer.create()): Writer {
     for (const v of message.terms) {
@@ -1244,6 +1072,8 @@ export const Schedule_TermSchedule = {
       writer.uint32(10).string(v!);
     }
     writer.uint32(18).string(message.termName);
+    writer.uint32(24).int32(message.year);
+    writer.uint32(32).int32(message.term);
     return writer;
   },
   decode(input: Uint8Array | Reader, length?: number): Schedule_TermSchedule {
@@ -1259,6 +1089,12 @@ export const Schedule_TermSchedule = {
           break;
         case 2:
           message.termName = reader.string();
+          break;
+        case 3:
+          message.year = reader.int32();
+          break;
+        case 4:
+          message.term = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1280,6 +1116,16 @@ export const Schedule_TermSchedule = {
     } else {
       message.termName = "";
     }
+    if (object.year !== undefined && object.year !== null) {
+      message.year = Number(object.year);
+    } else {
+      message.year = 0;
+    }
+    if (object.term !== undefined && object.term !== null) {
+      message.term = Term.fromJSON(object.term);
+    } else {
+      message.term = 0;
+    }
     return message;
   },
   fromPartial(object: DeepPartial<Schedule_TermSchedule>): Schedule_TermSchedule {
@@ -1295,6 +1141,16 @@ export const Schedule_TermSchedule = {
     } else {
       message.termName = "";
     }
+    if (object.year !== undefined && object.year !== null) {
+      message.year = object.year;
+    } else {
+      message.year = 0;
+    }
+    if (object.term !== undefined && object.term !== null) {
+      message.term = object.term;
+    } else {
+      message.term = 0;
+    }
     return message;
   },
   toJSON(message: Schedule_TermSchedule): unknown {
@@ -1305,6 +1161,8 @@ export const Schedule_TermSchedule = {
       obj.courseCodes = [];
     }
     obj.termName = message.termName || "";
+    obj.year = message.year || 0;
+    obj.term = Term.toJSON(message.term);
     return obj;
   },
 };
@@ -1402,6 +1260,109 @@ export const StudentProfile = {
     } else {
       obj.degrees = [];
     }
+    return obj;
+  },
+};
+
+export const CreateStudentProfileRequest = {
+  encode(message: CreateStudentProfileRequest, writer: Writer = Writer.create()): Writer {
+    for (const v of message.degrees) {
+      writer.uint32(10).string(v!);
+    }
+    writer.uint32(16).int32(message.startingYear);
+    writer.uint32(24).int32(message.coopStream);
+    if (message.schedule !== undefined && message.schedule !== undefined) {
+      Schedule.encode(message.schedule, writer.uint32(34).fork()).ldelim();
+    }
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): CreateStudentProfileRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseCreateStudentProfileRequest } as CreateStudentProfileRequest;
+    message.degrees = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.degrees.push(reader.string());
+          break;
+        case 2:
+          message.startingYear = reader.int32();
+          break;
+        case 3:
+          message.coopStream = reader.int32() as any;
+          break;
+        case 4:
+          message.schedule = Schedule.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): CreateStudentProfileRequest {
+    const message = { ...baseCreateStudentProfileRequest } as CreateStudentProfileRequest;
+    message.degrees = [];
+    if (object.degrees !== undefined && object.degrees !== null) {
+      for (const e of object.degrees) {
+        message.degrees.push(String(e));
+      }
+    }
+    if (object.startingYear !== undefined && object.startingYear !== null) {
+      message.startingYear = Number(object.startingYear);
+    } else {
+      message.startingYear = 0;
+    }
+    if (object.coopStream !== undefined && object.coopStream !== null) {
+      message.coopStream = CoopStream.fromJSON(object.coopStream);
+    } else {
+      message.coopStream = 0;
+    }
+    if (object.schedule !== undefined && object.schedule !== null) {
+      message.schedule = Schedule.fromJSON(object.schedule);
+    } else {
+      message.schedule = undefined;
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<CreateStudentProfileRequest>): CreateStudentProfileRequest {
+    const message = { ...baseCreateStudentProfileRequest } as CreateStudentProfileRequest;
+    message.degrees = [];
+    if (object.degrees !== undefined && object.degrees !== null) {
+      for (const e of object.degrees) {
+        message.degrees.push(e);
+      }
+    }
+    if (object.startingYear !== undefined && object.startingYear !== null) {
+      message.startingYear = object.startingYear;
+    } else {
+      message.startingYear = 0;
+    }
+    if (object.coopStream !== undefined && object.coopStream !== null) {
+      message.coopStream = object.coopStream;
+    } else {
+      message.coopStream = 0;
+    }
+    if (object.schedule !== undefined && object.schedule !== null) {
+      message.schedule = Schedule.fromPartial(object.schedule);
+    } else {
+      message.schedule = undefined;
+    }
+    return message;
+  },
+  toJSON(message: CreateStudentProfileRequest): unknown {
+    const obj: any = {};
+    if (message.degrees) {
+      obj.degrees = message.degrees.map(e => e || "");
+    } else {
+      obj.degrees = [];
+    }
+    obj.startingYear = message.startingYear || 0;
+    obj.coopStream = CoopStream.toJSON(message.coopStream);
+    obj.schedule = message.schedule ? Schedule.toJSON(message.schedule) : undefined;
     return obj;
   },
 };
@@ -1602,28 +1563,26 @@ export const CheckResults_Issue = {
   },
 };
 
-export const ReservedEnrolInfo = {
-  encode(message: ReservedEnrolInfo, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.reserve);
-    writer.uint32(16).int32(message.cap);
-    writer.uint32(24).int32(message.total);
+export const FindSlotRequest = {
+  encode(message: FindSlotRequest, writer: Writer = Writer.create()): Writer {
+    if (message.profile !== undefined && message.profile !== undefined) {
+      StudentProfile.encode(message.profile, writer.uint32(10).fork()).ldelim();
+    }
+    writer.uint32(18).string(message.courseCode);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): ReservedEnrolInfo {
+  decode(input: Uint8Array | Reader, length?: number): FindSlotRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseReservedEnrolInfo } as ReservedEnrolInfo;
+    const message = { ...baseFindSlotRequest } as FindSlotRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.reserve = reader.string();
+          message.profile = StudentProfile.decode(reader, reader.uint32());
           break;
         case 2:
-          message.cap = reader.int32();
-          break;
-        case 3:
-          message.total = reader.int32();
+          message.courseCode = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1632,105 +1591,62 @@ export const ReservedEnrolInfo = {
     }
     return message;
   },
-  fromJSON(object: any): ReservedEnrolInfo {
-    const message = { ...baseReservedEnrolInfo } as ReservedEnrolInfo;
-    if (object.reserve !== undefined && object.reserve !== null) {
-      message.reserve = String(object.reserve);
+  fromJSON(object: any): FindSlotRequest {
+    const message = { ...baseFindSlotRequest } as FindSlotRequest;
+    if (object.profile !== undefined && object.profile !== null) {
+      message.profile = StudentProfile.fromJSON(object.profile);
     } else {
-      message.reserve = "";
+      message.profile = undefined;
     }
-    if (object.cap !== undefined && object.cap !== null) {
-      message.cap = Number(object.cap);
+    if (object.courseCode !== undefined && object.courseCode !== null) {
+      message.courseCode = String(object.courseCode);
     } else {
-      message.cap = 0;
-    }
-    if (object.total !== undefined && object.total !== null) {
-      message.total = Number(object.total);
-    } else {
-      message.total = 0;
+      message.courseCode = "";
     }
     return message;
   },
-  fromPartial(object: DeepPartial<ReservedEnrolInfo>): ReservedEnrolInfo {
-    const message = { ...baseReservedEnrolInfo } as ReservedEnrolInfo;
-    if (object.reserve !== undefined && object.reserve !== null) {
-      message.reserve = object.reserve;
+  fromPartial(object: DeepPartial<FindSlotRequest>): FindSlotRequest {
+    const message = { ...baseFindSlotRequest } as FindSlotRequest;
+    if (object.profile !== undefined && object.profile !== null) {
+      message.profile = StudentProfile.fromPartial(object.profile);
     } else {
-      message.reserve = "";
+      message.profile = undefined;
     }
-    if (object.cap !== undefined && object.cap !== null) {
-      message.cap = object.cap;
+    if (object.courseCode !== undefined && object.courseCode !== null) {
+      message.courseCode = object.courseCode;
     } else {
-      message.cap = 0;
-    }
-    if (object.total !== undefined && object.total !== null) {
-      message.total = object.total;
-    } else {
-      message.total = 0;
+      message.courseCode = "";
     }
     return message;
   },
-  toJSON(message: ReservedEnrolInfo): unknown {
+  toJSON(message: FindSlotRequest): unknown {
     const obj: any = {};
-    obj.reserve = message.reserve || "";
-    obj.cap = message.cap || 0;
-    obj.total = message.total || 0;
+    obj.profile = message.profile ? StudentProfile.toJSON(message.profile) : undefined;
+    obj.courseCode = message.courseCode || "";
     return obj;
   },
 };
 
-export const CourseSection = {
-  encode(message: CourseSection, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.section);
-    writer.uint32(18).string(message.location);
-    writer.uint32(24).int32(message.enrolCap);
-    writer.uint32(32).int32(message.enrolTotal);
-    for (const v of message.time) {
-      writer.uint32(42).string(v!);
-    }
-    writer.uint32(50).string(message.room);
-    writer.uint32(58).string(message.instructor);
-    writer.uint32(64).int32(message.sectionId);
-    for (const v of message.reservedEnrolInfo) {
-      ReservedEnrolInfo.encode(v!, writer.uint32(74).fork()).ldelim();
-    }
+export const FindSlotResponse = {
+  encode(message: FindSlotResponse, writer: Writer = Writer.create()): Writer {
+    Object.entries(message.slot).forEach(([key, value]) => {
+      FindSlotResponse_SlotEntry.encode({ key: key as any, value }, writer.uint32(10).fork()).ldelim();
+    })
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): CourseSection {
+  decode(input: Uint8Array | Reader, length?: number): FindSlotResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseCourseSection } as CourseSection;
-    message.time = [];
-    message.reservedEnrolInfo = [];
+    const message = { ...baseFindSlotResponse } as FindSlotResponse;
+    message.slot = {};
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.section = reader.string();
-          break;
-        case 2:
-          message.location = reader.string();
-          break;
-        case 3:
-          message.enrolCap = reader.int32();
-          break;
-        case 4:
-          message.enrolTotal = reader.int32();
-          break;
-        case 5:
-          message.time.push(reader.string());
-          break;
-        case 6:
-          message.room = reader.string();
-          break;
-        case 7:
-          message.instructor = reader.string();
-          break;
-        case 8:
-          message.sectionId = reader.int32();
-          break;
-        case 9:
-          message.reservedEnrolInfo.push(ReservedEnrolInfo.decode(reader, reader.uint32()));
+          const entry1 = FindSlotResponse_SlotEntry.decode(reader, reader.uint32());
+          if (entry1.value !== undefined) {
+            message.slot[entry1.key] = entry1.value;
+          }
           break;
         default:
           reader.skipType(tag & 7);
@@ -1739,126 +1655,206 @@ export const CourseSection = {
     }
     return message;
   },
-  fromJSON(object: any): CourseSection {
-    const message = { ...baseCourseSection } as CourseSection;
-    message.time = [];
-    message.reservedEnrolInfo = [];
-    if (object.section !== undefined && object.section !== null) {
-      message.section = String(object.section);
-    } else {
-      message.section = "";
-    }
-    if (object.location !== undefined && object.location !== null) {
-      message.location = String(object.location);
-    } else {
-      message.location = "";
-    }
-    if (object.enrolCap !== undefined && object.enrolCap !== null) {
-      message.enrolCap = Number(object.enrolCap);
-    } else {
-      message.enrolCap = 0;
-    }
-    if (object.enrolTotal !== undefined && object.enrolTotal !== null) {
-      message.enrolTotal = Number(object.enrolTotal);
-    } else {
-      message.enrolTotal = 0;
-    }
-    if (object.time !== undefined && object.time !== null) {
-      for (const e of object.time) {
-        message.time.push(String(e));
-      }
-    }
-    if (object.room !== undefined && object.room !== null) {
-      message.room = String(object.room);
-    } else {
-      message.room = "";
-    }
-    if (object.instructor !== undefined && object.instructor !== null) {
-      message.instructor = String(object.instructor);
-    } else {
-      message.instructor = "";
-    }
-    if (object.sectionId !== undefined && object.sectionId !== null) {
-      message.sectionId = Number(object.sectionId);
-    } else {
-      message.sectionId = 0;
-    }
-    if (object.reservedEnrolInfo !== undefined && object.reservedEnrolInfo !== null) {
-      for (const e of object.reservedEnrolInfo) {
-        message.reservedEnrolInfo.push(ReservedEnrolInfo.fromJSON(e));
-      }
+  fromJSON(object: any): FindSlotResponse {
+    const message = { ...baseFindSlotResponse } as FindSlotResponse;
+    message.slot = {};
+    if (object.slot !== undefined && object.slot !== null) {
+      Object.entries(object.slot).forEach(([key, value]) => {
+        message.slot[key] = CheckResults.fromJSON(value);
+      })
     }
     return message;
   },
-  fromPartial(object: DeepPartial<CourseSection>): CourseSection {
-    const message = { ...baseCourseSection } as CourseSection;
-    message.time = [];
-    message.reservedEnrolInfo = [];
-    if (object.section !== undefined && object.section !== null) {
-      message.section = object.section;
-    } else {
-      message.section = "";
-    }
-    if (object.location !== undefined && object.location !== null) {
-      message.location = object.location;
-    } else {
-      message.location = "";
-    }
-    if (object.enrolCap !== undefined && object.enrolCap !== null) {
-      message.enrolCap = object.enrolCap;
-    } else {
-      message.enrolCap = 0;
-    }
-    if (object.enrolTotal !== undefined && object.enrolTotal !== null) {
-      message.enrolTotal = object.enrolTotal;
-    } else {
-      message.enrolTotal = 0;
-    }
-    if (object.time !== undefined && object.time !== null) {
-      for (const e of object.time) {
-        message.time.push(e);
-      }
-    }
-    if (object.room !== undefined && object.room !== null) {
-      message.room = object.room;
-    } else {
-      message.room = "";
-    }
-    if (object.instructor !== undefined && object.instructor !== null) {
-      message.instructor = object.instructor;
-    } else {
-      message.instructor = "";
-    }
-    if (object.sectionId !== undefined && object.sectionId !== null) {
-      message.sectionId = object.sectionId;
-    } else {
-      message.sectionId = 0;
-    }
-    if (object.reservedEnrolInfo !== undefined && object.reservedEnrolInfo !== null) {
-      for (const e of object.reservedEnrolInfo) {
-        message.reservedEnrolInfo.push(ReservedEnrolInfo.fromPartial(e));
-      }
+  fromPartial(object: DeepPartial<FindSlotResponse>): FindSlotResponse {
+    const message = { ...baseFindSlotResponse } as FindSlotResponse;
+    message.slot = {};
+    if (object.slot !== undefined && object.slot !== null) {
+      Object.entries(object.slot).forEach(([key, value]) => {
+        if (value !== undefined) {
+          message.slot[key] = CheckResults.fromPartial(value);
+        }
+      })
     }
     return message;
   },
-  toJSON(message: CourseSection): unknown {
+  toJSON(message: FindSlotResponse): unknown {
     const obj: any = {};
-    obj.section = message.section || "";
-    obj.location = message.location || "";
-    obj.enrolCap = message.enrolCap || 0;
-    obj.enrolTotal = message.enrolTotal || 0;
-    if (message.time) {
-      obj.time = message.time.map(e => e || "");
-    } else {
-      obj.time = [];
+    obj.slot = message.slot || undefined;
+    return obj;
+  },
+};
+
+export const FindSlotResponse_SlotEntry = {
+  encode(message: FindSlotResponse_SlotEntry, writer: Writer = Writer.create()): Writer {
+    writer.uint32(10).string(message.key);
+    if (message.value !== undefined && message.value !== undefined) {
+      CheckResults.encode(message.value, writer.uint32(18).fork()).ldelim();
     }
-    obj.room = message.room || "";
-    obj.instructor = message.instructor || "";
-    obj.sectionId = message.sectionId || 0;
-    if (message.reservedEnrolInfo) {
-      obj.reservedEnrolInfo = message.reservedEnrolInfo.map(e => e ? ReservedEnrolInfo.toJSON(e) : undefined);
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): FindSlotResponse_SlotEntry {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseFindSlotResponse_SlotEntry } as FindSlotResponse_SlotEntry;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.key = reader.string();
+          break;
+        case 2:
+          message.value = CheckResults.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): FindSlotResponse_SlotEntry {
+    const message = { ...baseFindSlotResponse_SlotEntry } as FindSlotResponse_SlotEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = String(object.key);
     } else {
-      obj.reservedEnrolInfo = [];
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = CheckResults.fromJSON(object.value);
+    } else {
+      message.value = undefined;
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<FindSlotResponse_SlotEntry>): FindSlotResponse_SlotEntry {
+    const message = { ...baseFindSlotResponse_SlotEntry } as FindSlotResponse_SlotEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = object.key;
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = CheckResults.fromPartial(object.value);
+    } else {
+      message.value = undefined;
+    }
+    return message;
+  },
+  toJSON(message: FindSlotResponse_SlotEntry): unknown {
+    const obj: any = {};
+    obj.key = message.key || "";
+    obj.value = message.value ? CheckResults.toJSON(message.value) : undefined;
+    return obj;
+  },
+};
+
+export const BatchGetCourseRequest = {
+  encode(message: BatchGetCourseRequest, writer: Writer = Writer.create()): Writer {
+    for (const v of message.courseCodes) {
+      writer.uint32(10).string(v!);
+    }
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): BatchGetCourseRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseBatchGetCourseRequest } as BatchGetCourseRequest;
+    message.courseCodes = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.courseCodes.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): BatchGetCourseRequest {
+    const message = { ...baseBatchGetCourseRequest } as BatchGetCourseRequest;
+    message.courseCodes = [];
+    if (object.courseCodes !== undefined && object.courseCodes !== null) {
+      for (const e of object.courseCodes) {
+        message.courseCodes.push(String(e));
+      }
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<BatchGetCourseRequest>): BatchGetCourseRequest {
+    const message = { ...baseBatchGetCourseRequest } as BatchGetCourseRequest;
+    message.courseCodes = [];
+    if (object.courseCodes !== undefined && object.courseCodes !== null) {
+      for (const e of object.courseCodes) {
+        message.courseCodes.push(e);
+      }
+    }
+    return message;
+  },
+  toJSON(message: BatchGetCourseRequest): unknown {
+    const obj: any = {};
+    if (message.courseCodes) {
+      obj.courseCodes = message.courseCodes.map(e => e || "");
+    } else {
+      obj.courseCodes = [];
+    }
+    return obj;
+  },
+};
+
+export const BatchGetCourseResponse = {
+  encode(message: BatchGetCourseResponse, writer: Writer = Writer.create()): Writer {
+    for (const v of message.results) {
+      CourseInfo.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): BatchGetCourseResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseBatchGetCourseResponse } as BatchGetCourseResponse;
+    message.results = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.results.push(CourseInfo.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): BatchGetCourseResponse {
+    const message = { ...baseBatchGetCourseResponse } as BatchGetCourseResponse;
+    message.results = [];
+    if (object.results !== undefined && object.results !== null) {
+      for (const e of object.results) {
+        message.results.push(CourseInfo.fromJSON(e));
+      }
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<BatchGetCourseResponse>): BatchGetCourseResponse {
+    const message = { ...baseBatchGetCourseResponse } as BatchGetCourseResponse;
+    message.results = [];
+    if (object.results !== undefined && object.results !== null) {
+      for (const e of object.results) {
+        message.results.push(CourseInfo.fromPartial(e));
+      }
+    }
+    return message;
+  },
+  toJSON(message: BatchGetCourseResponse): unknown {
+    const obj: any = {};
+    if (message.results) {
+      obj.results = message.results.map(e => e ? CourseInfo.toJSON(e) : undefined);
+    } else {
+      obj.results = [];
     }
     return obj;
   },

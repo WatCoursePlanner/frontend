@@ -1,4 +1,4 @@
-import {CourseInfo} from "../../proto/courses";
+import {BatchGetCourseRequest, BatchGetCourseResponse, CourseInfo} from "../../proto/courses";
 import {Dispatch} from "redux";
 import {RootState} from "../types";
 import {URL_BASE} from "../../constants/api";
@@ -11,9 +11,9 @@ export const COURSE_ERROR = 'COURSE_ERROR';
 
 type AddCourse = {
     type: typeof ADD_COURSE,
-    payload: CourseInfo,
+    payload: CourseInfo[],
 };
-export const addCourse = (story: CourseInfo) => ({type: ADD_COURSE, payload: story});
+export const addCourse = (story: CourseInfo[]) => ({type: ADD_COURSE, payload: story});
 
 type CourseInit = {
     type: typeof COURSE_INIT,
@@ -22,16 +22,18 @@ export const courseInit = (): CourseInit => ({
     type: COURSE_INIT
 });
 
-export const fetchCourseAction = (code: string) => {
+export const fetchCourseAction = (request: BatchGetCourseRequest) => {
     return (dispatch: Dispatch) => {
         dispatch(courseInit());
-        fetch(URL_BASE +
-            '/course/' + encodeURI(code))
+        fetch(URL_BASE + '/course/batch/', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(BatchGetCourseRequest.toJSON(request))
+        })
             .then(res => res.json())
             .then(res => {
-                if (res.error) throw(res.error);
-                // res = snakeToCamelCase(res) as CourseInfo
-                dispatch(addCourse(res));
+                if (res.error) throw(res.error)
+                dispatch(addCourse(BatchGetCourseResponse.fromJSON(res).results))
                 return res;
             })
             .catch(error => {

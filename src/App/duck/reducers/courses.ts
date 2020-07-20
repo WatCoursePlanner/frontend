@@ -25,12 +25,14 @@ const coursesReducer = (
             return {...state, loading: true};
 
         case ADD_COURSE:
-            const course: CourseInfo = action.payload;
-            if (course.code) {
+            const courses: CourseInfo[] = action.payload;
+            if (courses.length > 0) {
+                let appendix: { [courseCode: string]: CourseInfo } = {};
+                courses.forEach((course) => appendix[course.code] = course)
                 return {
                     ...state,
                     loading: false,
-                    content: {...state.content, [course.code]: course},
+                    content: {...state.content, ...appendix},
                 };
             }
             return state;

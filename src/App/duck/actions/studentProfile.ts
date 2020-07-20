@@ -1,4 +1,9 @@
-import {StudentProfile} from "../../proto/courses";
+import {
+    BatchGetCourseRequest,
+    CreateStudentProfileRequest,
+    Schedule_TermSchedule,
+    StudentProfile
+} from "../../proto/courses";
 import {Dispatch} from "redux";
 import {fetchCourseAction, shouldFetchCourse} from "./courses";
 import {store} from "../store";
@@ -33,25 +38,27 @@ export const studentProfileError = (error: string): StudentProfileError => ({
     payload: error
 });
 
-export const fetchStudentProfileAction = () => {
+export const fetchStudentProfileAction = (request: CreateStudentProfileRequest) => {
     return (dispatch: Dispatch) => {
         dispatch(studentProfileInit());
-        fetch(URL_BASE +
-            '/profile/default?program=Software%20Engineering')
+        fetch(URL_BASE + '/profile/create', {
+            method: 'post',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(CreateStudentProfileRequest.toJSON(request))
+        })
             .then(res => res.json())
             .then(res => {
-                console.log(res)
                 if (res.error) throw(res.error);
-                if (res.schedule.terms.length > 0) {
-                    for (const term of res.schedule.terms) {
-                        for (const code of term.courseCodes) {
-                            if (shouldFetchCourse(store.getState(), code))
-                                // @ts-ignore
-                                dispatch(fetchCourseAction(code));
-                        }
-                    }
-                }
                 dispatch(studentProfileSuccess(res));
+                if (res.schedule.terms.length > 0) {
+                    let request = BatchGetCourseRequest.fromJSON("")
+                    request.courseCodes =
+                        // Flattening array with concat
+                        Array.prototype.concat.apply([],
+                            res.schedule.terms.map((term: Schedule_TermSchedule) => term.courseCodes))
+                        .filter((code: string) => shouldFetchCourse(store.getState(), code))
+                    fetchCourseAction(request)(dispatch);
+                }
                 return res
             })
             .catch(error => dispatch(studentProfileError(error)));
