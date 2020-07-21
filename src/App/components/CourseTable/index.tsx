@@ -9,7 +9,6 @@ import CourseTableRow from "./CourseTableRow";
 import styled from "styled-components";
 import {CourseDisplayData, getComparator, Order, stableSort} from "./CourseTableUtils";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import {CircularProgress} from "@rmwc/circular-progress";
 
 import '@rmwc/circular-progress/styles';
 import {TablePagination} from "@material-ui/core";
@@ -103,14 +102,6 @@ const CourseTable = () => {
         setOrderBy(property);
     };
 
-    const handleScroll = (e: React.UIEvent<HTMLElement>) => {
-
-        if ((e.currentTarget.scrollHeight - e.currentTarget.scrollTop)
-            === (e.currentTarget.clientHeight)) {
-            console.log("BOTTOM!!")
-        }
-    }
-
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage)
     };
@@ -126,8 +117,7 @@ const CourseTable = () => {
 
     return (
         <Root>
-            <StyledTable
-                onScroll={handleScroll}>
+            <StyledTable>
                 <Table
                     stickyHeader
                     aria-labelledby="tableTitle"
