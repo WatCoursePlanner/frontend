@@ -22,7 +22,8 @@ const CourseTableRow = ({row}: CourseTableRowProps) => {
             hover
             tabIndex={-1}
             onMouseEnter={toggleHover}
-            onMouseLeave={toggleHover}>
+            onMouseLeave={toggleHover}
+        >
             <CodeCell align="left">{row.code}</CodeCell>
             <TableCell align="left">{row.name}</TableCell>
             <TableCell align="right">

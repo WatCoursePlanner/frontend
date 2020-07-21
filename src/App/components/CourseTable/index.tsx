@@ -2,14 +2,17 @@ import React, {useEffect} from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
-import TablePagination from "@material-ui/core/TablePagination";
-import {CourseInfo, SearchCourseRequest, SearchCourseResponse} from "../../proto/courses";
+import {CourseInfo, SearchCourseResponse} from "../../proto/courses";
 import {URL_BASE} from "../../constants/api";
 import EnhancedTableHead from "./EnhancedTableHead";
 import CourseTableRow from "./CourseTableRow";
 import styled from "styled-components";
 import {CourseDisplayData, getComparator, Order, stableSort} from "./CourseTableUtils";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
+import {CircularProgress} from "@rmwc/circular-progress";
+
+import '@rmwc/circular-progress/styles';
+import {TablePagination} from "@material-ui/core";
 
 const Root = styled.div`
   width: 100%;
@@ -37,22 +40,58 @@ const PaginationWrapper = styled.div`
 const CourseTable = () => {
 
     useEffect(() => {
-        fetchCourses(SearchCourseRequest.fromJSON(""))
+        fetchCourseCount()
+        fetchCourses(0, 5000)
     }, [])
 
     const [order, setOrder] = React.useState<Order>("asc");
-    const [orderBy, setOrderBy] = React.useState<keyof CourseDisplayData>("name");
+    const [orderBy, setOrderBy] = React.useState<keyof CourseDisplayData>("code");
     const [page, setPage] = React.useState(0);
+    const [courseCount, setCourseCount] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [rows, setRows] = React.useState<CourseInfo[]>([]);
 
-    const fetchCourses = async (request: SearchCourseRequest) => {
-        const response = await fetch(URL_BASE + "/course/search/")
-        const res = await response.json()
-        if (res.error) {
-            setRows([])
-        }
-        setRows(SearchCourseResponse.fromJSON(res).results)
+    const fetchCourses = (page: number, limit: number) => {
+        fetch(URL_BASE + "/course/search/", {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                pagination: {
+                    zeroBasedPage: page,
+                    limit: limit
+                }
+            })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) {
+                    setRows([])
+                    return {}
+                }
+                setRows(SearchCourseResponse.fromJSON(res).results)
+            })
+    }
+
+    // TODO dedicated course count API
+    const fetchCourseCount = async () => {
+        fetch(URL_BASE + "/course/search/", {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                pagination: {
+                    zeroBasedPage: 0,
+                    limit: 1
+                }
+            })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) {
+                    throw Error(res.error)
+                }
+                if (res.hasOwnProperty('pagination'))
+                    setCourseCount(SearchCourseResponse.fromJSON(res).pagination?.totalPages ?? 0)
+            })
     }
 
     const handleRequestSort = (
@@ -64,8 +103,16 @@ const CourseTable = () => {
         setOrderBy(property);
     };
 
+    const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+
+        if ((e.currentTarget.scrollHeight - e.currentTarget.scrollTop)
+            === (e.currentTarget.clientHeight)) {
+            console.log("BOTTOM!!")
+        }
+    }
+
     const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
+        setPage(newPage)
     };
 
     const handleChangeRowsPerPage = (
@@ -79,7 +126,8 @@ const CourseTable = () => {
 
     return (
         <Root>
-            <StyledTable>
+            <StyledTable
+                onScroll={handleScroll}>
                 <Table
                     stickyHeader
                     aria-labelledby="tableTitle"
@@ -97,14 +145,15 @@ const CourseTable = () => {
                             .map((row, index) =>
                                 <CourseTableRow key={row.code} row={row}/>
                             )}
+
                     </TableBody>
                 </Table>
             </StyledTable>
             <PaginationWrapper>
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                    rowsPerPageOptions={[5, 10, 25, 50, 100]}
                     component="div"
-                    count={rows.length}
+                    count={courseCount}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}

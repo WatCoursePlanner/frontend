@@ -4,34 +4,14 @@ import {ThemeProvider as RMWCThemeProvider} from "@rmwc/theme"
 import Home from "./sections/Home";
 import '@rmwc/theme/styles';
 import {ThemeProvider as MUIThemeProvider} from "@material-ui/core/styles"
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
-
-const theme = createMuiTheme({
-    overrides: {
-        MuiTableCell: {
-            root: {
-                height: '56px',
-                padding: '4px 16px',
-                borderBottom: "none"
-            },
-            stickyHeader: {
-                backgroundColor: "white",
-                borderBottom: "1px solid #e0e0e0"
-            }
-        },
-    },
-});
+import {RMWCTheme, Theme} from "./constants/theme";
 
 const App = () => {
     return (
         <RMWCThemeProvider
-            options={{
-                primary: '#2196F3',
-                secondary: '#0069B5'
-            }}
-            style={{height: '100%'}}
-        >
-            <MUIThemeProvider theme={theme}>
+            options={RMWCTheme}
+            style={{height: '100%'}}>
+            <MUIThemeProvider theme={Theme}>
                 <Router>
                     <Switch>
                         <Route path="/" exact>
