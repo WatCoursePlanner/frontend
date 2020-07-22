@@ -5,40 +5,42 @@ import '@rmwc/textfield/styles';
 import SearchBar, {SearchBarProps} from "./SearchBar";
 
 type AutoCompleteProps = {
-    option: AutoCompleteOption[],
+    options: AutoCompleteOption[],
 }
 
 export type AutoCompleteOption = {
     title: string,
-    subTitle: string
+    subTitle: string,
 }
 
-const isAutoCompleteOption = (x: any): x is AutoCompleteOption => true;
-
-const AutoCompleteSearchBar = ({option, searchText, setSearchText}: AutoCompleteProps & SearchBarProps) => {
-    const filterOptions = createFilterOptions<AutoCompleteOption>({
+const AutoCompleteSearchBar = ({options, searchText, setSearchText, searchCallback}: AutoCompleteProps & SearchBarProps) => {
+    const filterOptions = createFilterOptions<AutoCompleteOption | string>({
         limit: 5,
     });
     return (
         <Autocomplete
             freeSolo
+            disableListWrap
             filterOptions={filterOptions}
-            options={option}
+            options={searchText.length > 0 ? options.map((option => option.title ?? '')) : []}
             onChange={(event, newValue: string | AutoCompleteOption | null) => {
                 //TODO selected from list
                 if (!newValue) return
-                if (isAutoCompleteOption(newValue) && newValue.title)
-                    console.log("[Autocomplete] Selected " + newValue.title)
-                else
-                    console.log("[Autocomplete] Entered " + newValue)
+                console.log("[Autocomplete] TODO select " + newValue)
             }}
             inputValue={searchText}
             onInputChange={(event, newInputValue) => {
                 setSearchText(newInputValue)
             }}
-            getOptionLabel={(option: AutoCompleteOption) => option.title ?? ''}
+            renderOption={(option) => (
+                <React.Fragment>
+                    <span style={{minWidth: 100, marginRight: 12}}>{option}</span>
+                    {options.filter(o => o.title === option)[0]?.subTitle}
+                </React.Fragment>
+            )}
             renderInput={(props) =>
                 <SearchBar
+                    searchCallback={searchCallback}
                     autoCompleteRenderProps={props}
                     searchText={searchText}
                     setSearchText={setSearchText}/>

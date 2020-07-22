@@ -47,9 +47,14 @@ const Home = ({isProfileLoading, fetchCourses, fetchStudentProfile}: HomeProps) 
         }))
     }, [])
 
+    const searchKeyword = () => {
+        console.log(`[Home] TODO Implement search ${searchText}`)
+    }
+
     return (
         <Container>
             <TopNav
+                searchCallback={searchKeyword}
                 toggleDrawer={() => setDrawerOpen(!drawerOpen)}
                 searchText={searchText}
                 setSearchText={setSearchText}/>

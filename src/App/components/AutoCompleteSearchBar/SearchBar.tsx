@@ -34,16 +34,22 @@ export type SearchBarProps = {
     autoCompleteRenderProps?: AutocompleteRenderInputParams,
     searchText: string,
     setSearchText: ((text: string) => void),
+    searchCallback: (() => void),
 }
 
-const SearchBar = ({autoCompleteRenderProps, searchText, setSearchText}: SearchBarProps) => {
+const SearchBar = ({autoCompleteRenderProps, searchText, setSearchText, searchCallback}: SearchBarProps) => {
     return (
         <StyledSearchBar
             ref={autoCompleteRenderProps?.InputProps.ref} elevation={0}>
-            <AppBarButton icon={'search'}/>
+            <AppBarButton icon={'search'} onClick={searchCallback}/>
             <StyledInputBase
                 inputProps={Object.assign({}, autoCompleteRenderProps?.inputProps)}
                 placeholder="Search for Programs or Courses"
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        searchCallback()
+                    }
+                }}
             />
             <AppBarButton
                 className={searchText === '' ? 'hidden' : ''}

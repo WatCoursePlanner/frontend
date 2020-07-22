@@ -76,8 +76,6 @@ const CourseTable = ({rows, loading}: CourseTableProps) => {
         setPage(0);
     };
 
-    /*TODO：not adding favorite at the same time*/
-
     return (
         <Root>
             {
