@@ -7,7 +7,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../duck/types";
 import {bindActionCreators, Dispatch} from "redux";
 import {DragDropContext} from "react-beautiful-dnd";
-import {ScheduleTerm} from "../components/ScheduleList";
+import {ScheduleShortList, ScheduleTerm} from "../components/ScheduleList";
 
 import '@rmwc/fab/styles';
 import Spacer from "../components/Spacer";
@@ -64,7 +64,8 @@ const ScheduleListContainer = styled.div`
 
 const ShortListContainer = styled.div<{ open: boolean }>`
     display: flex;
-    min-width: ${props => props.open ? '320px' : 0};
+    min-width: ${props => props.open ? '360px' : 0};
+    max-width: ${props => props.open ? '360px' : 0};
     transition: 0.3s;
     border-left: 1px solid #e0e0e0;
 `
@@ -79,7 +80,7 @@ const StyledFab = styled(Fab)<FabProps>`
 
 type ScheduleProps = ConnectedProps<typeof connector>
 
-const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
+const Schedule = ({studentProfile, loading, profileCourses}: ScheduleProps) => {
 
     const [shortlistOpen, setShortlistOpen] = useState(false)
 
@@ -100,11 +101,11 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
                         if (showYear)
                             shownYears.push(term.year)
                         return (<ScheduleTerm
-                                key={term.termName}
-                                term={term}
-                                index={index}
-                                courses={courses}
-                                showYear={showYear}/>)})} </>
+                            key={term.termName}
+                            term={term}
+                            index={index}
+                            courses={profileCourses}
+                            showYear={showYear}/>)})} </>
             : <div/>
     }
 
@@ -127,6 +128,7 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
                         icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}/>
                 </ScheduleContainer>
                 <ShortListContainer open={shortlistOpen}>
+                    <ScheduleShortList shortlist={['STAT 230', 'STAT 231', 'EMLS 129R']} courses={profileCourses}/>
                 </ShortListContainer>
             </DragDropContext>
         </OuterContainer>
@@ -135,7 +137,7 @@ const Schedule = ({studentProfile, loading, courses}: ScheduleProps) => {
 
 const mapState = (state: RootState) => ({
     studentProfile: state.studentProfile.content,
-    courses: state.courses.content,
+    profileCourses: state.profileCourses.content,
     loading: state.studentProfile.loading
 })
 

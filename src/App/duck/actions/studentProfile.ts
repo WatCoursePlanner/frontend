@@ -5,7 +5,7 @@ import {
     StudentProfile
 } from "../../proto/courses";
 import {Dispatch} from "redux";
-import {fetchBatchCourseAction, shouldFetchCourse} from "./courses";
+import {fetchProfileCourseAction, shouldFetchProfileCourse} from "./profileCourses";
 import {store} from "../store";
 import {URL_BASE} from "../../constants/api";
 
@@ -56,8 +56,8 @@ export const fetchStudentProfileAction = (request: CreateStudentProfileRequest) 
                         // Flattening array with concat
                         Array.prototype.concat.apply([],
                             res.schedule.terms.map((term: Schedule_TermSchedule) => term.courseCodes))
-                        .filter((code: string) => shouldFetchCourse(store.getState(), code))
-                    fetchBatchCourseAction(request)(dispatch);
+                        .filter((code: string) => shouldFetchProfileCourse(store.getState(), code))
+                    fetchProfileCourseAction(request)(dispatch);
                 }
                 return res
             })

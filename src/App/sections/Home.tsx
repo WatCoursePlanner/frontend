@@ -10,7 +10,8 @@ import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import {RootState} from "../duck/types";
 import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
-import {CoopStream, CreateStudentProfileRequest} from "../proto/courses";
+import {CoopStream, CreateStudentProfileRequest, SearchCourseRequest} from "../proto/courses";
+import {fetchCoursesAction} from "../duck/actions/courses";
 
 const Container = styled.div`
       height: 100%;
@@ -26,7 +27,7 @@ const AppContainer = styled(DrawerAppContent)`
 
 type HomeProps = ConnectedProps<typeof connector>
 
-const Home = ({loading, fetchStudentProfile}: HomeProps) => {
+const Home = ({isProfileLoading, fetchCourses, fetchStudentProfile}: HomeProps) => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
@@ -37,6 +38,12 @@ const Home = ({loading, fetchStudentProfile}: HomeProps) => {
             degrees: ["Software Engineering"],
             startingYear: 2019,
             coopStream: CoopStream.STREAM_8
+        }))
+        fetchCourses(SearchCourseRequest.fromJSON({
+            pagination: {
+                zeroBasedPage: 0,
+                limit: 5000
+            }
         }))
     }, [])
 
@@ -65,11 +72,12 @@ const Home = ({loading, fetchStudentProfile}: HomeProps) => {
 }
 
 const mapState = (state: RootState) => ({
-    loading: state.studentProfile.loading
+    isProfileLoading: state.studentProfile.loading,
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
     fetchStudentProfile: fetchStudentProfileAction,
+    fetchCourses: fetchCoursesAction,
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

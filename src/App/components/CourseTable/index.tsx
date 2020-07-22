@@ -9,9 +9,12 @@ import CourseTableRow from "./CourseTableRow";
 import styled from "styled-components";
 import {CourseDisplayData, getComparator, Order, stableSort} from "./CourseTableUtils";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
+import {CircularProgress} from "@rmwc/circular-progress";
+import {TablePagination} from "@material-ui/core";
 
 import '@rmwc/circular-progress/styles';
-import {TablePagination} from "@material-ui/core";
+import {RootState} from "../../duck/types";
+import {connect, ConnectedProps} from "react-redux";
 
 const Root = styled.div`
   width: 100%;
@@ -36,62 +39,22 @@ const PaginationWrapper = styled.div`
   padding-right: 48px;
 `
 
-const CourseTable = () => {
+const Center = styled.div`
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
 
-    useEffect(() => {
-        fetchCourseCount()
-        fetchCourses(0, 5000)
-    }, [])
+type CourseTableProps = ConnectedProps<typeof connector>
+
+const CourseTable = ({rows, loading}: CourseTableProps) => {
 
     const [order, setOrder] = React.useState<Order>("asc");
     const [orderBy, setOrderBy] = React.useState<keyof CourseDisplayData>("code");
     const [page, setPage] = React.useState(0);
-    const [courseCount, setCourseCount] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
-    const [rows, setRows] = React.useState<CourseInfo[]>([]);
-
-    const fetchCourses = (page: number, limit: number) => {
-        fetch(URL_BASE + "/course/search/", {
-            method: 'post',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                pagination: {
-                    zeroBasedPage: page,
-                    limit: limit
-                }
-            })
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) {
-                    setRows([])
-                    return {}
-                }
-                setRows(SearchCourseResponse.fromJSON(res).results)
-            })
-    }
-
-    // TODO dedicated course count API
-    const fetchCourseCount = async () => {
-        fetch(URL_BASE + "/course/search/", {
-            method: 'post',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                pagination: {
-                    zeroBasedPage: 0,
-                    limit: 1
-                }
-            })
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) {
-                    throw Error(res.error)
-                }
-                if (res.hasOwnProperty('pagination'))
-                    setCourseCount(SearchCourseResponse.fromJSON(res).pagination?.totalPages ?? 0)
-            })
-    }
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -117,33 +80,41 @@ const CourseTable = () => {
 
     return (
         <Root>
-            <StyledTable>
-                <Table
-                    stickyHeader
-                    aria-labelledby="tableTitle"
-                    aria-label="enhanced table"
-                >
-                    <EnhancedTableHead
-                        order={order}
-                        orderBy={orderBy}
-                        onRequestSort={handleRequestSort}
-                        rowCount={rows.length}
-                    />
-                    <TableBody>
-                        {stableSort(rows, getComparator(order, orderBy))
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row, index) =>
-                                <CourseTableRow key={row.code} row={row}/>
-                            )}
+            {
+                loading
+                    ?
+                    <Center>
+                        <CircularProgress size={72}/>
+                    </Center>
+                    :
+                    <StyledTable>
+                        <Table
+                            stickyHeader
+                            aria-labelledby="tableTitle"
+                            aria-label="enhanced table"
+                        >
+                            <EnhancedTableHead
+                                order={order}
+                                orderBy={orderBy}
+                                onRequestSort={handleRequestSort}
+                                rowCount={rows.length}
+                            />
+                            <TableBody>
+                                {stableSort(rows, getComparator(order, orderBy))
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((row, index) =>
+                                        <CourseTableRow key={row.code} row={row}/>
+                                    )}
 
-                    </TableBody>
-                </Table>
-            </StyledTable>
+                            </TableBody>
+                        </Table>
+                    </StyledTable>
+            }
             <PaginationWrapper>
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50, 100]}
                     component="div"
-                    count={courseCount}
+                    count={rows.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
@@ -153,4 +124,12 @@ const CourseTable = () => {
     );
 }
 
-export default CourseTable
+const mapState = (state: RootState) => ({
+    loading: state.courses.loading,
+    rows: state.courses.content,
+})
+
+const connector = connect(mapState)
+
+export default connector(CourseTable)
+

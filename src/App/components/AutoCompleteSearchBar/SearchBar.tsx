@@ -1,11 +1,9 @@
-import Paper from "@material-ui/core/Paper";
 import React, {useRef} from "react";
 import styled from "styled-components";
 import InputBase from "@material-ui/core/InputBase";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-
-import '@rmwc/icon-button/styles';
-import '@rmwc/textfield/styles';
+import Paper from "@material-ui/core/Paper";
+import {AutocompleteRenderInputParams} from "@material-ui/lab";
 
 const StyledInputBase = styled(InputBase)`
       margin-left: 16px;
@@ -32,40 +30,29 @@ const StyledSearchBar = styled(Paper)`
   }
 `
 
-const useFocus = () => {
-    const htmlElRef = useRef(null)
-    const setFocus = () => {
-        // @ts-ignore
-        htmlElRef.current && htmlElRef.current.focus()
-    }
-    return [htmlElRef, setFocus]
-}
-
-type SearchBarProps = {
+export type SearchBarProps = {
+    autoCompleteRenderProps?: AutocompleteRenderInputParams,
     searchText: string,
     setSearchText: ((text: string) => void),
 }
 
-const SearchBar = ({searchText, setSearchText}: SearchBarProps) => {
-    const [inputRef, setInputFocus] = useFocus()
+const SearchBar = ({autoCompleteRenderProps, searchText, setSearchText}: SearchBarProps) => {
     return (
-        <StyledSearchBar elevation={0}>
+        <StyledSearchBar
+            ref={autoCompleteRenderProps?.InputProps.ref} elevation={0}>
             <AppBarButton icon={'search'}/>
             <StyledInputBase
-                inputProps={{'ref': inputRef}}
+                inputProps={Object.assign({}, autoCompleteRenderProps?.inputProps)}
                 placeholder="Search for Programs or Courses"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
             />
             <AppBarButton
                 className={searchText === '' ? 'hidden' : ''}
                 icon={'close'}
                 onClick={() => {
                     setSearchText('')
-                    // @ts-ignore
-                    setInputFocus()
                 }}/>
-    </StyledSearchBar>
-  )
+        </StyledSearchBar>
+    )
 }
+
 export default SearchBar

@@ -6,10 +6,17 @@ export const RMWCTheme = {
 }
 
 export const Theme = createMuiTheme({
+    typography: {
+        "fontFamily": `"Montserrat", "Helvetica", "Arial", sans-serif`,
+        "fontSize": 14,
+        "fontWeightLight": 300,
+        "fontWeightRegular": 400,
+        "fontWeightMedium": 600,
+        "fontWeightBold": 700
+    },
     overrides: {
         MuiTableCell: {
             root: {
-                fontFamily: '\'Montserrat\', sans-serif',
                 height: '56px',
                 padding: '4px 16px',
                 fontWeight: 500,

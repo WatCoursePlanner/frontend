@@ -1,9 +1,17 @@
 body {
   margin: 0;
   overflow: auto;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+[class^='mdc-'], [class*=' mdc-'] {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.material-icons {
+  font-family: 'Material Icons Outlined', sans-serif;
 }
 
 html, body, #app, #app > div {
@@ -26,4 +34,3 @@ html {
 .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
   margin-left: 276px;
 }
-

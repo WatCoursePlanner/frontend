@@ -9,18 +9,22 @@ import '@rmwc/drawer/styles';
 import '@rmwc/list/styles';
 
 const StyledDrawer = styled(Drawer)<DrawerProps & React.HTMLProps<HTMLDivElement>>`
-        border-color: transparent;
-        padding-top: 72px;
-        z-index: 3;
-    `
+    border-color: transparent;
+    padding-top: 72px;
+    z-index: 3;
+`
 
 const CustomListItem = styled(ListItem)<ListItemProps & React.HTMLProps<HTMLDivElement>>`
-       margin: 4px 0 4px 0 !important;
-       -webkit-mask-image: radial-gradient(white, black);
-       border-radius: 0 100px 100px 0 !important;
-       padding-left: 24px !important;
-       text-transform: capitalize !important;
-    `
+   margin: 4px 0 4px 0 !important;
+   -webkit-mask-image: radial-gradient(white, black);
+   border-radius: 0 100px 100px 0 !important;
+   padding-left: 24px !important;
+   text-transform: capitalize !important;
+`
+
+const StyledListItemText = styled(ListItemText)`
+  font-weight: 600 !important;
+`
 
 const tabIcons = [
   'schedule',
@@ -46,9 +50,9 @@ const MyDrawer = ({open, location}: MyDrawerProps) => (
                 className={"material-icons-outlined"}
                 style={{marginRight: 24}}
                 icon={tabIcons[index]}/>
-              <ListItemText>
+              <StyledListItemText>
                 {route}
-              </ListItemText>
+              </StyledListItemText>
             </CustomListItem>
           </Link>
         ))}
@@ -58,21 +62,21 @@ const MyDrawer = ({open, location}: MyDrawerProps) => (
             className={"material-icons-outlined"}
             style={{marginRight: 24}}
             icon={'upload'}/>
-          <ListItemText>Import</ListItemText>
+          <StyledListItemText>Import</StyledListItemText>
         </CustomListItem>
         <CustomListItem>
           <ListItemGraphic
             className={"material-icons-outlined"}
             style={{marginRight: 24}}
             icon={'cloud_download'}/>
-          <ListItemText>Export</ListItemText>
+          <StyledListItemText>Export</StyledListItemText>
         </CustomListItem>
         <CustomListItem>
           <ListItemGraphic
             className={"material-icons-outlined"}
             style={{marginRight: 24}}
             icon={'share'}/>
-          <ListItemText>Share my Schedule</ListItemText>
+          <StyledListItemText>Share my Schedule</StyledListItemText>
         </CustomListItem>
       </List>
     </DrawerContent>

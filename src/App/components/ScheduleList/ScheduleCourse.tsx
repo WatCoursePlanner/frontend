@@ -18,7 +18,6 @@ const RootContainer = styled.div`
 
 const StyledCard = styled(Card)<CardProps | React.HTMLProps<HTMLDivElement>>`
     width: 265px; 
-    
 `
 
 const CardContainer = styled.div`

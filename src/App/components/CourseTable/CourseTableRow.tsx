@@ -3,7 +3,7 @@ import TableRow from "@material-ui/core/TableRow";
 import React, {useState} from "react";
 import {CourseInfo} from "../../proto/courses";
 import styled from "styled-components";
-import { StyledIconButton } from ".";
+import {StyledIconButton} from ".";
 
 export type CourseTableRowProps = {
     row: CourseInfo
@@ -21,6 +21,9 @@ const CourseTableRow = ({row}: CourseTableRowProps) => {
         <TableRow
             hover
             tabIndex={-1}
+            onMouseOver={() => {
+                if (!hovered) setHovered(true)
+            }}
             onMouseEnter={toggleHover}
             onMouseLeave={toggleHover}
         >
