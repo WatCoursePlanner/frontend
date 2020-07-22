@@ -26,14 +26,17 @@ const AutoCompleteSearchBar = ({option, searchText, setSearchText}: AutoComplete
             options={option}
             onChange={(event, newValue: string | AutoCompleteOption | null) => {
                 //TODO selected from list
-                if (newValue && isAutoCompleteOption(newValue))
+                if (!newValue) return
+                if (isAutoCompleteOption(newValue) && newValue.title)
                     console.log("[Autocomplete] Selected " + newValue.title)
+                else
+                    console.log("[Autocomplete] Entered " + newValue)
             }}
             inputValue={searchText}
             onInputChange={(event, newInputValue) => {
                 setSearchText(newInputValue)
             }}
-            getOptionLabel={(option: AutoCompleteOption) => option.title}
+            getOptionLabel={(option: AutoCompleteOption) => option.title ?? ''}
             renderInput={(props) =>
                 <SearchBar
                     autoCompleteRenderProps={props}
