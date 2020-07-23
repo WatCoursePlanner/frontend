@@ -33,7 +33,11 @@ const StyledDropzoneContainer = styled.div`
   }  
 `
 
-const TranscriptReader = () => {
+type TranscriptReaderProps = {
+    onSuccessCallback: (request: CreateStudentProfileRequest)=>void,
+}
+
+const TranscriptReader = ({onSuccessCallback}: TranscriptReaderProps) => {
     let onDrop: (acceptedFiles: any) => void;
     onDrop = useCallback((acceptedFiles) => {
         acceptedFiles.forEach((file: Blob) => {
@@ -92,6 +96,7 @@ const TranscriptReader = () => {
                                 terms: schedule
                             }
                         })
+                        onSuccessCallback(result)
                     });
 
                 }, function (reason) {
