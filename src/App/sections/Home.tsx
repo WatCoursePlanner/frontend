@@ -22,7 +22,7 @@ const Container = styled.div`
 const AppContainer = styled(DrawerAppContent)`
     margin-top: 64px;
     width: 100%;
-    overflow: auto;
+    overflow-y: hidden;
 `
 
 type HomeProps = ConnectedProps<typeof connector>

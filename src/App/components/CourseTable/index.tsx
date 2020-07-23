@@ -23,10 +23,9 @@ const Root = styled.div`
   flex-direction: column;
 `
 
-const StyledTable = styled(TableContainer)`
+const StyledTableContainer = styled(TableContainer)`
   flex-grow: 1;
   width: auto !important;
-  min-width: 750px;
   padding-right: 48px;
 `
 
@@ -89,7 +88,7 @@ const CourseTable = ({rows, loading}: CourseTableProps) => {
                         <CircularProgress size={72}/>
                     </Center>
                     :
-                    <StyledTable>
+                    <StyledTableContainer>
                         <Table
                             stickyHeader
                             aria-labelledby="tableTitle"
@@ -110,7 +109,7 @@ const CourseTable = ({rows, loading}: CourseTableProps) => {
 
                             </TableBody>
                         </Table>
-                    </StyledTable>
+                    </StyledTableContainer>
             }
             <PaginationWrapper>
                 <TablePagination
