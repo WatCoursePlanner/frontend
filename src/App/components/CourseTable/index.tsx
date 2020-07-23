@@ -30,8 +30,12 @@ const StyledTable = styled(TableContainer)`
   padding-right: 48px;
 `
 
-export const StyledIconButton = styled(IconButton)<IconButtonHTMLProps & IconButtonProps>`
+// `filled` needs to be a number instead of boolean
+// see https://github.com/styled-components/styled-components/issues/1198#issuecomment-336628848
+export const StyledIconButton =
+    styled(IconButton)<IconButtonHTMLProps & IconButtonProps & {filled?: number}>`
   color: #5f6368;
+  font-family: ${props => props.filled ? "Material Icons" : "Material Icons Outlined"};
 `
 
 const PaginationWrapper = styled.div`

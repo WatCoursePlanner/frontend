@@ -33,7 +33,7 @@ const CourseTableRow = ({row}: CourseTableRowProps) => {
                 {
                     hovered ?
                         <StyledIconButton
-                            className={shortListed ? "" : "material-icons-outlined"}
+                            filled={shortListed ? 1 : 0}
                             theme={shortListed ? 'primary' : ''}
                             icon={'shopping_cart'}
                             onClick={() => setShortListed(!shortListed)}
