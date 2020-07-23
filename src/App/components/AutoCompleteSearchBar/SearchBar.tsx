@@ -44,7 +44,7 @@ const SearchBar = ({autoCompleteRenderProps, searchText, setSearchText, searchCa
             <AppBarButton icon={'search'} onClick={searchCallback}/>
             <StyledInputBase
                 inputProps={Object.assign({}, autoCompleteRenderProps?.inputProps)}
-                placeholder="Search for Programs or Courses"
+                placeholder="Search for Courses"
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                         searchCallback()

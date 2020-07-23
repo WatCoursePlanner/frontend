@@ -5,7 +5,7 @@ import {Avatar} from "@rmwc/avatar";
 import React from "react";
 import styled from "styled-components";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import AutoCompleteSearchBar, {AutoCompleteOption} from "../AutoCompleteSearchBar"
+import AutoCompleteSearchBar, {AutoCompleteOption, AutoCompleteProps} from "../AutoCompleteSearchBar"
 import DegreeRequirementPopup from "./DegreeRequirementPopup";
 import Popup from "../Popup";
 
@@ -41,7 +41,8 @@ type TopNavProps = {
   toggleDrawer: () => void,
 }
 
-const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallback}: TopNavProps & SearchBarProps & ConnectedProps<typeof connector>) => {
+const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallback, onAutoCompleteSelect}:
+                    TopNavProps & AutoCompleteProps & SearchBarProps & ConnectedProps<typeof connector>) => {
     const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
     const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
     return (
@@ -60,6 +61,7 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallbac
                     </svg>
                     <StyledAppBarTitle>WatCourses</StyledAppBarTitle>
                     <AutoCompleteSearchBar
+                        onAutoCompleteSelect={onAutoCompleteSelect}
                         searchCallback={searchCallback}
                         searchText={searchText}
                         setSearchText={setSearchText}

@@ -51,10 +51,15 @@ const Home = ({isProfileLoading, fetchCourses, fetchStudentProfile}: HomeProps) 
         console.log(`[Home] TODO Implement search ${searchText}`)
     }
 
+    const onAutoCompleteSelect = async (code: string) => {
+        console.log(`[Home] TODO Select ${code}`)
+    }
+
     return (
         <Container>
             <TopNav
                 searchCallback={searchKeyword}
+                onAutoCompleteSelect={onAutoCompleteSelect}
                 toggleDrawer={() => setDrawerOpen(!drawerOpen)}
                 searchText={searchText}
                 setSearchText={setSearchText}/>
