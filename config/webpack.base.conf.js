@@ -24,6 +24,10 @@ module.exports = {
                 ]
             },
             {
+                test: /pdf\.worker(\.min)?\.js$/,
+                loader: 'file-loader'
+            },
+            {
                 test: /\.(js|jsx)$/,
                 use: ['babel-loader'],
                 exclude: /node_modules/,
