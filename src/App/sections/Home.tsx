@@ -39,12 +39,6 @@ const Home = ({isProfileLoading, fetchCourses, fetchStudentProfile}: HomeProps) 
             startingYear: 2019,
             coopStream: CoopStream.STREAM_8
         }))
-        fetchCourses(SearchCourseRequest.fromJSON({
-            pagination: {
-                zeroBasedPage: 0,
-                limit: 5000
-            }
-        }))
     }, [])
 
     return (
