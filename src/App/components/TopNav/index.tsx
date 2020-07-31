@@ -5,7 +5,7 @@ import {Avatar} from "@rmwc/avatar";
 import React from "react";
 import styled from "styled-components";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import AutoCompleteSearchBar, {AutoCompleteOption} from "../AutoCompleteSearchBar"
+import AutoCompleteSearchBar, {AutoCompleteOption, AutoCompleteProps} from "../AutoCompleteSearchBar"
 import DegreeRequirementPopup from "./DegreeRequirementPopup";
 import Popup from "../Popup";
 
@@ -16,6 +16,7 @@ import '@rmwc/avatar/styles';
 import {RootState} from "../../duck/types";
 import {connect, ConnectedProps} from "react-redux";
 import {CourseInfo} from "../../proto/courses";
+import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
 
 const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
       border-bottom: 1px solid #e0e0e0;
@@ -38,11 +39,10 @@ const InfoButton = styled(AppBarButton)`
 
 type TopNavProps = {
   toggleDrawer: () => void,
-  searchText: string,
-  setSearchText: ((text: string) => void),
 }
 
-const TopNav = ({toggleDrawer, searchText, setSearchText, courses}: TopNavProps & ConnectedProps<typeof connector>) => {
+const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallback, onAutoCompleteSelect}:
+                    TopNavProps & AutoCompleteProps & SearchBarProps & ConnectedProps<typeof connector>) => {
     const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
     const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
     return (
@@ -61,9 +61,11 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses}: TopNavProps 
                     </svg>
                     <StyledAppBarTitle>WatCourses</StyledAppBarTitle>
                     <AutoCompleteSearchBar
+                        onAutoCompleteSelect={onAutoCompleteSelect}
+                        searchCallback={searchCallback}
                         searchText={searchText}
                         setSearchText={setSearchText}
-                        option={courses.map((course: CourseInfo): AutoCompleteOption => {
+                        options={courses.map((course: CourseInfo): AutoCompleteOption => {
                             return {
                                 title: course.code,
                                 subTitle: course.name

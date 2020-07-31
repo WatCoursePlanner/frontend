@@ -23,28 +23,23 @@ const Root = styled.div`
   flex-direction: column;
 `
 
-const StyledTable = styled(TableContainer)`
+const StyledTableContainer = styled(TableContainer)`
   flex-grow: 1;
   width: auto !important;
-  min-width: 750px;
   padding-right: 48px;
 `
 
-export const StyledIconButton = styled(IconButton)<IconButtonHTMLProps & IconButtonProps>`
+// `filled` needs to be a number instead of boolean
+// see https://github.com/styled-components/styled-components/issues/1198#issuecomment-336628848
+export const StyledIconButton =
+    styled(IconButton)<IconButtonHTMLProps & IconButtonProps & {filled?: number}>`
   color: #5f6368;
+  font-family: ${props => props.filled ? "Material Icons" : "Material Icons Outlined"};
 `
 
 const PaginationWrapper = styled.div`
   min-height: 52px;
   padding-right: 48px;
-`
-
-const Center = styled.div`
-  flex-grow: 1;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `
 
 type CourseTableProps = ConnectedProps<typeof connector>
@@ -85,11 +80,9 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseT
         setPage(0);
     };
 
-    /*TODO：not adding favorite at the same time*/
-
     return (
         <Root>
-            <StyledTable>
+            <StyledTableContainer>
                 <Table
                     stickyHeader
                     aria-labelledby="tableTitle"
@@ -104,13 +97,13 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseT
                     <TableBody>
                         {
                             loading || error
-                                ? Array.from({length: rowsPerPage}, (v, i) => i).map((row) =>
-                                    <CourseTableRowPlaceholder key={row}/>)
+                                ? Array.from(Array(rowsPerPage).keys())
+                                    .map((row) => <CourseTableRowPlaceholder key={row}/>)
                                 : rows.map((row) => <CourseTableRow key={row.code} row={row}/>)
                         }
                     </TableBody>
                 </Table>
-            </StyledTable>
+            </StyledTableContainer>
             <PaginationWrapper>
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50, 100]}

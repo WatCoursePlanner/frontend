@@ -8,25 +8,23 @@ const CodeCell = styled(TableCell)`
     width: 138px
 `
 
-const CourseTableRowPlaceholder = () => {
-    return (
-        <TableRow
-            tabIndex={-1}
-        >
-            <CodeCell align="left">
-                <ContentLoader width="100" height="20" preserveAspectRatio="none">
-                    <rect x="0" y="0" width="138" height="20" />
-                </ContentLoader>
-            </CodeCell>
-            <TableCell align="left">
-                <ContentLoader width="300" height="20" preserveAspectRatio="none">
+const CourseTableRowPlaceholder = () => (
+    <TableRow
+        tabIndex={-1}
+    >
+        <CodeCell align="left">
+            <ContentLoader width="100" height="20" preserveAspectRatio="none">
+                <rect x="0" y="0" width="138" height="20"/>
+            </ContentLoader>
+        </CodeCell>
+        <TableCell align="left">
+            <ContentLoader width="300" height="20" preserveAspectRatio="none">
                     <rect x="0" y="0" width="100%" height="20" />
                 </ContentLoader>
             </TableCell>
             <TableCell align="right">
             </TableCell>
         </TableRow>
-    )
-}
+)
 
 export default CourseTableRowPlaceholder

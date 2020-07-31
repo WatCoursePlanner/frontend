@@ -22,7 +22,7 @@ const Container = styled.div`
 const AppContainer = styled(DrawerAppContent)`
     margin-top: 64px;
     width: 100%;
-    overflow: auto;
+    overflow-y: hidden;
 `
 
 type HomeProps = ConnectedProps<typeof connector>
@@ -41,9 +41,19 @@ const Home = ({isProfileLoading, fetchCourses, fetchStudentProfile}: HomeProps) 
         }))
     }, [])
 
+    const searchKeyword = () => {
+        console.log(`[Home] TODO Implement search ${searchText}`)
+    }
+
+    const onAutoCompleteSelect = async (code: string) => {
+        console.log(`[Home] TODO Select ${code}`)
+    }
+
     return (
         <Container>
             <TopNav
+                searchCallback={searchKeyword}
+                onAutoCompleteSelect={onAutoCompleteSelect}
                 toggleDrawer={() => setDrawerOpen(!drawerOpen)}
                 searchText={searchText}
                 setSearchText={setSearchText}/>
