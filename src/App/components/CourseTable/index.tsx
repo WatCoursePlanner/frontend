@@ -2,19 +2,19 @@ import React, {useEffect} from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
-import {CourseInfo, SearchCourseResponse} from "../../proto/courses";
-import {URL_BASE} from "../../constants/api";
+import {SearchCourseRequest} from "../../proto/courses";
 import EnhancedTableHead from "./EnhancedTableHead";
 import CourseTableRow from "./CourseTableRow";
 import styled from "styled-components";
-import {CourseDisplayData, getComparator, Order, stableSort} from "./CourseTableUtils";
+import {CourseDisplayData, Order} from "./CourseTableUtils";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import {CircularProgress} from "@rmwc/circular-progress";
 import {TablePagination} from "@material-ui/core";
-
 import '@rmwc/circular-progress/styles';
 import {RootState} from "../../duck/types";
 import {connect, ConnectedProps} from "react-redux";
+import {bindActionCreators, Dispatch} from "redux";
+import {doSearchAction} from "../../duck/actions/search";
+import CourseTableRowPlaceholder from "./CourseTableRowPlaceholder";
 
 const Root = styled.div`
   width: 100%;
@@ -52,12 +52,21 @@ const Center = styled.div`
 
 type CourseTableProps = ConnectedProps<typeof connector>
 
-const CourseTable = ({rows, loading}: CourseTableProps) => {
+const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseTableProps) => {
 
     const [order, setOrder] = React.useState<Order>("asc");
     const [orderBy, setOrderBy] = React.useState<keyof CourseDisplayData>("code");
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
+
+    useEffect(()=>{
+        doSearchAction(SearchCourseRequest.fromJSON({
+            pagination: {
+                zeroBasedPage: page,
+                limit: rowsPerPage
+            }
+        }))
+    }, [page, rowsPerPage])
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -81,41 +90,33 @@ const CourseTable = ({rows, loading}: CourseTableProps) => {
 
     return (
         <Root>
-            {
-                loading
-                    ?
-                    <Center>
-                        <CircularProgress size={72}/>
-                    </Center>
-                    :
-                    <StyledTableContainer>
-                        <Table
-                            stickyHeader
-                            aria-labelledby="tableTitle"
-                            aria-label="enhanced table"
-                        >
-                            <EnhancedTableHead
-                                order={order}
-                                orderBy={orderBy}
-                                onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
-                            />
-                            <TableBody>
-                                {stableSort(rows, getComparator(order, orderBy))
-                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row, index) =>
-                                        <CourseTableRow key={row.code} row={row}/>
-                                    )}
-
-                            </TableBody>
-                        </Table>
-                    </StyledTableContainer>
-            }
+            <StyledTable>
+                <Table
+                    stickyHeader
+                    aria-labelledby="tableTitle"
+                    aria-label="enhanced table"
+                >
+                    <EnhancedTableHead
+                        order={order}
+                        orderBy={orderBy}
+                        onRequestSort={handleRequestSort}
+                        rowCount={loading ? rowsPerPage : rows.length}
+                    />
+                    <TableBody>
+                        {
+                            loading || error
+                                ? Array.from({length: rowsPerPage}, (v, i) => i).map((row) =>
+                                    <CourseTableRowPlaceholder key={row}/>)
+                                : rows.map((row) => <CourseTableRow key={row.code} row={row}/>)
+                        }
+                    </TableBody>
+                </Table>
+            </StyledTable>
             <PaginationWrapper>
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50, 100]}
                     component="div"
-                    count={rows.length}
+                    count={(pagination?.totalPages ?? 0) * rowsPerPage} // TODO: backend return accurate total count
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
@@ -126,11 +127,17 @@ const CourseTable = ({rows, loading}: CourseTableProps) => {
 }
 
 const mapState = (state: RootState) => ({
-    loading: state.courses.loading,
-    rows: state.courses.content,
+    loading: state.searchResults.loading,
+    error: state.searchResults.error,
+    rows: state.searchResults.content,
+    pagination: state.searchResults.pagination,
 })
 
-const connector = connect(mapState)
+const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
+    doSearchAction: doSearchAction,
+}, dispatch)
+
+const connector = connect(mapState, mapDispatch)
 
 export default connector(CourseTable)
 
