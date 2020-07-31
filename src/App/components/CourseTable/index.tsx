@@ -42,14 +42,6 @@ const PaginationWrapper = styled.div`
   padding-right: 48px;
 `
 
-const Center = styled.div`
-  flex-grow: 1;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
 type CourseTableProps = ConnectedProps<typeof connector>
 
 const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseTableProps) => {
@@ -90,7 +82,7 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseT
 
     return (
         <Root>
-            <StyledTable>
+            <StyledTableContainer>
                 <Table
                     stickyHeader
                     aria-labelledby="tableTitle"
@@ -105,13 +97,13 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseT
                     <TableBody>
                         {
                             loading || error
-                                ? Array.from({length: rowsPerPage}, (v, i) => i).map((row) =>
-                                    <CourseTableRowPlaceholder key={row}/>)
+                                ? Array.from(Array(rowsPerPage).keys())
+                                    .map((row) => <CourseTableRowPlaceholder key={row}/>)
                                 : rows.map((row) => <CourseTableRow key={row.code} row={row}/>)
                         }
                     </TableBody>
                 </Table>
-            </StyledTable>
+            </StyledTableContainer>
             <PaginationWrapper>
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50, 100]}
