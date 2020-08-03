@@ -95,9 +95,11 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
         // TODO: check before applying the changes
         if (dropResult.removedIndex !== null) {
             removeCourseFromList(termName, dropResult.removedIndex)
+            setTermList(TermList)
         }
         if (dropResult.addedIndex !== null) {
             addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
+            setTermList(TermList)
         }
     }
 
