@@ -1,5 +1,5 @@
 import React from "react";
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import '@rmwc/icon-button/styles';
 import '@rmwc/textfield/styles';
 import SearchBar, {SearchBarProps} from "./SearchBar";
@@ -7,6 +7,8 @@ import styled from "styled-components";
 import {Typography} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import ReactHtmlParser from 'react-html-parser';
+import matchSorter from 'match-sorter';
+import {FilterOptionsState} from "@material-ui/lab";
 
 const fuzzysort = require('fuzzysort')
 
@@ -23,10 +25,6 @@ interface Result {
 interface KeysResult extends ReadonlyArray<Result> {
     readonly total: number
     readonly obj?: AutoCompleteOption
-}
-
-interface KeysResults extends ReadonlyArray<KeysResult> {
-    readonly total: number
 }
 
 interface Option {
@@ -101,16 +99,20 @@ const AutoCompleteSearchBar = ({_options, searchText, setSearchText, searchCallb
     }, [value, searchText]);
 
 
-    // const filterOptions = createFilterOptions<AutoCompleteOption>({
+    // const filterOptions = createFilterOptions<KeysResult>({
     //     limit: 25,
     // });
+
+    const filterOptions = (options: KeysResult[], { inputValue }: FilterOptionsState<KeysResult>) =>
+        matchSorter(options, inputValue, {keys: ['obj.title', 'obj.subTitle']});
+
     return (
         <Autocomplete
             disableListWrap
             autoComplete
             includeInputInList
             filterSelectedOptions
-            // filterOptions={filterOptions}
+            filterOptions={filterOptions}
             options={options}
             getOptionLabel={(option) => (option && option.obj ? `${option.obj.title} ${option.obj.subTitle}` : '')}
             onChange={(event, newValue: KeysResult | null) => {
