@@ -65,13 +65,13 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallbac
                         searchCallback={searchCallback}
                         searchText={searchText}
                         setSearchText={setSearchText}
-                        // _options={courses.map((course: CourseInfo): AutoCompleteOption => {
+                        // options={courses.map((course: CourseInfo): AutoCompleteOption => {
                         //     return {
                         //         title: course.code,
                         //         subTitle: course.name
                         //     }
                         // })}
-                        _options={
+                        options={
                             [
                                 {
                                 title: 'CS 137',
