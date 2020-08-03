@@ -3,12 +3,15 @@ import {Container} from 'react-smooth-dnd';
 import {CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
 import ScheduleCourse from "./ScheduleCourse";
 import styled from "styled-components";
+import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
 
 type ScheduleTermProps = {
     showYear: boolean,
     term: Schedule_TermSchedule,
     courses: { [courseCode: string]: CourseInfo }
-    index: number
+    index: number,
+    options: ContainerOptions,
+    onDropWithTerm: (result: DropResult, termName: string) => void
 }
 
 const RootContainer = styled.div`
@@ -65,7 +68,7 @@ const Row = styled.div`
     margin-bottom: 2vh;
 `
 
-const ScheduleTerm = ({term, index, courses, showYear}: ScheduleTermProps) => {
+const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm}: ScheduleTermProps) => {
     return (
         <RootContainer>
             <Year>{showYear ? term.year : ''}</Year>
@@ -74,7 +77,10 @@ const ScheduleTerm = ({term, index, courses, showYear}: ScheduleTermProps) => {
                 <TermCode>{term.termName}</TermCode>
             </Row>
             <StyledContainer>
-                <Container groupName={'terms'} style={{height: '100%'}}>
+                <Container groupName={'terms'} style={{height: '100%'}}
+                           getChildPayload={idx => term.courseCodes[idx]}
+                           onDrop={(e) => onDropWithTerm(e, term.termName)}
+                           {...options}>
                     {term.courseCodes.map((code, index) => (
                         <ScheduleCourse
                             key={code}

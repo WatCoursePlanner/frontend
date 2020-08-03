@@ -33,7 +33,6 @@
     "pdfjs-dist": "^2.4.456",
     "prop-types": "latest",
     "react": "^16.13.1",
-    "react-beautiful-dnd": "^13.0.0",
     "react-content-loader": "^5.1.0",
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.0.2",
