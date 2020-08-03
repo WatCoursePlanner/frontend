@@ -65,12 +65,25 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallbac
                         searchCallback={searchCallback}
                         searchText={searchText}
                         setSearchText={setSearchText}
-                        options={courses.map((course: CourseInfo): AutoCompleteOption => {
-                            return {
-                                title: course.code,
-                                subTitle: course.name
-                            }
-                        })}/>
+                        // _options={courses.map((course: CourseInfo): AutoCompleteOption => {
+                        //     return {
+                        //         title: course.code,
+                        //         subTitle: course.name
+                        //     }
+                        // })}
+                        _options={
+                            [
+                                {
+                                title: 'CS 137',
+                                subTitle: "Introduction to Computer Science"
+                                },
+                                {
+                                title: 'MOHAWK 233',
+                                subTitle: "Introduction to Mohawk Language"
+                                },
+                            ]
+                        }
+                    />
                 </TopAppBarSection>
                 <TopAppBarSection alignEnd>
                     <MenuSurfaceAnchor>
