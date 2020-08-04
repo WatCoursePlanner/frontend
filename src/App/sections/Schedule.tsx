@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {Button, ButtonHTMLProps, ButtonProps} from "@rmwc/button";
 import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
@@ -6,13 +6,15 @@ import '@rmwc/button/styles';
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../duck/types";
 import {bindActionCreators, Dispatch} from "redux";
-import {ScheduleShortList, ScheduleTerm} from "../components/ScheduleList";
+import {ScheduleShortList, TermList} from "../components/ScheduleList";
 
 import '@rmwc/fab/styles';
 import Spacer from "../components/Spacer";
 import {DragEndParams, DragStartParams} from "smooth-dnd/dist/src/exportTypes";
 import {DropResult} from "react-smooth-dnd";
 import {studentProfileAddCourse, studentProfileRemoveCourse} from "../duck/actions/studentProfile";
+import {URL_BASE} from "../constants/api";
+import {CheckResults, FindSlotRequest} from "../proto/courses";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
 position:absolute;
@@ -83,62 +85,53 @@ const StyledFab = styled(Fab)<FabProps>`
 type ScheduleProps = ConnectedProps<typeof connector>
 
 const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, removeCourseFromList}: ScheduleProps) => {
-
     const [shortlistOpen, setShortlistOpen] = useState(false)
-    const [termList, setTermList] = useState(<></>)
+    const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
 
     const onDragEnd = (result: DragEndParams) => {
-        console.log("onDragEnd", result)
+        // console.log("onDragEnd", result)
+        setIssues({})
     }
 
     const onDropWithTerm = (dropResult: DropResult, termName: string) => {
         // TODO: check before applying the changes
         if (dropResult.removedIndex !== null) {
             removeCourseFromList(termName, dropResult.removedIndex)
-            setTermList(TermList)
         }
         if (dropResult.addedIndex !== null) {
             addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
-            setTermList(TermList)
         }
     }
 
-    const onDragStart = function onDragStart(dragStart: DragStartParams) {
-        if (!dragStart.isSource) return
+    const onDragStart = (dragStart: DragStartParams) => {
+        if (!dragStart.isSource) return // only need to do this once
         // TODO: send a request to determine whether the drag is possible
-        console.log("onDragStart", dragStart)
+        fetch(URL_BASE + '/profile/find_slots', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(FindSlotRequest.toJSON({profile: studentProfile!!, courseCode: dragStart.payload!!}))
+        })
+            .then(res => res.json())
+            .then(res => {
+                setIssues(res.slot)
+            })
+            .catch(error => {
+                throw(error)
+            });
     }
 
-    const TermList = () => {
-        let shownYears: number[] = []
-        return (studentProfile && studentProfile.schedule)
-            ? <>{studentProfile.schedule.terms
-                .map((term, index) => {
-                    const showYear = !shownYears.includes(term.year)
-                    if (showYear)
-                        shownYears.push(term.year)
-                    return (<ScheduleTerm
-                        key={term.termName}
-                        term={term}
-                        index={index}
-                        courses={profileCourses}
-                        showYear={showYear}
-                        options={{onDragEnd, onDragStart}}
-                        onDropWithTerm={onDropWithTerm}/>)
-                })} </>
-            : <div/>
-    }
-
-    useEffect(() => {
-        setTermList(TermList)
-    }, [studentProfile, profileCourses])
 
     return (
         <OuterContainer>
             <ScheduleContainer>
                 <ScheduleListContainer>
                     <Spacer minWidth={'16px'} minHeight={'100%'}/>
-                    {termList}
+                    <TermList
+                        profileCourses={profileCourses}
+                        studentProfile={studentProfile!!}
+                        issues={issues}
+                        options={{onDragEnd, onDragStart}}
+                        onDropWithTerm={onDropWithTerm}/>
                     <Spacer minWidth={'240px'} minHeight={'100%'}/>
                     <StyledFab icon="add" label="Add Term"/>
                 </ScheduleListContainer>

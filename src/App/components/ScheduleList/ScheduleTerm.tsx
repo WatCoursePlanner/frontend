@@ -1,6 +1,6 @@
 import React from "react";
 import {Container} from 'react-smooth-dnd';
-import {CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
+import {CheckResults, CheckResults_Issue, CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
 import ScheduleCourse from "./ScheduleCourse";
 import styled from "styled-components";
 import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
@@ -11,7 +11,8 @@ type ScheduleTermProps = {
     courses: { [courseCode: string]: CourseInfo }
     index: number,
     options: ContainerOptions,
-    onDropWithTerm: (result: DropResult, termName: string) => void
+    onDropWithTerm: (result: DropResult, termName: string) => void,
+    issues: CheckResults | null
 }
 
 const RootContainer = styled.div`
@@ -68,7 +69,25 @@ const Row = styled.div`
     margin-bottom: 2vh;
 `
 
-const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm}: ScheduleTermProps) => {
+const OverlayDiv = styled.div`
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background-color:#f73378aa;
+    z-index:100;
+    text-align:center;
+    color:white;
+`
+
+const TextInsideOverlay = styled.div`
+    position:relative;
+    vertical-align: middle;
+    padding: 10px 15px;
+`
+
+const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, issues}: ScheduleTermProps) => {
     return (
         <RootContainer>
             <Year>{showYear ? term.year : ''}</Year>
@@ -77,10 +96,26 @@ const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm}:
                 <TermCode>{term.termName}</TermCode>
             </Row>
             <StyledContainer>
-                <Container groupName={'terms'} style={{height: '100%'}}
+                <Container groupName={'terms'}
+                           style={{height: '100%'}}
                            getChildPayload={idx => term.courseCodes[idx]}
                            onDrop={(e) => onDropWithTerm(e, term.termName)}
                            {...options}>
+                    {(issues && issues.issues.length !== 0) ?
+                        <OverlayDiv>
+                            {
+                                issues.issues.map(
+                                    (issue: CheckResults_Issue) =>
+                                        (<TextInsideOverlay>
+                                            <p>{issue.type}</p>
+                                            <p>{issue.subjectName}</p>
+                                            <p>{issue.relatedCondRaw}</p>
+                                            <p>{issue.relatedCond}</p>
+                                        </TextInsideOverlay>)
+                                )
+                            }
+                        </OverlayDiv>
+                        : null}
                     {term.courseCodes.map((code, index) => (
                         <ScheduleCourse
                             key={code}
