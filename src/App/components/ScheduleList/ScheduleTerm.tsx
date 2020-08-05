@@ -1,6 +1,6 @@
 import React from "react";
 import {Container} from 'react-smooth-dnd';
-import {CheckResults, CheckResults_Issue, CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
+import {CheckResults, CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
 import ScheduleCourse from "./ScheduleCourse";
 import styled from "styled-components";
 import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
@@ -69,24 +69,6 @@ const Row = styled.div`
     margin-bottom: 2vh;
 `
 
-const OverlayDiv = styled.div`
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    background-color:#f73378aa;
-    z-index:100;
-    text-align:center;
-    color:white;
-`
-
-const TextInsideOverlay = styled.div`
-    position:relative;
-    vertical-align: middle;
-    padding: 10px 15px;
-`
-
 const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, issues}: ScheduleTermProps) => {
     return (
         <RootContainer>
@@ -100,22 +82,8 @@ const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, 
                            style={{height: '100%'}}
                            getChildPayload={idx => term.courseCodes[idx]}
                            onDrop={(e) => onDropWithTerm(e, term.termName)}
+                           dropPlaceholder={{className: issues && issues.issues.length !== 0 ? "warning" : ""}}
                            {...options}>
-                    {(issues && issues.issues.length !== 0) ?
-                        <OverlayDiv>
-                            {
-                                issues.issues.map(
-                                    (issue: CheckResults_Issue) =>
-                                        (<TextInsideOverlay>
-                                            <p>{issue.type}</p>
-                                            <p>{issue.subjectName}</p>
-                                            <p>{issue.relatedCondRaw}</p>
-                                            <p>{issue.relatedCond}</p>
-                                        </TextInsideOverlay>)
-                                )
-                            }
-                        </OverlayDiv>
-                        : null}
                     {term.courseCodes.map((code, index) => (
                         <ScheduleCourse
                             key={code}
