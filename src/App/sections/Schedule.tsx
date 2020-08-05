@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Button, ButtonHTMLProps, ButtonProps} from "@rmwc/button";
 import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
@@ -83,6 +83,11 @@ type ScheduleProps = ConnectedProps<typeof connector>
 const Schedule = ({studentProfile, loading, profileCourses}: ScheduleProps) => {
 
     const [shortlistOpen, setShortlistOpen] = useState(false)
+    const [termList, setTermList] = useState(<></>)
+
+    useEffect(() => {
+        setTermList(TermList)
+    }, [studentProfile, profileCourses])
 
     const onDragEnd = (result: any) => {
         if (!result.destination) {
@@ -115,7 +120,7 @@ const Schedule = ({studentProfile, loading, profileCourses}: ScheduleProps) => {
                 <ScheduleContainer>
                     <ScheduleListContainer>
                         <Spacer minWidth={'16px'} minHeight={'100%'}/>
-                        <TermList/>
+                        {termList}
                         <Spacer minWidth={'240px'} minHeight={'100%'}/>
                         <StyledFab icon="add" label="Add Term" />
                     </ScheduleListContainer>

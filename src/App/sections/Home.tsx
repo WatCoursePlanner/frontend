@@ -10,7 +10,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import {RootState} from "../duck/types";
 import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
-import {CoopStream, CreateStudentProfileRequest, SearchCourseRequest} from "../proto/courses";
+import {CoopStream, CreateStudentProfileRequest} from "../proto/courses";
 import {fetchCoursesAction} from "../duck/actions/courses";
 
 const Container = styled.div`
