@@ -105,7 +105,7 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
 
     const onDragStart = (dragStart: DragStartParams) => {
         if (!dragStart.isSource) return // only need to do this once
-        // TODO: send a request to determine whether the drag is possible
+        
         fetch(URL_BASE + '/profile/find_slots', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
