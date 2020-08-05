@@ -87,6 +87,7 @@ type ScheduleProps = ConnectedProps<typeof connector>
 const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, removeCourseFromList}: ScheduleProps) => {
     const [shortlistOpen, setShortlistOpen] = useState(false)
     const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
+    const [shortList, setShortList] = useState<string[]>(['STAT 230', 'STAT 231', 'EMLS 129R'])
 
     const onDragEnd = (result: DragEndParams) => {
         // console.log("onDragEnd", result)
@@ -95,17 +96,23 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
 
     const onDropWithTerm = (dropResult: DropResult, termName: string) => {
         // TODO: check before applying the changes
+        console.log(termName, dropResult)
+        if (dropResult.removedIndex === dropResult.addedIndex) return
         if (dropResult.removedIndex !== null) {
-            removeCourseFromList(termName, dropResult.removedIndex)
+            if (termName === "shortlist") setShortList(shortList.filter(c => c !== dropResult.payload))
+            else removeCourseFromList(termName, dropResult.removedIndex)
         }
         if (dropResult.addedIndex !== null) {
-            addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
+            if (termName === "shortlist") {
+                shortList.splice(dropResult.addedIndex, 0, dropResult.payload)
+                setShortList(shortList)
+            } else addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
         }
     }
 
     const onDragStart = (dragStart: DragStartParams) => {
         if (!dragStart.isSource) return // only need to do this once
-        
+
         fetch(URL_BASE + '/profile/find_slots', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
@@ -144,7 +151,10 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
                     icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}/>
             </ScheduleContainer>
             <ShortListContainer open={shortlistOpen}>
-                <ScheduleShortList shortlist={['STAT 230', 'STAT 231', 'EMLS 129R']} courses={profileCourses}/>
+                <ScheduleShortList shortlist={shortList}
+                                   courses={profileCourses}
+                                   options={{onDragEnd, onDragStart}}
+                                   onDropWithTerm={onDropWithTerm}/>
             </ShortListContainer>
         </OuterContainer>
     )

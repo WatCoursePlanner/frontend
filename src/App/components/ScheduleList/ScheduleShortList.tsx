@@ -1,12 +1,15 @@
 import React from "react";
 import {Container} from "react-smooth-dnd";
 import ScheduleCourse from "./ScheduleCourse";
-import {CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
+import {CourseInfo} from "../../proto/courses";
 import styled from "styled-components";
+import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
 
 type ShortListProps = {
     shortlist: string[],
-    courses: { [courseCode: string]: CourseInfo }
+    courses: { [courseCode: string]: CourseInfo },
+    options: ContainerOptions,
+    onDropWithTerm: (result: DropResult, termName: string) => void,
 }
 
 const RootContainer = styled.div`
@@ -42,12 +45,16 @@ const Title = styled.span`
     margin: 5vh 0 5vh 0;
 `
 
-const ScheduleShortList = ({shortlist, courses}: ShortListProps) => {
+const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortListProps) => {
     return (
         <RootContainer>
             <Title>Shortlist</Title>
             <StyledContainer>
-                <Container groupName={'terms'} style={{height: '100%'}}>
+                <Container groupName={'terms'}
+                           style={{height: '100%'}}
+                           getChildPayload={idx => shortlist[idx]}
+                           onDrop={(e) => onDropWithTerm(e, "shortlist")}
+                           {...options}>
                     {shortlist.map((code, index) => (
                         <ScheduleCourse
                             key={code}

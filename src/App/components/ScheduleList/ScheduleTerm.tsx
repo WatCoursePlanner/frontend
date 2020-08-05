@@ -82,7 +82,6 @@ const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, 
                            style={{height: '100%'}}
                            getChildPayload={idx => term.courseCodes[idx]}
                            onDrop={(e) => onDropWithTerm(e, term.termName)}
-                           dropPlaceholder={{className: issues && issues.issues.length !== 0 ? "warning" : ""}}
                            {...options}>
                     {term.courseCodes.map((code, index) => (
                         <ScheduleCourse
