@@ -9,10 +9,10 @@ import TopNav from "../components/TopNav";
 import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import {RootState} from "../duck/types";
-import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
 import {CheckResults, CoopStream, CreateStudentProfileRequest, StudentProfile} from "../proto/courses";
 import {fetchCoursesAction} from "../duck/actions/courses";
 import {URL_BASE} from "../constants/api";
+import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
 
 const Container = styled.div`
       height: 100%;

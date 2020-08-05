@@ -5,18 +5,17 @@ import {Avatar} from "@rmwc/avatar";
 import React from "react";
 import styled from "styled-components";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import AutoCompleteSearchBar, {AutoCompleteOption, AutoCompleteProps} from "../AutoCompleteSearchBar"
+import AutoCompleteSearchBar, {AutoCompleteCallbackProps, AutoCompleteOption} from "../AutoCompleteSearchBar"
 import DegreeRequirementPopup, {DegreeRequirementPopupProps} from "./DegreeRequirementPopup";
-import Popup from "../Popup";
-
-import '@rmwc/top-app-bar/styles';
-import '@rmwc/menu/styles';
-import '@rmwc/badge/styles';
-import '@rmwc/avatar/styles';
 import {RootState} from "../../duck/types";
 import {connect, ConnectedProps} from "react-redux";
 import {CourseInfo} from "../../proto/courses";
 import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
+import Popup from "../Popup";
+import '@rmwc/top-app-bar/styles';
+import '@rmwc/menu/styles';
+import '@rmwc/badge/styles';
+import '@rmwc/avatar/styles';
 
 const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
       border-bottom: 1px solid #e0e0e0;
@@ -42,8 +41,8 @@ type TopNavProps = {
 }
 
 const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallback, onAutoCompleteSelect, issues}:
-                    TopNavProps & AutoCompleteProps & SearchBarProps & DegreeRequirementPopupProps
-                    & ConnectedProps<typeof connector>) => {
+                    TopNavProps & AutoCompleteCallbackProps & SearchBarProps & DegreeRequirementPopupProps &
+                    ConnectedProps<typeof connector>) => {
     const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
     const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
     return (
@@ -69,9 +68,11 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallbac
                         options={courses.map((course: CourseInfo): AutoCompleteOption => {
                             return {
                                 title: course.code,
-                                subTitle: course.name
+                                subTitle: course.name,
+                                weight: 0 // TODO assign weight
                             }
-                        })}/>
+                        })}
+                    />
                 </TopAppBarSection>
                 <TopAppBarSection alignEnd>
                     <MenuSurfaceAnchor>

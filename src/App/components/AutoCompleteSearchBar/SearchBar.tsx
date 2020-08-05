@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React from "react";
 import styled from "styled-components";
 import InputBase from "@material-ui/core/InputBase";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
