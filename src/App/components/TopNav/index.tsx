@@ -5,13 +5,14 @@ import {Avatar} from "@rmwc/avatar";
 import React from "react";
 import styled from "styled-components";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import AutoCompleteSearchBar, {AutoCompleteCallbackProps} from "../AutoCompleteSearchBar"
+import AutoCompleteSearchBar, {AutoCompleteCallbackProps, AutoCompleteOption} from "../AutoCompleteSearchBar"
 import DegreeRequirementPopup from "./DegreeRequirementPopup";
 import {RootState} from "../../duck/types";
 import {connect, ConnectedProps} from "react-redux";
+import {CourseInfo} from "../../proto/courses";
 import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
-import Popup from "../Popup";
 
+import Popup from "../Popup";
 import '@rmwc/top-app-bar/styles';
 import '@rmwc/menu/styles';
 import '@rmwc/badge/styles';
@@ -64,26 +65,13 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallbac
                         searchCallback={searchCallback}
                         searchText={searchText}
                         setSearchText={setSearchText}
-                        // options={courses.map((course: CourseInfo): AutoCompleteOption => {
-                        //     return {
-                        //         title: course.code,
-                        //         subTitle: course.name
-                        //     }
-                        // })}
-                        options={
-                            [
-                                {
-                                    title: 'CS 137',
-                                    subTitle: "Introduction to Computer Science",
-                                    weight: 100,
-                                },
-                                {
-                                    title: 'MOHAWK 233',
-                                    subTitle: "Introduction to Mohawk Language",
-                                    weight: 10,
-                                },
-                            ]
-                        }
+                        options={courses.map((course: CourseInfo): AutoCompleteOption => {
+                            return {
+                                title: course.code,
+                                subTitle: course.name,
+                                weight: 0 // TODO assign weight
+                            }
+                        })}
                     />
                 </TopAppBarSection>
                 <TopAppBarSection alignEnd>
