@@ -96,7 +96,6 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
 
     const onDropWithTerm = (dropResult: DropResult, termName: string) => {
         // TODO: check before applying the changes
-        console.log(termName, dropResult)
         if (dropResult.removedIndex === dropResult.addedIndex) return
         if (dropResult.removedIndex !== null) {
             if (termName === "shortlist") setShortList(shortList.filter(c => c !== dropResult.payload))
