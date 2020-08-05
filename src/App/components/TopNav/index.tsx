@@ -5,17 +5,17 @@ import {Avatar} from "@rmwc/avatar";
 import React from "react";
 import styled from "styled-components";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import AutoCompleteSearchBar, {AutoCompleteProps} from "../AutoCompleteSearchBar"
+import AutoCompleteSearchBar, {AutoCompleteCallbackProps} from "../AutoCompleteSearchBar"
 import DegreeRequirementPopup from "./DegreeRequirementPopup";
+import {RootState} from "../../duck/types";
+import {connect, ConnectedProps} from "react-redux";
+import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
 import Popup from "../Popup";
 
 import '@rmwc/top-app-bar/styles';
 import '@rmwc/menu/styles';
 import '@rmwc/badge/styles';
 import '@rmwc/avatar/styles';
-import {RootState} from "../../duck/types";
-import {connect, ConnectedProps} from "react-redux";
-import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
 
 const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
       border-bottom: 1px solid #e0e0e0;
@@ -41,7 +41,7 @@ type TopNavProps = {
 }
 
 const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallback, onAutoCompleteSelect}:
-                    TopNavProps & AutoCompleteProps & SearchBarProps & ConnectedProps<typeof connector>) => {
+                    TopNavProps & AutoCompleteCallbackProps & SearchBarProps & ConnectedProps<typeof connector>) => {
     const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
     const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
     return (

@@ -3,26 +3,8 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import '@rmwc/icon-button/styles';
 import '@rmwc/textfield/styles';
 import SearchBar, {SearchBarProps} from "./SearchBar";
-import {Typography} from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import ReactHtmlParser from 'react-html-parser';
-
-const fuzzysort = require('fuzzysort')
-
-export type AutoCompleteProps = {
-    options?: AutoCompleteOption[],
-    onAutoCompleteSelect: ((text: string) => void)
-}
-
-interface Result {
-    readonly score: number
-    readonly target: string
-}
-
-interface KeysResult extends ReadonlyArray<Result> {
-    readonly total: number
-    readonly obj?: AutoCompleteOption
-}
+import Option from "./Option";
+import * as Fuzzysort from "fuzzysort";
 
 export type AutoCompleteOption = {
     title: string,
@@ -30,14 +12,26 @@ export type AutoCompleteOption = {
     weight: number
 }
 
+export type AutoCompleteCallbackProps = {
+    onAutoCompleteSelect: ((text: string) => void)
+}
+
+export type AutoCompleteProps = {
+    options: AutoCompleteOption[],
+}
+
+const sortByWeight = (options: Fuzzysort.KeysResult<AutoCompleteOption>[]) => {
+    return options.sort((a, b) => ((a?.obj?.weight ?? 0) < (b?.obj?.weight ?? 0)) ? 1 : -1)
+}
+
 const AutoCompleteSearchBar =
     ({options, searchText, setSearchText, searchCallback, onAutoCompleteSelect}:
-         AutoCompleteProps & SearchBarProps) => {
+         AutoCompleteProps & AutoCompleteCallbackProps & SearchBarProps) => {
 
-        const [displayOptions, setDisplayOptions] = React.useState<KeysResult[]>([]);
+        const [displayOptions, setDisplayOptions] = React.useState<Fuzzysort.KeysResult<AutoCompleteOption>[]>([]);
 
-        const fetch = (input: string) => {
-            return fuzzysort.go(input, options, {
+        const fetchOptions = (input: string) => {
+            return Fuzzysort.go(input, options, {
                 keys: ['title', 'subTitle'],
                 limit: 25, // TODO put into a constant file
                 allowTypo: true,
@@ -50,9 +44,9 @@ const AutoCompleteSearchBar =
                 setDisplayOptions([])
                 return undefined
             }
-            const results = fetch(searchText);
+            const results = fetchOptions(searchText);
             if (active) {
-                let newOptions = [] as KeysResult[]
+                let newOptions = [] as Fuzzysort.KeysResult<AutoCompleteOption>[]
                 if (results) {
                     newOptions = [...newOptions, ...results]
                 }
@@ -62,10 +56,6 @@ const AutoCompleteSearchBar =
                 active = false
             };
         }, [searchText])
-
-        const sortByWeight = (options: KeysResult[]) => {
-            return options.sort((a, b) => ((a?.obj?.weight ?? 0) < (b?.obj?.weight ?? 0)) ? 1 : -1)
-        }
 
         return (
             <Autocomplete
@@ -77,7 +67,7 @@ const AutoCompleteSearchBar =
                 filterOptions={sortByWeight}
                 options={displayOptions}
                 getOptionLabel={(option) => (`${option?.obj?.title ?? option}`)}
-                onChange={(event, newValue: KeysResult | string | null) => {
+                onChange={(event, newValue: Fuzzysort.KeysResult<AutoCompleteOption> | string | null) => {
                     if (!newValue || typeof newValue == "string") return
                     onAutoCompleteSelect(newValue?.obj?.title ?? '')
                 }}
@@ -85,34 +75,15 @@ const AutoCompleteSearchBar =
                 onInputChange={(event, newInputValue) => {
                     setSearchText(newInputValue)
                 }}
-            renderOption={(option: KeysResult) => {
-                return (
-                    <Grid container alignItems="center">
-                        <Grid item xs>
-                            {
-                                option.obj ?
-                                    <>
-                                        <Typography variant="body1" color="textPrimary">
-                                            {option[0] ? ReactHtmlParser(fuzzysort.highlight(option[0])) : option.obj.title}
-                                        </Typography>
-                                        <Typography variant="body2" color="textSecondary">
-                                            {option[1] ? ReactHtmlParser(fuzzysort.highlight(option[1])) : option.obj.subTitle}
-                                        </Typography>
-                                    </>
-                                    : <></>
-                            }
-                        </Grid>
-                    </Grid>
-                )
-            }}
-            renderInput={(props) =>
-                <SearchBar
-                    searchCallback={searchCallback}
-                    autoCompleteRenderProps={props}
-                    searchText={searchText}
-                    setSearchText={setSearchText}/>
-            }
-        />
+                renderOption={(option) => <Option option={option}/>}
+                renderInput={(props) =>
+                    <SearchBar
+                        searchCallback={searchCallback}
+                        autoCompleteRenderProps={props}
+                        searchText={searchText}
+                        setSearchText={setSearchText}/>
+                }
+            />
     )
 }
 
