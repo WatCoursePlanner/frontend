@@ -10,8 +10,9 @@ import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import {RootState} from "../duck/types";
 import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
-import {CoopStream, CreateStudentProfileRequest, SearchCourseRequest} from "../proto/courses";
+import {CheckResults, CoopStream, CreateStudentProfileRequest, StudentProfile} from "../proto/courses";
 import {fetchCoursesAction} from "../duck/actions/courses";
+import {URL_BASE} from "../constants/api";
 
 const Container = styled.div`
       height: 100%;
@@ -27,10 +28,11 @@ const AppContainer = styled(DrawerAppContent)`
 
 type HomeProps = ConnectedProps<typeof connector>
 
-const Home = ({isProfileLoading, fetchCourses, fetchStudentProfile}: HomeProps) => {
+const Home = ({studentProfile, fetchCourses, fetchStudentProfile}: HomeProps) => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
+    const [issues, setIssues] = useState<CheckResults>({issues: []});
     const location = useLocation();
 
     useEffect(() => {
@@ -40,6 +42,23 @@ const Home = ({isProfileLoading, fetchCourses, fetchStudentProfile}: HomeProps) 
             coopStream: CoopStream.STREAM_8
         }))
     }, [])
+
+    useEffect(() => {
+        if (!studentProfile) return
+
+        fetch(URL_BASE + '/profile/check', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(StudentProfile.toJSON(studentProfile!!))
+        })
+            .then(res => res.json())
+            .then(res => {
+                setIssues(res)
+            })
+            .catch(error => {
+                throw(error)
+            });
+    }, [studentProfile])
 
     const searchKeyword = () => {
         console.log(`[Home] TODO Implement search ${searchText}`)
@@ -56,16 +75,17 @@ const Home = ({isProfileLoading, fetchCourses, fetchStudentProfile}: HomeProps) 
                 onAutoCompleteSelect={onAutoCompleteSelect}
                 toggleDrawer={() => setDrawerOpen(!drawerOpen)}
                 searchText={searchText}
-                setSearchText={setSearchText}/>
+                setSearchText={setSearchText}
+                issues={issues}/>
             <Drawer open={drawerOpen} location={location}/>
             <AppContainer>
                 <Switch>
-                  <Route path="/home/schedule">
-                      <Schedule/>
-                  </Route>
-                  <Route path="/home/discover">
-                      <Discover/>
-                  </Route>
+                    <Route path="/home/schedule">
+                        <Schedule/>
+                    </Route>
+                    <Route path="/home/discover">
+                        <Discover/>
+                    </Route>
                     <Route path="/home" exact>
                         <Redirect to="/home/schedule"/>
                     </Route>
@@ -76,7 +96,7 @@ const Home = ({isProfileLoading, fetchCourses, fetchStudentProfile}: HomeProps) 
 }
 
 const mapState = (state: RootState) => ({
-    isProfileLoading: state.studentProfile.loading,
+    studentProfile: state.studentProfile.content
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
