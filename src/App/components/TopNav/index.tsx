@@ -5,7 +5,7 @@ import {Avatar} from "@rmwc/avatar";
 import React from "react";
 import styled from "styled-components";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import AutoCompleteSearchBar, {AutoCompleteOption, AutoCompleteProps} from "../AutoCompleteSearchBar"
+import AutoCompleteSearchBar, {AutoCompleteProps} from "../AutoCompleteSearchBar"
 import DegreeRequirementPopup from "./DegreeRequirementPopup";
 import Popup from "../Popup";
 
@@ -15,7 +15,6 @@ import '@rmwc/badge/styles';
 import '@rmwc/avatar/styles';
 import {RootState} from "../../duck/types";
 import {connect, ConnectedProps} from "react-redux";
-import {CourseInfo} from "../../proto/courses";
 import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
 
 const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
@@ -74,12 +73,14 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallbac
                         options={
                             [
                                 {
-                                title: 'CS 137',
-                                subTitle: "Introduction to Computer Science"
+                                    title: 'CS 137',
+                                    subTitle: "Introduction to Computer Science",
+                                    weight: 100,
                                 },
                                 {
-                                title: 'MOHAWK 233',
-                                subTitle: "Introduction to Mohawk Language"
+                                    title: 'MOHAWK 233',
+                                    subTitle: "Introduction to Mohawk Language",
+                                    weight: 10,
                                 },
                             ]
                         }

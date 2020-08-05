@@ -6,8 +6,6 @@ import SearchBar, {SearchBarProps} from "./SearchBar";
 import {Typography} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import ReactHtmlParser from 'react-html-parser';
-import matchSorter from 'match-sorter';
-import {FilterOptionsState} from "@material-ui/lab";
 
 const fuzzysort = require('fuzzysort')
 
@@ -29,59 +27,64 @@ interface KeysResult extends ReadonlyArray<Result> {
 export type AutoCompleteOption = {
     title: string,
     subTitle: string,
+    weight: number
 }
 
-const AutoCompleteSearchBar = ({options, searchText, setSearchText, searchCallback, onAutoCompleteSelect}: AutoCompleteProps & SearchBarProps) => {
+const AutoCompleteSearchBar =
+    ({options, searchText, setSearchText, searchCallback, onAutoCompleteSelect}:
+         AutoCompleteProps & SearchBarProps) => {
 
-    const [displayOptions, setDisplayOptions] = React.useState<KeysResult[]>([]);
+        const [displayOptions, setDisplayOptions] = React.useState<KeysResult[]>([]);
 
-    const fetch = (input: string) => {
-        return fuzzysort.go(input, options, {
-            keys: ['title', 'subTitle'],
-            limit: 25 // TODO put into a constant file
-        })
-    }
-
-    React.useEffect(() => {
-        let active = true;
-        if (searchText === '') {
-            setDisplayOptions([])
-            return undefined
+        const fetch = (input: string) => {
+            return fuzzysort.go(input, options, {
+                keys: ['title', 'subTitle'],
+                limit: 25, // TODO put into a constant file
+                allowTypo: true,
+            })
         }
-        const results = fetch(searchText);
-        if (active) {
-            let newOptions = [] as KeysResult[]
-            if (results) {
-                newOptions = [...newOptions, ...results]
+
+        React.useEffect(() => {
+            let active = true;
+            if (searchText === '') {
+                setDisplayOptions([])
+                return undefined
             }
-            setDisplayOptions(newOptions)
+            const results = fetch(searchText);
+            if (active) {
+                let newOptions = [] as KeysResult[]
+                if (results) {
+                    newOptions = [...newOptions, ...results]
+                }
+                setDisplayOptions(newOptions)
+            }
+            return () => {
+                active = false
+            };
+        }, [searchText])
+
+        const sortByWeight = (options: KeysResult[]) => {
+            return options.sort((a, b) => ((a?.obj?.weight ?? 0) < (b?.obj?.weight ?? 0)) ? 1 : -1)
         }
-        return () => {
-            active = false
-        };
-    }, [searchText])
 
-    const filterOptions = (options: KeysResult[], { inputValue }: FilterOptionsState<KeysResult>) =>
-        matchSorter(options, inputValue, {keys: ['obj.title', 'obj.subTitle']});
-
-    return (
-        <Autocomplete
-            freeSolo
-            disableListWrap
-            autoComplete
-            includeInputInList
-            filterSelectedOptions
-            filterOptions={filterOptions}
-            options={displayOptions}
-            getOptionLabel={(option) => (`${option?.obj?.title ?? option}`)}
-            onChange={(event, newValue: KeysResult | string | null) => {
-                if (!newValue || typeof newValue == "string") return
-                onAutoCompleteSelect(newValue?.obj?.title ?? '')
-            }}
-            inputValue={searchText}
-            onInputChange={(event, newInputValue) => {
-                setSearchText(newInputValue)
-            }}
+        return (
+            <Autocomplete
+                freeSolo
+                disableListWrap
+                autoComplete
+                includeInputInList
+                filterSelectedOptions
+                filterOptions={sortByWeight}
+                options={displayOptions}
+                getOptionLabel={(option) => (`${option?.obj?.title ?? option}`)}
+                onChange={(event, newValue: KeysResult | string | null) => {
+                    if (!newValue || typeof newValue == "string") return
+                    onAutoCompleteSelect(newValue?.obj?.title ?? '')
+                }}
+                inputValue={searchText}
+                onInputChange={(event, newInputValue) => {
+                    setSearchText(newInputValue)
+                }}
             renderOption={(option: KeysResult) => {
                 return (
                     <Grid container alignItems="center">
