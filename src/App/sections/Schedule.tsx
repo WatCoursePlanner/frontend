@@ -90,8 +90,6 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
     const [shortList, setShortList] = useState<string[]>(['STAT 230', 'STAT 231', 'EMLS 129R'])
 
     const onDragEnd = (result: DragEndParams) => {
-        // console.log("onDragEnd", result)
-        setIssues({})
     }
 
     const onDropWithTerm = (dropResult: DropResult, termName: string) => {

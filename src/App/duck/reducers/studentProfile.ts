@@ -1,12 +1,13 @@
 import {RootAction} from "../actions";
 import {StudentProfile} from "../../proto/courses";
 import {
-  STUDENT_PROFILE_ADD_COURSE,
-  STUDENT_PROFILE_ERROR,
-  STUDENT_PROFILE_INIT,
-  STUDENT_PROFILE_REMOVE_COURSE,
-  STUDENT_PROFILE_SUCCESS
+    STUDENT_PROFILE_ADD_COURSE,
+    STUDENT_PROFILE_ERROR,
+    STUDENT_PROFILE_INIT,
+    STUDENT_PROFILE_REMOVE_COURSE,
+    STUDENT_PROFILE_SUCCESS
 } from "../actions/studentProfile";
+import _ from 'lodash';
 
 export type StudentProfileState = {
     readonly content: StudentProfile | null,
@@ -52,38 +53,29 @@ const studentProfileReducer = (
         case STUDENT_PROFILE_REMOVE_COURSE:
             const doRemoveCourse = () => {
                 const index = action.index;
-
                 const newProfile = state.content!!
-
-                const codes = newProfile.schedule!!.terms.find(
-                    (term) => term!!.termName === action.termName
-                )!!.courseCodes;
-
-                if (index !== null) codes.splice(index, 1);
+                const term = newProfile.schedule!!.terms.find((term) => term!!.termName === action.termName)!!
+                const codes = term.courseCodes
+                if (index !== null) codes.splice(index, 1)
                 return newProfile
             }
             return {
                 ...state,
-                content: doRemoveCourse()
+                content: _.cloneDeep(doRemoveCourse())
             };
 
         case STUDENT_PROFILE_ADD_COURSE:
             const doAddCourse = () => {
                 const index = action.index;
-
                 const newProfile = state.content!!
-
-                const codes = newProfile.schedule!!.terms.find(
-                    (term) => term!!.termName === action.termName
-                )!!.courseCodes;
-
+                const term = newProfile.schedule!!.terms.find((term) => term!!.termName === action.termName)!!
+                const codes = term.courseCodes
                 if (index !== null) codes.splice(index, 0, action.code);
-
                 return newProfile
             }
             return {
                 ...state,
-                content: doAddCourse()
+                content: _.cloneDeep(doAddCourse())
             };
 
         default:
