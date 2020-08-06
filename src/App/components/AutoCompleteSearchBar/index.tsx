@@ -1,58 +1,89 @@
 import React from "react";
-import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import '@rmwc/icon-button/styles';
 import '@rmwc/textfield/styles';
 import SearchBar, {SearchBarProps} from "./SearchBar";
-import styled from "styled-components";
-
-export type AutoCompleteProps = {
-    options?: AutoCompleteOption[],
-    onAutoCompleteSelect: ((text: string) => void)
-}
+import Option from "./Option";
+import * as Fuzzysort from "fuzzysort";
 
 export type AutoCompleteOption = {
     title: string,
     subTitle: string,
+    weight: number
 }
 
-const Title = styled.span`
-    min-width: 100px; 
-    margin-right: 12px;
-    font-weight: 600;
-`
+export type AutoCompleteCallbackProps = {
+    onAutoCompleteSelect: ((text: string) => void)
+}
 
-const AutoCompleteSearchBar = ({options, searchText, setSearchText, searchCallback, onAutoCompleteSelect}: AutoCompleteProps & SearchBarProps) => {
-    const filterOptions = createFilterOptions<AutoCompleteOption | string>({
-        limit: 25,
-    });
-    return (
-        <Autocomplete
-            freeSolo
-            disableListWrap
-            filterOptions={filterOptions}
-            options={searchText.length > 0 ? options!!.map((option => option.title ?? '')) : []}
-            onChange={(event, newValue: string | AutoCompleteOption | null) => {
-                if (!newValue || typeof newValue != "string") return
-                onAutoCompleteSelect(newValue)
-            }}
-            inputValue={searchText}
-            onInputChange={(event, newInputValue) => {
-                setSearchText(newInputValue)
-            }}
-            renderOption={(option) => (
-                <React.Fragment>
-                    <Title>{option}</Title>
-                    {options?.filter(o => o.title === option)[0]?.subTitle}
-                </React.Fragment>
-            )}
-            renderInput={(props) =>
-                <SearchBar
-                    searchCallback={searchCallback}
-                    autoCompleteRenderProps={props}
-                    searchText={searchText}
-                    setSearchText={setSearchText}/>
+export type AutoCompleteProps = {
+    options: AutoCompleteOption[],
+}
+
+const sortByWeight = (options: Fuzzysort.KeysResult<AutoCompleteOption>[]) => {
+    return options.sort((a, b) => ((a?.obj?.weight ?? 0) < (b?.obj?.weight ?? 0)) ? 1 : -1)
+}
+
+const AutoCompleteSearchBar =
+    ({options, searchText, setSearchText, searchCallback, onAutoCompleteSelect}:
+         AutoCompleteProps & AutoCompleteCallbackProps & SearchBarProps) => {
+
+        const [displayOptions, setDisplayOptions] = React.useState<Fuzzysort.KeysResult<AutoCompleteOption>[]>([]);
+
+        const fetchOptions = (input: string) => {
+            return Fuzzysort.go(input, options, {
+                keys: ['title', 'subTitle'],
+                limit: 25, // TODO put into a constant file
+                allowTypo: true,
+            })
+        }
+
+        React.useEffect(() => {
+            let active = true;
+            if (searchText === '') {
+                setDisplayOptions([])
+                return undefined
             }
-        />
+            const results = fetchOptions(searchText);
+            if (active) {
+                let newOptions = [] as Fuzzysort.KeysResult<AutoCompleteOption>[]
+                if (results) {
+                    newOptions = [...newOptions, ...results]
+                }
+                setDisplayOptions(newOptions)
+            }
+            return () => {
+                active = false
+            };
+        }, [searchText])
+
+        return (
+            <Autocomplete
+                freeSolo
+                disableListWrap
+                autoComplete
+                includeInputInList
+                filterSelectedOptions
+                filterOptions={sortByWeight}
+                options={displayOptions}
+                getOptionLabel={(option) => (`${option?.obj?.title ?? option}`)}
+                onChange={(event, newValue: Fuzzysort.KeysResult<AutoCompleteOption> | string | null) => {
+                    if (!newValue || typeof newValue == "string") return
+                    onAutoCompleteSelect(newValue?.obj?.title ?? '')
+                }}
+                inputValue={searchText}
+                onInputChange={(event, newInputValue) => {
+                    setSearchText(newInputValue)
+                }}
+                renderOption={(option) => <Option option={option}/>}
+                renderInput={(props) =>
+                    <SearchBar
+                        searchCallback={searchCallback}
+                        autoCompleteRenderProps={props}
+                        searchText={searchText}
+                        setSearchText={setSearchText}/>
+                }
+            />
     )
 }
 
