@@ -79,9 +79,11 @@ const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, 
             </Row>
             <StyledContainer>
                 <Container groupName={'terms'}
-                           style={{height: '100%'}}
+                           dropPlaceholder={{className: 'drop-placeholder'}}
                            getChildPayload={idx => term.courseCodes[idx]}
                            onDrop={(e) => onDropWithTerm(e, term.termName)}
+                           dragClass="card-ghost"
+                           dropClass="card-ghost-drop"
                            {...options}>
                     {term.courseCodes.map((code, index) => (
                         <ScheduleCourse

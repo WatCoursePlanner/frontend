@@ -132,7 +132,7 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
                     <Spacer minWidth={'16px'} minHeight={'100%'}/>
                     <TermList
                         profileCourses={profileCourses}
-                        studentProfile={studentProfile!!}
+                        studentProfile={studentProfile}
                         issues={issues}
                         options={{onDragEnd, onDragStart}}
                         onDropWithTerm={onDropWithTerm}/>

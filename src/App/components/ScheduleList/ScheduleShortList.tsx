@@ -51,7 +51,6 @@ const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortL
             <Title>Shortlist</Title>
             <StyledContainer>
                 <Container groupName={'terms'}
-                           style={{height: '100%'}}
                            getChildPayload={idx => shortlist[idx]}
                            onDrop={(e) => onDropWithTerm(e, "shortlist")}
                            {...options}>

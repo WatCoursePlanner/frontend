@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useState} from "react";
 import {Draggable} from 'react-smooth-dnd';
-import {Card, CardPrimaryAction, CardProps} from "@rmwc/card";
+import {Card, CardProps} from "@rmwc/card";
 
 import '@rmwc/card/styles';
+import '@rmwc/ripple/styles';
 import styled from "styled-components";
 
 
@@ -13,11 +14,14 @@ type ScheduleCourseProps = {
 }
 
 const RootContainer = styled.div`
+    width: 265px; 
     margin: 0 0 16px 0;
+    background-color: transparent;
 `
 
-const StyledCard = styled(Card)<CardProps | React.HTMLProps<HTMLDivElement>>`
-    width: 265px; 
+const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & {hovered: number}>`
+    width: 100%;
+    background-color: ${props => props.hovered ? '#fafafa' : 'transparent'};
 `
 
 const CardContainer = styled.div`
@@ -36,20 +40,28 @@ const CourseName = styled.span`
 `
 
 const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
+    const [hovered, setHovered] = useState(false);
+    const toggleHover = () => setHovered(!hovered);
     return (
         <Draggable>
             <RootContainer>
-                <StyledCard outlined>
-                    <CardPrimaryAction>
-                        <CardContainer>
-                            <CourseCode>
-                                {code}
-                            </CourseCode>
-                            <CourseName>
-                                {name}
-                            </CourseName>
-                        </CardContainer>
-                    </CardPrimaryAction>
+                <StyledCard
+                    outlined
+                    hovered={hovered ? 1 : 0}
+                    onClick={() => console.log(`TODO clicked ${code}`)}
+                    onMouseOver={() => {
+                        if (!hovered) setHovered(true)
+                    }}
+                    onMouseEnter={toggleHover}
+                    onMouseLeave={toggleHover}>
+                    <CardContainer>
+                        <CourseCode>
+                            {code}
+                        </CourseCode>
+                        <CourseName>
+                            {name}
+                        </CourseName>
+                    </CardContainer>
                 </StyledCard>
             </RootContainer>
         </Draggable>

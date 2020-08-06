@@ -5,7 +5,7 @@ import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
 
 type TermListProps = {
     issues: { [termName: string]: CheckResults },
-    studentProfile: StudentProfile,
+    studentProfile: StudentProfile | null,
     profileCourses: { [courseCode: string]: CourseInfo },
     options: ContainerOptions,
     onDropWithTerm: (result: DropResult, termName: string) => void,
