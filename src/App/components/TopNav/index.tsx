@@ -11,7 +11,6 @@ import {RootState} from "../../duck/types";
 import {connect, ConnectedProps} from "react-redux";
 import {CourseInfo} from "../../proto/courses";
 import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
-
 import Popup from "../Popup";
 import '@rmwc/top-app-bar/styles';
 import '@rmwc/menu/styles';

@@ -4,11 +4,11 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
-import IconButton from "@material-ui/core/IconButton";
-import FilterListIcon from "@material-ui/icons/FilterList";
 import styled from "styled-components";
 import {CourseDisplayData, Order} from "./CourseTableUtils";
 import {StyledIconButton} from "./index";
+import FilterPopup from "./FilterPopup"
+import {MenuSurface, MenuSurfaceAnchor} from "@rmwc/menu";
 
 const VisuallyHidden = styled.span`
     border: 0;
@@ -45,6 +45,7 @@ interface EnhancedTableProps {
 
 function EnhancedTableHead(props: EnhancedTableProps) {
     const {order, orderBy, onRequestSort} = props;
+    const [filterOpen, setFilterOpen] = React.useState(false);
     const createSortHandler = (property: keyof CourseDisplayData) => (
         event: React.MouseEvent<unknown>
     ) => {
@@ -75,9 +76,18 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                     </TableCell>
                 ))}
                 <TableCell align="right">
+                    <MenuSurfaceAnchor>
+                    <MenuSurface
+                        open={filterOpen}
+                        onClose={() => setFilterOpen(false)}>
+                        <FilterPopup/>
+                    </MenuSurface>
                     <Tooltip title="Filter Courses">
-                        <StyledIconButton icon={'filter_list'}/>
-                    </Tooltip>
+                        <StyledIconButton
+                            icon={'filter_list'}
+                            onClick={() => setFilterOpen(!filterOpen)} />
+                     </Tooltip>
+                    </MenuSurfaceAnchor>
                 </TableCell>
             </TableRow>
         </TableHead>

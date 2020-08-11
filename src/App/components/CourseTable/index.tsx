@@ -16,6 +16,7 @@ import {bindActionCreators, Dispatch} from "redux";
 import {doSearchAction} from "../../duck/actions/search";
 import CourseTableRowPlaceholder from "./CourseTableRowPlaceholder";
 
+
 const Root = styled.div`
   width: 100%;
   height: 100%;
