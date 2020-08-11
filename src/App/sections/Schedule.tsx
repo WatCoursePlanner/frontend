@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {Button, ButtonHTMLProps, ButtonProps} from "@rmwc/button";
 import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
@@ -6,11 +6,15 @@ import '@rmwc/button/styles';
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../duck/types";
 import {bindActionCreators, Dispatch} from "redux";
-import {DragDropContext} from "react-beautiful-dnd";
-import {ScheduleShortList, ScheduleTerm} from "../components/ScheduleList";
+import {ScheduleShortList, TermList} from "../components/ScheduleList";
 
 import '@rmwc/fab/styles';
 import Spacer from "../components/Spacer";
+import {DragEndParams, DragStartParams} from "smooth-dnd/dist/src/exportTypes";
+import {DropResult} from "react-smooth-dnd";
+import {studentProfileAddCourse, studentProfileRemoveCourse} from "../duck/actions/studentProfile";
+import {URL_BASE} from "../constants/api";
+import {CheckResults, FindSlotRequest} from "../proto/courses";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
 position:absolute;
@@ -80,62 +84,75 @@ const StyledFab = styled(Fab)<FabProps>`
 
 type ScheduleProps = ConnectedProps<typeof connector>
 
-const Schedule = ({studentProfile, loading, profileCourses}: ScheduleProps) => {
-
+const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, removeCourseFromList}: ScheduleProps) => {
     const [shortlistOpen, setShortlistOpen] = useState(false)
-    const [termList, setTermList] = useState(<></>)
+    const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
+    const [shortList, setShortList] = useState<string[]>(['STAT 230', 'STAT 231', 'EMLS 129R'])
 
-    useEffect(() => {
-        setTermList(TermList)
-    }, [studentProfile, profileCourses])
+    const onDragEnd = (result: DragEndParams) => {
+    }
 
-    const onDragEnd = (result: any) => {
-        if (!result.destination) {
-            return;
+    const onDropWithTerm = (dropResult: DropResult, termName: string) => {
+        // TODO: check before applying the changes
+        if (dropResult.removedIndex === dropResult.addedIndex) return
+        if (dropResult.removedIndex !== null) {
+            if (termName === "shortlist") setShortList(shortList.filter(c => c !== dropResult.payload))
+            else removeCourseFromList(termName, dropResult.removedIndex)
         }
-        // TODO Re-order courses
-        // see https://github.com/kutlugsahin/react-smooth-dnd#ondragend
+        if (dropResult.addedIndex !== null) {
+            if (termName === "shortlist") {
+                shortList.splice(dropResult.addedIndex, 0, dropResult.payload)
+                setShortList(shortList)
+            } else addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
+        }
     }
 
-    const TermList = () => {
-        let shownYears: number[] = []
-        return (studentProfile && studentProfile.schedule)
-            ? <>{studentProfile.schedule.terms
-                    .map((term, index) => {
-                        const showYear = !shownYears.includes(term.year)
-                        if (showYear)
-                            shownYears.push(term.year)
-                        return (<ScheduleTerm
-                            key={term.termName}
-                            term={term}
-                            index={index}
-                            courses={profileCourses}
-                            showYear={showYear}/>)})} </>
-            : <div/>
+    const onDragStart = (dragStart: DragStartParams) => {
+        if (!dragStart.isSource) return // only need to do this once
+
+        fetch(URL_BASE + '/profile/find_slots', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(FindSlotRequest.toJSON({profile: studentProfile!!, courseCode: dragStart.payload!!}))
+        })
+            .then(res => res.json())
+            .then(res => {
+                setIssues(res.slot)
+            })
+            .catch(error => {
+                throw(error)
+            });
     }
+
 
     return (
         <OuterContainer>
-            <DragDropContext onDragEnd={onDragEnd}>
-                <ScheduleContainer>
-                    <ScheduleListContainer>
-                        <Spacer minWidth={'16px'} minHeight={'100%'}/>
-                        {termList}
-                        <Spacer minWidth={'240px'} minHeight={'100%'}/>
-                        <StyledFab icon="add" label="Add Term" />
-                    </ScheduleListContainer>
-                    <ShortListButton
-                        unelevated
-                        onMouseDown={(e) => {
-                            e.preventDefault()
-                        }}
-                        onClick={() => setShortlistOpen(!shortlistOpen)}
-                        icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}/>
-                </ScheduleContainer>
-                <ShortListContainer open={shortlistOpen}>
-                    <ScheduleShortList shortlist={['STAT 230', 'STAT 231', 'EMLS 129R']} courses={profileCourses}/>
-                </ShortListContainer>
-            </DragDropContext>
+            <ScheduleContainer>
+                <ScheduleListContainer>
+                    <Spacer minWidth={'16px'} minHeight={'100%'}/>
+                    <TermList
+                        profileCourses={profileCourses}
+                        studentProfile={studentProfile}
+                        issues={issues}
+                        options={{onDragEnd, onDragStart}}
+                        onDropWithTerm={onDropWithTerm}/>
+                    <Spacer minWidth={'240px'} minHeight={'100%'}/>
+                    <StyledFab icon="add" label="Add Term"/>
+                </ScheduleListContainer>
+                <ShortListButton
+                    unelevated
+                    onMouseDown={(e) => {
+                        e.preventDefault()
+                    }}
+                    onClick={() => setShortlistOpen(!shortlistOpen)}
+                    icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}/>
+            </ScheduleContainer>
+            <ShortListContainer open={shortlistOpen}>
+                <ScheduleShortList shortlist={shortList}
+                                   courses={profileCourses}
+                                   options={{onDragEnd, onDragStart}}
+                                   onDropWithTerm={onDropWithTerm}/>
+            </ShortListContainer>
         </OuterContainer>
     )
 }
@@ -146,7 +163,10 @@ const mapState = (state: RootState) => ({
     loading: state.studentProfile.loading
 })
 
-const mapDispatch = (dispatch: Dispatch) => bindActionCreators({}, dispatch)
+const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
+    addCourseToList: studentProfileAddCourse,
+    removeCourseFromList: studentProfileRemoveCourse
+}, dispatch)
 
 const connector = connect(mapState, mapDispatch)
 
