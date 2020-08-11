@@ -21,8 +21,11 @@ const RootContainer = styled.div`
 
 const StyledContainer = styled.div`
     flex-grow: 1;
-    min-width: 280px;
+    min-width: 296px;
     overflow-y: auto;
+    margin-left: -16px;
+    margin-top: -4px;
+    padding: 8px 0 16px 0;
     scrollbar-color: #ececec transparent;
     ::-webkit-scrollbar {
       width: 8px;
@@ -37,12 +40,21 @@ const StyledContainer = styled.div`
     ::-webkit-scrollbar-thumb:hover {
       background: #e0e0e0; 
     }
+    
+    .smooth-dnd-container {
+      min-height: 80%;
+    }
+    
+    .smooth-dnd-draggable-wrapper {
+      overflow: visible !important;
+      background-color: transparent;
+    }
 `
 
 const Title = styled.span`
     font-size: 20px;
     font-weight: 600;
-    margin: 5vh 0 5vh 0;
+    margin: 5vh 0 2vh 0;
 `
 
 const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortListProps) => {
@@ -51,8 +63,11 @@ const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortL
             <Title>Shortlist</Title>
             <StyledContainer>
                 <Container groupName={'terms'}
+                           dropPlaceholder={{className: 'drop-placeholder'}}
                            getChildPayload={idx => shortlist[idx]}
                            onDrop={(e) => onDropWithTerm(e, "shortlist")}
+                           dragClass="card-ghost"
+                           dropClass="card-ghost-drop"
                            {...options}>
                     {shortlist.map((code, index) => (
                         <ScheduleCourse
