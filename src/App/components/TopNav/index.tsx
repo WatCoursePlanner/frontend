@@ -6,12 +6,11 @@ import React from "react";
 import styled from "styled-components";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
 import AutoCompleteSearchBar, {AutoCompleteCallbackProps, AutoCompleteOption} from "../AutoCompleteSearchBar"
-import DegreeRequirementPopup from "./DegreeRequirementPopup";
+import DegreeRequirementPopup, {DegreeRequirementPopupProps} from "./DegreeRequirementPopup";
 import {RootState} from "../../duck/types";
 import {connect, ConnectedProps} from "react-redux";
 import {CourseInfo} from "../../proto/courses";
 import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
-
 import Popup from "../Popup";
 import '@rmwc/top-app-bar/styles';
 import '@rmwc/menu/styles';
@@ -38,11 +37,12 @@ const InfoButton = styled(AppBarButton)`
     `
 
 type TopNavProps = {
-  toggleDrawer: () => void,
+    toggleDrawer: () => void,
 }
 
-const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallback, onAutoCompleteSelect}:
-                    TopNavProps & AutoCompleteCallbackProps & SearchBarProps & ConnectedProps<typeof connector>) => {
+const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallback, onAutoCompleteSelect, issues}:
+                    TopNavProps & AutoCompleteCallbackProps & SearchBarProps & DegreeRequirementPopupProps &
+                    ConnectedProps<typeof connector>) => {
     const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
     const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
     return (
@@ -80,30 +80,31 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallbac
                             open={degreeMenuOpen}
                             anchorCorner={'bottomLeft'}
                             onClose={() => setDegreeMenuOpen(false)}>
-                            <DegreeRequirementPopup/>
+                            <DegreeRequirementPopup issues={issues}/>
                         </MenuSurface>
                         <BadgeAnchor>
-              <InfoButton
-                className={"material-icons-outlined"}
-                icon="info"
-                onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>
-              <Badge style={{marginRight: 40}} inset="0.75rem" label={10}/>
-            </BadgeAnchor>
-          </MenuSurfaceAnchor>
-          <MenuSurfaceAnchor>
-            <MenuSurface
-              open={accountMenuOpen}
-              anchorCorner={'bottomLeft'}
-              onClose={() => setAccountMenuOpen(false)}>
-              <Popup title={'Account'}/>
-            </MenuSurface>
-            <Avatar
-                ripple
-                name="John Doe"
-                size={'large'}
-                style={{backgroundColor: "#32b9c1"}}
-                onClick={() => setAccountMenuOpen(!accountMenuOpen)}/>
-          </MenuSurfaceAnchor>
+                            <InfoButton
+                                className={"material-icons-outlined"}
+                                icon="info"
+                                onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>\
+                            {issues && issues.issues.length > 0 ?
+                                <Badge style={{marginRight: 40}} inset="0.75rem" label={issues.issues.length}/> : null}
+                        </BadgeAnchor>
+                    </MenuSurfaceAnchor>
+                    <MenuSurfaceAnchor>
+                        <MenuSurface
+                            open={accountMenuOpen}
+                            anchorCorner={'bottomLeft'}
+                            onClose={() => setAccountMenuOpen(false)}>
+                            <Popup title={'Account'}/>
+                        </MenuSurface>
+                        <Avatar
+                            ripple
+                            name="John Doe"
+                            size={'large'}
+                            style={{backgroundColor: "#32b9c1"}}
+                            onClick={() => setAccountMenuOpen(!accountMenuOpen)}/>
+                    </MenuSurfaceAnchor>
                 </TopAppBarSection>
             </TopAppBarRow>
         </StyledAppBar>
