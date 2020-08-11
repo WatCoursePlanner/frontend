@@ -24,8 +24,11 @@ const RootContainer = styled.div`
 
 const StyledContainer = styled.div`
     flex-grow: 1;
-    min-width: 280px;
+    min-width: 296px;
     overflow-y: auto;
+    margin-left: -16px;
+    margin-top: -4px;
+    padding: 8px 0 16px 0;
     scrollbar-color: #ececec transparent;
     ::-webkit-scrollbar {
       width: 8px;
@@ -39,6 +42,15 @@ const StyledContainer = styled.div`
     }
     ::-webkit-scrollbar-thumb:hover {
       background: #e0e0e0; 
+    }
+    
+    .smooth-dnd-container {
+      min-height: 80%;
+    }
+    
+    .smooth-dnd-draggable-wrapper {
+      overflow: visible !important;
+      background-color: transparent;
     }
 `
 

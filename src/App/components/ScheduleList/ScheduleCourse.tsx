@@ -15,14 +15,25 @@ type ScheduleCourseProps = {
 
 const RootContainer = styled.div`
     width: 265px; 
-    margin: 0 0 16px 0;
+    padding: 8px 0;
     background-color: transparent;
-    cursor: pointer;
 `
 
 const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & {hovered: number}>`
     width: 100%;
-    background-color: ${props => props.hovered ? '#fafafa' : 'transparent'};
+    background-color: ${props => props.hovered ? '#fafafa' : 'white'};
+    cursor: pointer;
+    margin-left: 16px;
+    transition: background-color 0.2s cubic-bezier(.25,.8,.25,1),
+                opacity 0.2s cubic-bezier(.25,.8,.25,1),
+                box-shadow 0.2s cubic-bezier(.25,.8,.25,1);
+    :focus {
+      box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14), 
+                  0 1px 18px 0 rgba(0,0,0,0.12), 
+                  0 3px 5px -1px rgba(0,0,0,0.2);
+      border-color: transparent;
+      outline: none;
+    }
 `
 
 const CardContainer = styled.div`
@@ -43,13 +54,25 @@ const CourseName = styled.span`
 const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
     const [hovered, setHovered] = useState(false);
     const toggleHover = () => setHovered(!hovered);
+
+    const handleSelectCourse = () => {
+        console.log(`TODO clicked ${code}`)
+    }
+
     return (
         <Draggable>
             <RootContainer>
                 <StyledCard
                     outlined
+                    id={'course-card'}
+                    tabIndex={0}
                     hovered={hovered ? 1 : 0}
-                    onClick={() => console.log(`TODO clicked ${code}`)}
+                    onClick={handleSelectCourse}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleSelectCourse()
+                        }
+                    }}
                     onMouseOver={() => {
                         if (!hovered) setHovered(true)
                     }}

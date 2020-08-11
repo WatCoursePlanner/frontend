@@ -37,18 +37,29 @@ html {
 
 .drop-placeholder{
   max-width: 263px !important;
-  margin: 0 0 16px 0;
+  margin: 8px 0 8px 16px;
   border: #c7c7c7 dashed 1px;
   border-radius: 4px;
   background-color: #fafafa;
 }
 
 .card-ghost {
-  transition: 0.18s ease;
+  transition: 0.18s cubic-bezier(.25, .8, .25, 1);
   transform: rotateZ(5deg);
+  cursor: move;
+
+  #course-card {
+    background-color: #fafafa;
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+    0 1px 18px 0 rgba(0, 0, 0, 0.12),
+    0 3px 5px -1px rgba(0, 0, 0, 0.2);
+    border-color: transparent;
+    outline: none;
+    cursor: move;
+  }
 }
 
-.card-ghost-drop{
-  transition: 0.18s ease-in-out;
+.card-ghost-drop {
+  transition: 0.18s cubic-bezier(.25, .8, .25, 1);
   transform: rotateZ(0deg);
 }
