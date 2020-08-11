@@ -17,6 +17,7 @@ const RootContainer = styled.div`
     width: 265px; 
     margin: 0 0 16px 0;
     background-color: transparent;
+    cursor: pointer;
 `
 
 const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & {hovered: number}>`
