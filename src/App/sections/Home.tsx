@@ -10,10 +10,8 @@ import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import {RootState} from "../duck/types";
 import {CheckResults, CoopStream, CreateStudentProfileRequest, StudentProfile} from "../proto/courses";
-import {fetchCoursesAction} from "../duck/actions/courses";
 import {URL_BASE} from "../constants/api";
 import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
-import {doSearchAction} from "../duck/actions/search";
 import {CachedCourses} from "../CachedCourses";
 
 const Container = styled.div`
@@ -30,7 +28,7 @@ const AppContainer = styled(DrawerAppContent)`
 
 type HomeProps = ConnectedProps<typeof connector>
 
-const Home = ({studentProfile, fetchCourses, fetchStudentProfile, doSearchAction}: HomeProps) => {
+const Home = ({studentProfile, fetchStudentProfile}: HomeProps) => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
@@ -110,9 +108,7 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    fetchStudentProfile: fetchStudentProfileAction,
-    fetchCourses: fetchCoursesAction,
-    doSearchAction: doSearchAction
+    fetchStudentProfile: fetchStudentProfileAction
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)
