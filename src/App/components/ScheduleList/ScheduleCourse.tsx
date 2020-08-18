@@ -8,6 +8,7 @@ import styled from "styled-components";
 import Popper from "@material-ui/core/Popper";
 import Fade from "@material-ui/core/Fade";
 import CourseDetail from "./CourseDetail";
+import {CachedCourses} from "../../CachedCourses";
 
 
 type ScheduleCourseProps = {
@@ -107,7 +108,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                                 {code}
                             </CourseCode>
                             <CourseName>
-                                {name}
+                                {name ?? CachedCourses.getByCode(code)?.name}
                             </CourseName>
                         </CardContainer>
                     </StyledCard>
@@ -131,7 +132,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                         }}>
                         {({TransitionProps}) => (
                             <Fade {...TransitionProps}>
-                                <CourseDetail onDismiss={handleCloseDetail}/>
+                                <CourseDetail course={CachedCourses.getByCode(code)} onDismiss={handleCloseDetail}/>
                             </Fade>
                         )}
                     </Popper>

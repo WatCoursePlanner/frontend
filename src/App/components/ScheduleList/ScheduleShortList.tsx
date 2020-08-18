@@ -74,7 +74,7 @@ const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortL
                             key={code}
                             code={code}
                             index={index}
-                            name={courses[code] ? courses[code].name : undefined}/>
+                            name={courses[code]?.name ?? undefined}/>
                     ))}
                 </Container>
             </StyledContainer>
