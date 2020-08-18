@@ -29,6 +29,7 @@
     "@types/react-html-parser": "^2.0.1",
     "@types/react-redux": "^7.1.9",
     "@types/react-router-dom": "^5.1.5",
+    "@types/react-transition-group": "^4.4.0",
     "@types/redux": "^3.6.0",
     "@types/styled-components": "^5.1.1",
     "babel-preset-es2015": "^6.24.1",

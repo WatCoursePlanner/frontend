@@ -6,10 +6,9 @@ import '@rmwc/card/styles';
 import '@rmwc/ripple/styles';
 import styled from "styled-components";
 import Popper from "@material-ui/core/Popper";
-import Fade from "@material-ui/core/Fade";
 import CourseDetail from "./CourseDetail";
 import {CachedCourses} from "../../CachedCourses";
-
+import Fade from "../../animation/Fade";
 
 type ScheduleCourseProps = {
     code: string,
@@ -35,6 +34,7 @@ const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & { 
     transition:  background-color 0.2s ease,
                 opacity 0.2s ease,
                 box-shadow 0.2s ease;
+    transition-delay: 50ms;
                 
     :focus {
         box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14), 
@@ -85,24 +85,25 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
     return (
         <Draggable>
             <RootContainer>
-                <CardWrapper
-                    onClick={handleSelectCourse}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleSelectCourse(e)
-                        }
-                    }}
-                    onMouseOver={() => {
-                        if (!hovered) setHovered(true)
-                    }}
-                    onMouseEnter={toggleHover}
-                    onMouseLeave={toggleHover}>
+                <CardWrapper>
                     <StyledCard
                         outlined
+                        className={'unselectable'}
                         id={'course-card'}
                         tabIndex={0}
                         active={active ? 1 : 0}
-                        hovered={hovered ? 1 : 0}>
+                        hovered={hovered ? 1 : 0}
+                        onClick={handleSelectCourse}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleSelectCourse(e)
+                            }
+                        }}
+                        onMouseOver={() => {
+                            if (!hovered) setHovered(true)
+                        }}
+                        onMouseEnter={toggleHover}
+                        onMouseLeave={toggleHover}>
                         <CardContainer>
                             <CourseCode>
                                 {code}
@@ -123,7 +124,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                             },
                             preventOverflow: {
                                 enabled: true,
-                                boundariesElement: 'window',
+                                boundariesElement: 'viewport',
                             },
                             offset: {
                                 enabled: true,

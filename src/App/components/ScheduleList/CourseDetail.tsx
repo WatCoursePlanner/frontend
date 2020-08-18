@@ -4,6 +4,7 @@ import {Card, CardActionIcon, CardActionIcons, CardActions, CardProps} from "@rm
 
 import '@rmwc/card/styles';
 import {CourseInfo} from "../../proto/courses";
+import {List, ListItem, ListItemGraphic, ListItemGraphicProps, SimpleListItemProps} from "@rmwc/list";
 
 function useDetectClickOutside(ref: React.MutableRefObject<any>, callback: () => void) {
     useEffect(() => {
@@ -12,7 +13,6 @@ function useDetectClickOutside(ref: React.MutableRefObject<any>, callback: () =>
                 callback()
             }
         }
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -21,7 +21,7 @@ function useDetectClickOutside(ref: React.MutableRefObject<any>, callback: () =>
 }
 
 type CourseDetailProps = {
-    course: CourseInfo,
+    course: CourseInfo | null,
     onDismiss: () => void
 }
 
@@ -49,7 +49,29 @@ const CourseName = styled.span`
 const CardContainer = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 18px 28px;
+    padding: 18px 12px;
+`
+
+const TitleContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-left: 56px;
+    margin-bottom: 18px;
+`
+
+const StyledListItemGraphic = styled(ListItemGraphic)<ListItemGraphicProps & React.HTMLProps<HTMLDivElement>>`
+    margin-right: 16px;
+`
+
+const ListContentText = styled.span`
+    font-size: 14px;
+    white-space: pre-wrap;
+    line-height: 18px;
+`
+
+const StyledListItem = styled(ListItem)<SimpleListItemProps>`
+    height: auto;
+    align-items: start;
 `
 
 export default function CourseDetail({course, onDismiss}: CourseDetailProps) {
@@ -60,18 +82,32 @@ export default function CourseDetail({course, onDismiss}: CourseDetailProps) {
         <StyledCard ref={wrapperRef}>
             <CardActions>
                 <CardActionIcons>
-                    <CardActionIcon onIcon="favorite" icon="favorite_border"/>
-                    <CardActionIcon icon="share"/>
-                    <CardActionIcon icon="more_vert"/>
+                    <CardActionIcon icon="open_in_new"/>
+                    <CardActionIcon icon="forward"/>
+                    <CardActionIcon icon="delete_outline"/>
+                </CardActionIcons>
+                <CardActionIcons style={{flexGrow: 0, marginLeft: 8}}>
+                    <CardActionIcon onClick={() => onDismiss()} icon="close"/>
                 </CardActionIcons>
             </CardActions>
             <CardContainer>
-                <CourseCode>
-                    {course.code}
-                </CourseCode>
-                <CourseName>
-                    {course.name}
-                </CourseName>
+                <TitleContainer>
+                    <CourseCode>
+                        {course?.code ?? ''}
+                    </CourseCode>
+                    <CourseName>
+                        {course?.name ?? ''}
+                    </CourseName>
+                </TitleContainer>
+                <List nonInteractive={true}>
+                    <StyledListItem ripple={false}>
+                        <StyledListItemGraphic
+                            className={'unselectable'} icon="notes"/>
+                        <ListContentText>
+                            {course?.description ?? ''}
+                        </ListContentText>
+                    </StyledListItem>
+                </List>
             </CardContainer>
         </StyledCard>
     );
