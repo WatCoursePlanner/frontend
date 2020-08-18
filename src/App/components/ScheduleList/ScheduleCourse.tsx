@@ -36,7 +36,7 @@ const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & { 
                 box-shadow 0.2s ease;
     transition-delay: 0s;    
     :hover {
-      transition-delay: .2s
+      transition-delay: 150ms
     }        
     :focus {
         box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14), 
