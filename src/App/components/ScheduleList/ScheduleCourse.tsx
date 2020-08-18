@@ -8,7 +8,7 @@ import styled from "styled-components";
 import Popper from "@material-ui/core/Popper";
 import CourseDetail from "./CourseDetail";
 import {CachedCourses} from "../../CachedCourses";
-import Fade from "../../animation/Fade";
+import {Fade} from "@material-ui/core";
 
 type ScheduleCourseProps = {
     code: string,
@@ -34,8 +34,10 @@ const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & { 
     transition:  background-color 0.2s ease,
                 opacity 0.2s ease,
                 box-shadow 0.2s ease;
-    transition-delay: 50ms;
-                
+    transition-delay: 0s;    
+    :hover {
+      transition-delay: .2s
+    }        
     :focus {
         box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14), 
                     0 1px 18px 0 rgba(0,0,0,0.12), 
@@ -133,7 +135,9 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                         }}>
                         {({TransitionProps}) => (
                             <Fade {...TransitionProps}>
-                                <CourseDetail course={CachedCourses.getByCode(code)} onDismiss={handleCloseDetail}/>
+                                <div>
+                                    <CourseDetail course={CachedCourses.getByCode(code)} onDismiss={handleCloseDetail}/>
+                                </div>
                             </Fade>
                         )}
                     </Popper>
