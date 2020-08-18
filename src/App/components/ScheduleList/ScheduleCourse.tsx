@@ -5,6 +5,9 @@ import {Card, CardProps} from "@rmwc/card";
 import '@rmwc/card/styles';
 import '@rmwc/ripple/styles';
 import styled from "styled-components";
+import Popper from "@material-ui/core/Popper";
+import Fade from "@material-ui/core/Fade";
+import CourseDetail from "./CourseDetail";
 
 
 type ScheduleCourseProps = {
@@ -19,21 +22,32 @@ const RootContainer = styled.div`
     background-color: transparent;
 `
 
-const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & {hovered: number}>`
+const CardWrapper = styled.div`
     width: 100%;
-    background-color: ${props => props.hovered ? '#fafafa' : 'white'};
     cursor: pointer;
     margin-left: 16px;
-    transition: background-color 0.2s cubic-bezier(.25,.8,.25,1),
-                opacity 0.2s cubic-bezier(.25,.8,.25,1),
-                box-shadow 0.2s cubic-bezier(.25,.8,.25,1);
+`
+
+const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & { hovered: number, active: number }>`
+    width: 100%;
+    background-color: ${props => props.hovered ? '#fafafa' : 'white'};
+    transition:  background-color 0.2s ease,
+                opacity 0.2s ease,
+                box-shadow 0.2s ease;
+                
     :focus {
-      box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14), 
-                  0 1px 18px 0 rgba(0,0,0,0.12), 
-                  0 3px 5px -1px rgba(0,0,0,0.2);
-      border-color: transparent;
-      outline: none;
+        box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14), 
+                    0 1px 18px 0 rgba(0,0,0,0.12), 
+                    0 3px 5px -1px rgba(0,0,0,0.2);
+        border-color: transparent;
     }
+    
+    box-shadow: ${props => props.active ? `0 6px 10px 0 rgba(0,0,0,0.14), 
+                      0 1px 18px 0 rgba(0,0,0,0.12), 
+                      0 3px 5px -1px rgba(0,0,0,0.2)` : ''};
+    border-color: ${props => props.active ? `transparent` : 'inherited' };
+    outline: none;
+}
 `
 
 const CardContainer = styled.div`
@@ -53,24 +67,28 @@ const CourseName = styled.span`
 
 const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
     const [hovered, setHovered] = useState(false);
+    const [active, setActive] = useState(false);
+    const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
     const toggleHover = () => setHovered(!hovered);
 
-    const handleSelectCourse = () => {
-        console.log(`TODO clicked ${code}`)
+    const handleSelectCourse = (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+        setActive(true)
+        setAnchorEl(e.currentTarget)
+    }
+
+    const handleCloseDetail  = ()  => {
+        setActive(false)
+        setAnchorEl(null)
     }
 
     return (
         <Draggable>
             <RootContainer>
-                <StyledCard
-                    outlined
-                    id={'course-card'}
-                    tabIndex={0}
-                    hovered={hovered ? 1 : 0}
+                <CardWrapper
                     onClick={handleSelectCourse}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
-                            handleSelectCourse()
+                            handleSelectCourse(e)
                         }
                     }}
                     onMouseOver={() => {
@@ -78,15 +96,46 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                     }}
                     onMouseEnter={toggleHover}
                     onMouseLeave={toggleHover}>
-                    <CardContainer>
-                        <CourseCode>
-                            {code}
-                        </CourseCode>
-                        <CourseName>
-                            {name}
-                        </CourseName>
-                    </CardContainer>
-                </StyledCard>
+                    <StyledCard
+                        outlined
+                        id={'course-card'}
+                        tabIndex={0}
+                        active={active ? 1 : 0}
+                        hovered={hovered ? 1 : 0}>
+                        <CardContainer>
+                            <CourseCode>
+                                {code}
+                            </CourseCode>
+                            <CourseName>
+                                {name}
+                            </CourseName>
+                        </CardContainer>
+                    </StyledCard>
+                    <Popper
+                        style={{zIndex: 9999}}
+                        id={code} open={active} anchorEl={anchorEl}
+                        transition
+                        placement="left-start"
+                        modifiers={{
+                            flip: {
+                                enabled: true,
+                            },
+                            preventOverflow: {
+                                enabled: true,
+                                boundariesElement: 'window',
+                            },
+                            offset: {
+                                enabled: true,
+                                offset: '0, 8'
+                            }
+                        }}>
+                        {({TransitionProps}) => (
+                            <Fade {...TransitionProps}>
+                                <CourseDetail onDismiss={handleCloseDetail}/>
+                            </Fade>
+                        )}
+                    </Popper>
+                </CardWrapper>
             </RootContainer>
         </Draggable>
     )
