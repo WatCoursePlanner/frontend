@@ -7,7 +7,11 @@ import {CourseInfo} from "../../proto/courses";
 import {List, ListItem, ListItemGraphic, ListItemGraphicProps, SimpleListItemProps} from "@rmwc/list";
 import {Tooltip} from "@rmwc/tooltip";
 
+import {If, Then} from 'react-if'
+
 import '@rmwc/tooltip/styles';
+import {Requisite, RequisiteChecklist, RequisiteGroup} from "../Requisite";
+import RequisiteGroupChecklist from "../Requisite/RequisiteGroupChecklist";
 
 function useDetectClickOutside(ref: React.MutableRefObject<any>, callback: () => void) {
     useEffect(() => {
@@ -61,25 +65,63 @@ const TitleContainer = styled.div`
     display: flex;
     flex-direction: column;
     margin-left: 56px;
-    margin-bottom: 18px;
+    margin-bottom: -8px;
 `
 
 const StyledListItemGraphic = styled(ListItemGraphic)<ListItemGraphicProps & React.HTMLProps<HTMLDivElement>>`
+    color: rgba(0, 0, 0, .54);
     margin-right: 16px;
 `
 
-const ListContentText = styled.span`
+const ListContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+`
+
+const ListContentTitle = styled.span`
     font-size: 14px;
     white-space: pre-wrap;
     line-height: 18px;
 `
 
+const ListContentSubtitle = styled(ListContentTitle)`
+    margin: 4px 0;
+    font-size: 12px;
+    opacity: .8;
+`
+
 const StyledListItem = styled(ListItem)<SimpleListItemProps>`
     height: auto;
     align-items: start;
+    margin-top: 32px;
 `
 
 const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
+
+    const prerequisites: RequisiteGroup[] = [
+        {
+            requisites: [
+                {code: 'CS 137', met: true},
+                {code: 'CS 101', met: true},
+                {code: 'CS 102', met: false},
+            ],
+            requires: 2,
+            met: true
+        },
+        {
+            requisites: [
+                {code: 'CS 123', met: false},
+            ],
+            requires: 1,
+            met: false
+        },
+    ]
+
+    const antirequisites: Requisite[] = [
+        {code: 'CS 256', met: true},
+    ]
+
     const wrapperRef = useRef(null);
     useDetectClickOutside(wrapperRef, onDismiss);
 
@@ -116,10 +158,44 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
                     <StyledListItem ripple={false}>
                         <StyledListItemGraphic
                             className={'unselectable'} icon="notes"/>
-                        <ListContentText>
+                        <ListContentTitle>
                             {course?.description ?? ''}
-                        </ListContentText>
+                        </ListContentTitle>
                     </StyledListItem>
+                    <If condition={prerequisites.length > 0}><Then>
+                        <StyledListItem ripple={false}>
+                            <StyledListItemGraphic
+                                className={'unselectable'} icon="check_circle_outline"/>
+                            <ListContent>
+                                <ListContentTitle>
+                                    {prerequisites.length} Prerequisites
+                                </ListContentTitle>
+                                <ListContentSubtitle>
+                                    {`${prerequisites.filter(t => t.met).length} met, ${prerequisites.length - prerequisites.filter(t => t.met).length} not met`}
+                                </ListContentSubtitle>
+                                <RequisiteGroupChecklist requisiteGroups={prerequisites}/>
+                            </ListContent>
+                        </StyledListItem>
+                    </Then></If>
+                    <If condition={antirequisites.length > 0}><Then>
+                        <StyledListItem ripple={false}>
+                            <StyledListItemGraphic
+                                className={'unselectable'} icon="block"/>
+                            <ListContent>
+                                <ListContentTitle>
+                                    {antirequisites.length} Antirequisites
+                                </ListContentTitle>
+                                <ListContentSubtitle>
+                                    {`has ${
+                                        antirequisites.filter(t => !t.met).length === 0
+                                            ? 'none'
+                                            : antirequisites.filter(t => !t.met).length
+                                    }`}
+                                </ListContentSubtitle>
+                                <RequisiteChecklist requisites={antirequisites}/>
+                            </ListContent>
+                        </StyledListItem>
+                    </Then></If>
                 </List>
             </CardContainer>
         </StyledCard>

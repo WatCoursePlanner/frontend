@@ -4,6 +4,7 @@ import {CheckResults, CourseInfo, Schedule_TermSchedule} from "../../proto/cours
 import ScheduleCourse from "./ScheduleCourse";
 import styled from "styled-components";
 import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
+import {RequisiteChecklist} from "../Requisite";
 
 type ScheduleTermProps = {
     showYear: boolean,
