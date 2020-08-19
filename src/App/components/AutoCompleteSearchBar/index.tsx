@@ -21,11 +21,7 @@ export type AutoCompleteProps = {
 }
 
 const sortByWeight = (options: Fuzzysort.KeysResult<AutoCompleteOption>[]) => {
-    return options.sort((a, b) => ((a?.obj?.weight ?? 0) < (b?.obj?.weight ?? 0)) ? 1 : -1)
-}
-
-const displayAsIs = (options: Fuzzysort.KeysResult<AutoCompleteOption>[]) => {
-    return options
+    return options.sort((a, b) => ((a?.obj?.weight ?? 0) < (b?.obj?.weight ?? 0)) ? -1 : 1)
 }
 
 const AutoCompleteSearchBar =
@@ -39,6 +35,7 @@ const AutoCompleteSearchBar =
                 keys: ['title', 'subTitle'],
                 limit: 10, // TODO put into a constant file
                 allowTypo: true,
+                threshold: -5000
             })
         }
 
@@ -69,7 +66,7 @@ const AutoCompleteSearchBar =
                 autoComplete
                 includeInputInList
                 filterSelectedOptions
-                filterOptions={displayAsIs}
+                filterOptions={sortByWeight}
                 options={displayOptions}
                 getOptionLabel={(option) => (`${option?.obj?.title ?? option}`)}
                 onChange={(event, newValue: Fuzzysort.KeysResult<AutoCompleteOption> | string | null) => {
