@@ -26,6 +26,7 @@ type CourseDetailProps = {
 }
 
 const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement>>`
+    max-height: 80vh;
     min-width: 300px;
     background-color: white;
     outline: none;
@@ -50,6 +51,7 @@ const CardContainer = styled.div`
     display: flex;
     flex-direction: column;
     padding: 18px 12px;
+    overflow-y: auto;
 `
 
 const TitleContainer = styled.div`

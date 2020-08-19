@@ -116,7 +116,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                         </CardContainer>
                     </StyledCard>
                     <Popper
-                        style={{zIndex: 9999}}
+                        style={{zIndex: 9999, marginBottom: 50, maxHeight: '80vh'}}
                         id={code} open={active} anchorEl={anchorEl}
                         transition
                         placement="left-start"
@@ -135,7 +135,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                         }}>
                         {({TransitionProps}) => (
                             <Fade {...TransitionProps}>
-                                <div>
+                                <div style={{maxHeight: '80vh'}}>
                                     <CourseDetail course={CachedCourses.getByCode(code)} onDismiss={handleCloseDetail}/>
                                 </div>
                             </Fade>
