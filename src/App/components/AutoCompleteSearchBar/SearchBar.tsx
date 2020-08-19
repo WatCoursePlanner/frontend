@@ -4,6 +4,7 @@ import InputBase from "@material-ui/core/InputBase";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
 import Paper from "@material-ui/core/Paper";
 import {AutocompleteRenderInputParams} from "@material-ui/lab";
+import {Tooltip} from "@material-ui/core";
 
 const StyledInputBase = styled(InputBase)`
       margin-left: 16px;
@@ -41,7 +42,9 @@ const SearchBar = ({autoCompleteRenderProps, searchText, setSearchText, searchCa
     return (
         <StyledSearchBar
             ref={autoCompleteRenderProps?.InputProps.ref} elevation={0}>
-            <AppBarButton icon={'search'} onClick={searchCallback}/>
+            <Tooltip title={'Search'}>
+                <AppBarButton icon={'search'} onClick={searchCallback}/>
+            </Tooltip>
             <StyledInputBase
                 inputProps={Object.assign({}, autoCompleteRenderProps?.inputProps)}
                 placeholder="Search for Courses"
@@ -51,12 +54,14 @@ const SearchBar = ({autoCompleteRenderProps, searchText, setSearchText, searchCa
                     }
                 }}
             />
-            <AppBarButton
-                className={searchText === '' ? 'hidden' : ''}
-                icon={'close'}
-                onClick={() => {
-                    setSearchText('')
-                }}/>
+            <Tooltip title={'Clear'}>
+                <AppBarButton
+                    className={searchText === '' ? 'hidden' : ''}
+                    icon={'close'}
+                    onClick={() => {
+                        setSearchText('')
+                    }}/>
+            </Tooltip>
         </StyledSearchBar>
     )
 }

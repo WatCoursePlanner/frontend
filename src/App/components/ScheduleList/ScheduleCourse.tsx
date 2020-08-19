@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {Draggable} from 'react-smooth-dnd';
 import {Card, CardProps} from "@rmwc/card";
 
@@ -9,6 +9,7 @@ import Popper from "@material-ui/core/Popper";
 import CourseDetail from "./CourseDetail";
 import {CachedCourses} from "../../CachedCourses";
 import {Fade} from "@material-ui/core";
+import {PopperProps} from "@material-ui/core/Popper/Popper";
 
 type ScheduleCourseProps = {
     code: string,
@@ -28,7 +29,7 @@ const CardWrapper = styled.div`
     margin-left: 16px;
 `
 
-const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & { hovered: number, active: number }>`
+const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & { hovered: number, active: number, ref: any }>`
     width: 100%;
     background-color: ${props => props.hovered ? '#fafafa' : 'white'};
     transition:  background-color 0.2s ease,
@@ -68,20 +69,28 @@ const CourseName = styled.span`
     margin-top: 6px;
 `
 
+const StyledPopper = styled(Popper)<PopperProps>`
+    z-index: 9999;
+    margin-bottom: 50px;
+    max-height: 80vh;
+`
+
 const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
     const [hovered, setHovered] = useState(false);
     const [active, setActive] = useState(false);
-    const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
     const toggleHover = () => setHovered(!hovered);
+    const cardRef = useRef();
 
-    const handleSelectCourse = (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+    const handleSelectCourse = () => {
         setActive(true)
-        setAnchorEl(e.currentTarget)
     }
 
-    const handleCloseDetail  = ()  => {
+    const handleCloseDetail = () => {
         setActive(false)
-        setAnchorEl(null)
+    }
+
+    const toggleActive = () => {
+        setActive(!active)
     }
 
     return (
@@ -90,6 +99,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                 <CardWrapper>
                     <StyledCard
                         outlined
+                        ref={cardRef}
                         className={'unselectable'}
                         id={'course-card'}
                         tabIndex={0}
@@ -98,7 +108,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                         onClick={handleSelectCourse}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                                handleSelectCourse(e)
+                                toggleActive()
                             }
                         }}
                         onMouseOver={() => {
@@ -115,9 +125,8 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                             </CourseName>
                         </CardContainer>
                     </StyledCard>
-                    <Popper
-                        style={{zIndex: 9999, marginBottom: 50, maxHeight: '80vh'}}
-                        id={code} open={active} anchorEl={anchorEl}
+                    <StyledPopper
+                        id={code} open={active} anchorEl={cardRef.current}
                         transition
                         placement="left-start"
                         modifiers={{
@@ -140,7 +149,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                                 </div>
                             </Fade>
                         )}
-                    </Popper>
+                    </StyledPopper>
                 </CardWrapper>
             </RootContainer>
         </Draggable>

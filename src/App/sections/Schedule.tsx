@@ -9,6 +9,7 @@ import {bindActionCreators, Dispatch} from "redux";
 import {ScheduleShortList, TermList} from "../components/ScheduleList";
 
 import '@rmwc/fab/styles';
+import '@rmwc/tooltip/styles';
 import Spacer from "../components/Spacer";
 import {DragEndParams, DragStartParams} from "smooth-dnd/dist/src/exportTypes";
 import {DropResult} from "react-smooth-dnd";

@@ -5,6 +5,9 @@ import {Card, CardActionIcon, CardActionIcons, CardActions, CardProps} from "@rm
 import '@rmwc/card/styles';
 import {CourseInfo} from "../../proto/courses";
 import {List, ListItem, ListItemGraphic, ListItemGraphicProps, SimpleListItemProps} from "@rmwc/list";
+import {Tooltip} from "@rmwc/tooltip";
+
+import '@rmwc/tooltip/styles';
 
 function useDetectClickOutside(ref: React.MutableRefObject<any>, callback: () => void) {
     useEffect(() => {
@@ -76,7 +79,7 @@ const StyledListItem = styled(ListItem)<SimpleListItemProps>`
     align-items: start;
 `
 
-export default function CourseDetail({course, onDismiss}: CourseDetailProps) {
+const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
     const wrapperRef = useRef(null);
     useDetectClickOutside(wrapperRef, onDismiss);
 
@@ -84,12 +87,20 @@ export default function CourseDetail({course, onDismiss}: CourseDetailProps) {
         <StyledCard ref={wrapperRef}>
             <CardActions>
                 <CardActionIcons>
-                    <CardActionIcon icon="open_in_new"/>
-                    <CardActionIcon icon="forward"/>
-                    <CardActionIcon icon="delete_outline"/>
+                    <Tooltip content="Open">
+                        <CardActionIcon icon="open_in_new"/>
+                    </Tooltip>
+                    <Tooltip content="Move">
+                        <CardActionIcon icon="forward"/>
+                    </Tooltip>
+                    <Tooltip content="Delete">
+                        <CardActionIcon icon="delete_outline"/>
+                    </Tooltip>
                 </CardActionIcons>
                 <CardActionIcons style={{flexGrow: 0, marginLeft: 8}}>
-                    <CardActionIcon onClick={() => onDismiss()} icon="close"/>
+                    <Tooltip content="Close">
+                        <CardActionIcon onClick={() => onDismiss()} icon="close"/>
+                    </Tooltip>
                 </CardActionIcons>
             </CardActions>
             <CardContainer>
@@ -114,3 +125,5 @@ export default function CourseDetail({course, onDismiss}: CourseDetailProps) {
         </StyledCard>
     );
 }
+
+export default CourseDetail
