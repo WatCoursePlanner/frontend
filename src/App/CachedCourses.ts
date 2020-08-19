@@ -41,7 +41,8 @@ export class CachedCourses {
                 pagination: {
                     zeroBasedPage: 0,
                     limit: 5000
-                }
+                },
+                basicInfoOnly: true
             })
         })
         let res = await result.json()
@@ -53,7 +54,12 @@ export class CachedCourses {
             lastUpdatedAt: CachedCourses.getCurrentTimestamp(),
             courses: SearchCourseResponse.fromJSON(res).results
         }
-        await localStorage.setItem("courses", JSON.stringify(this.courses))
+        await localStorage.setItem("courses", JSON.stringify(
+            {
+                lastUpdatedAt: CachedCourses.getCurrentTimestamp(),
+                courses: res.results
+            }
+        ))
     }
 
     static getByCode(courseCode: string): CourseInfo | null {
