@@ -41,7 +41,8 @@ export class CachedCourses {
                 pagination: {
                     zeroBasedPage: 0,
                     limit: 5000
-                }
+                },
+                basicInfoOnly: true
             })
         })
         let res = await result.json()
