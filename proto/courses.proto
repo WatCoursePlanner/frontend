@@ -10,6 +10,7 @@ message RuleInfo {
   optional string rawString = 1;
   optional string logicString = 2;
   optional bool fullyResolved = 3;
+  optional string json = 4;
 }
 
 message CourseInfo {
@@ -22,6 +23,11 @@ message CourseInfo {
   optional RuleInfo preRequisite = 7;
   optional RuleInfo coRequisite = 8;
   optional RuleInfo antiRequisite = 9;
+  optional double liked = 10;
+  optional double useful = 11;
+  optional double easy = 12;
+  optional int32 commentsCount = 13;
+  optional int32 ratingsCount = 14;
 }
 
 message CourseList {
@@ -38,10 +44,25 @@ message PaginationInfoResponse {
   optional int32 totalPages = 1;
   optional int32 currentPage = 2;
   optional int32 limit = 3;
+  optional int32 totalResults = 4;
+}
+
+message Sort {
+  enum SortBy {
+    TITLE = 1;
+    CODE = 2;
+  }
+  enum Order {
+    ASC = 1;
+    DESC = 2;
+  }
+  optional SortBy sortBy = 1;
+  optional Order order = 2;
 }
 
 message SearchCourseRequest {
   optional PaginationInfoRequest pagination = 1;
+  optional bool basicInfoOnly = 2; // if true, do not return requisite info
 }
 
 message SearchCourseResponse {
@@ -80,6 +101,7 @@ message StudentProfile {
   optional Schedule schedule = 1;
   repeated string labels = 2;
   repeated string degrees = 3;
+  repeated string shortList = 4;
 }
 
 message CreateStudentProfileRequest {
@@ -124,3 +146,8 @@ message BatchGetCourseResponse {
   repeated CourseInfo results = 1;
 }
 
+message EventRequest {
+  optional string type = 1;
+  optional string subject = 2;
+  optional string data = 3;
+}

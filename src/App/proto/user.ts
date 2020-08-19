@@ -40,6 +40,10 @@ export interface GoogleLoginOrRegisterRequest {
   token: string;
 }
 
+export interface SetUserDataRequest {
+  data: string;
+}
+
 const baseUserInfo: object = {
   firstName: "",
   lastName: "",
@@ -66,6 +70,10 @@ const baseLoginRequest: object = {
 
 const baseGoogleLoginOrRegisterRequest: object = {
   token: "",
+};
+
+const baseSetUserDataRequest: object = {
+  data: "",
 };
 
 export const UserInfo = {
@@ -436,6 +444,53 @@ export const GoogleLoginOrRegisterRequest = {
   toJSON(message: GoogleLoginOrRegisterRequest): unknown {
     const obj: any = {};
     obj.token = message.token || "";
+    return obj;
+  },
+};
+
+export const SetUserDataRequest = {
+  encode(message: SetUserDataRequest, writer: Writer = Writer.create()): Writer {
+    writer.uint32(10).string(message.data);
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): SetUserDataRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseSetUserDataRequest } as SetUserDataRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.data = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): SetUserDataRequest {
+    const message = { ...baseSetUserDataRequest } as SetUserDataRequest;
+    if (object.data !== undefined && object.data !== null) {
+      message.data = String(object.data);
+    } else {
+      message.data = "";
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<SetUserDataRequest>): SetUserDataRequest {
+    const message = { ...baseSetUserDataRequest } as SetUserDataRequest;
+    if (object.data !== undefined && object.data !== null) {
+      message.data = object.data;
+    } else {
+      message.data = "";
+    }
+    return message;
+  },
+  toJSON(message: SetUserDataRequest): unknown {
+    const obj: any = {};
+    obj.data = message.data || "";
     return obj;
   },
 };

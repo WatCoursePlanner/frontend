@@ -6,6 +6,7 @@ export interface RuleInfo {
   rawString: string;
   logicString: string;
   fullyResolved: boolean;
+  json: string;
 }
 
 export interface CourseInfo {
@@ -18,6 +19,11 @@ export interface CourseInfo {
   preRequisite: RuleInfo | undefined;
   coRequisite: RuleInfo | undefined;
   antiRequisite: RuleInfo | undefined;
+  liked: number;
+  useful: number;
+  easy: number;
+  commentsCount: number;
+  ratingsCount: number;
 }
 
 export interface CourseList {
@@ -34,10 +40,20 @@ export interface PaginationInfoResponse {
   totalPages: number;
   currentPage: number;
   limit: number;
+  totalResults: number;
+}
+
+export interface Sort {
+  sortBy: Sort_SortBy;
+  order: Sort_Order;
 }
 
 export interface SearchCourseRequest {
   pagination: PaginationInfoRequest | undefined;
+  /**
+   *  if true, do not return requisite info
+   */
+  basicInfoOnly: boolean;
 }
 
 export interface SearchCourseResponse {
@@ -69,6 +85,7 @@ export interface StudentProfile {
   schedule: Schedule | undefined;
   labels: string[];
   degrees: string[];
+  shortList: string[];
 }
 
 export interface CreateStudentProfileRequest {
@@ -134,10 +151,17 @@ export interface BatchGetCourseResponse {
   results: CourseInfo[];
 }
 
+export interface EventRequest {
+  type: string;
+  subject: string;
+  data: string;
+}
+
 const baseRuleInfo: object = {
   rawString: "",
   logicString: "",
   fullyResolved: false,
+  json: "",
 };
 
 const baseCourseInfo: object = {
@@ -147,6 +171,11 @@ const baseCourseInfo: object = {
   faculty: "",
   offeringTerms: 0,
   id: "",
+  liked: 0,
+  useful: 0,
+  easy: 0,
+  commentsCount: 0,
+  ratingsCount: 0,
 };
 
 const baseCourseList: object = {
@@ -163,9 +192,16 @@ const basePaginationInfoResponse: object = {
   totalPages: 0,
   currentPage: 0,
   limit: 0,
+  totalResults: 0,
+};
+
+const baseSort: object = {
+  sortBy: 1,
+  order: 1,
 };
 
 const baseSearchCourseRequest: object = {
+  basicInfoOnly: false,
 };
 
 const baseSearchCourseResponse: object = {
@@ -184,6 +220,7 @@ const baseSchedule_TermSchedule: object = {
 const baseStudentProfile: object = {
   labels: "",
   degrees: "",
+  shortList: "",
 };
 
 const baseCreateStudentProfileRequest: object = {
@@ -220,6 +257,12 @@ const baseBatchGetCourseRequest: object = {
 };
 
 const baseBatchGetCourseResponse: object = {
+};
+
+const baseEventRequest: object = {
+  type: "",
+  subject: "",
+  data: "",
 };
 
 export const Term = {
@@ -366,6 +409,70 @@ export const CoopStream = {
 
 export type CoopStream = 0 | 1 | 2 | -1;
 
+export const Sort_SortBy = {
+  TITLE: 1 as const,
+  CODE: 2 as const,
+  UNRECOGNIZED: -1 as const,
+  fromJSON(object: any): Sort_SortBy {
+    switch (object) {
+      case 1:
+      case "TITLE":
+        return Sort_SortBy.TITLE;
+      case 2:
+      case "CODE":
+        return Sort_SortBy.CODE;
+      case -1:
+      case "UNRECOGNIZED":
+      default:
+        return Sort_SortBy.UNRECOGNIZED;
+    }
+  },
+  toJSON(object: Sort_SortBy): string {
+    switch (object) {
+      case Sort_SortBy.TITLE:
+        return "TITLE";
+      case Sort_SortBy.CODE:
+        return "CODE";
+      default:
+        return "UNKNOWN";
+    }
+  },
+}
+
+export type Sort_SortBy = 1 | 2 | -1;
+
+export const Sort_Order = {
+  ASC: 1 as const,
+  DESC: 2 as const,
+  UNRECOGNIZED: -1 as const,
+  fromJSON(object: any): Sort_Order {
+    switch (object) {
+      case 1:
+      case "ASC":
+        return Sort_Order.ASC;
+      case 2:
+      case "DESC":
+        return Sort_Order.DESC;
+      case -1:
+      case "UNRECOGNIZED":
+      default:
+        return Sort_Order.UNRECOGNIZED;
+    }
+  },
+  toJSON(object: Sort_Order): string {
+    switch (object) {
+      case Sort_Order.ASC:
+        return "ASC";
+      case Sort_Order.DESC:
+        return "DESC";
+      default:
+        return "UNKNOWN";
+    }
+  },
+}
+
+export type Sort_Order = 1 | 2 | -1;
+
 export const CheckResults_Issue_Type = {
   PRE_REQUISITE_NOT_MET: 1 as const,
   CO_REQUISITE_NOT_MET: 2 as const,
@@ -415,6 +522,7 @@ export const RuleInfo = {
     writer.uint32(10).string(message.rawString);
     writer.uint32(18).string(message.logicString);
     writer.uint32(24).bool(message.fullyResolved);
+    writer.uint32(34).string(message.json);
     return writer;
   },
   decode(input: Uint8Array | Reader, length?: number): RuleInfo {
@@ -432,6 +540,9 @@ export const RuleInfo = {
           break;
         case 3:
           message.fullyResolved = reader.bool();
+          break;
+        case 4:
+          message.json = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -457,6 +568,11 @@ export const RuleInfo = {
     } else {
       message.fullyResolved = false;
     }
+    if (object.json !== undefined && object.json !== null) {
+      message.json = String(object.json);
+    } else {
+      message.json = "";
+    }
     return message;
   },
   fromPartial(object: DeepPartial<RuleInfo>): RuleInfo {
@@ -476,6 +592,11 @@ export const RuleInfo = {
     } else {
       message.fullyResolved = false;
     }
+    if (object.json !== undefined && object.json !== null) {
+      message.json = object.json;
+    } else {
+      message.json = "";
+    }
     return message;
   },
   toJSON(message: RuleInfo): unknown {
@@ -483,6 +604,7 @@ export const RuleInfo = {
     obj.rawString = message.rawString || "";
     obj.logicString = message.logicString || "";
     obj.fullyResolved = message.fullyResolved || false;
+    obj.json = message.json || "";
     return obj;
   },
 };
@@ -508,6 +630,11 @@ export const CourseInfo = {
     if (message.antiRequisite !== undefined && message.antiRequisite !== undefined) {
       RuleInfo.encode(message.antiRequisite, writer.uint32(74).fork()).ldelim();
     }
+    writer.uint32(81).double(message.liked);
+    writer.uint32(89).double(message.useful);
+    writer.uint32(97).double(message.easy);
+    writer.uint32(104).int32(message.commentsCount);
+    writer.uint32(112).int32(message.ratingsCount);
     return writer;
   },
   decode(input: Uint8Array | Reader, length?: number): CourseInfo {
@@ -551,6 +678,21 @@ export const CourseInfo = {
           break;
         case 9:
           message.antiRequisite = RuleInfo.decode(reader, reader.uint32());
+          break;
+        case 10:
+          message.liked = reader.double();
+          break;
+        case 11:
+          message.useful = reader.double();
+          break;
+        case 12:
+          message.easy = reader.double();
+          break;
+        case 13:
+          message.commentsCount = reader.int32();
+          break;
+        case 14:
+          message.ratingsCount = reader.int32();
           break;
         default:
           reader.skipType(tag & 7);
@@ -607,6 +749,31 @@ export const CourseInfo = {
     } else {
       message.antiRequisite = undefined;
     }
+    if (object.liked !== undefined && object.liked !== null) {
+      message.liked = Number(object.liked);
+    } else {
+      message.liked = 0;
+    }
+    if (object.useful !== undefined && object.useful !== null) {
+      message.useful = Number(object.useful);
+    } else {
+      message.useful = 0;
+    }
+    if (object.easy !== undefined && object.easy !== null) {
+      message.easy = Number(object.easy);
+    } else {
+      message.easy = 0;
+    }
+    if (object.commentsCount !== undefined && object.commentsCount !== null) {
+      message.commentsCount = Number(object.commentsCount);
+    } else {
+      message.commentsCount = 0;
+    }
+    if (object.ratingsCount !== undefined && object.ratingsCount !== null) {
+      message.ratingsCount = Number(object.ratingsCount);
+    } else {
+      message.ratingsCount = 0;
+    }
     return message;
   },
   fromPartial(object: DeepPartial<CourseInfo>): CourseInfo {
@@ -657,6 +824,31 @@ export const CourseInfo = {
     } else {
       message.antiRequisite = undefined;
     }
+    if (object.liked !== undefined && object.liked !== null) {
+      message.liked = object.liked;
+    } else {
+      message.liked = 0;
+    }
+    if (object.useful !== undefined && object.useful !== null) {
+      message.useful = object.useful;
+    } else {
+      message.useful = 0;
+    }
+    if (object.easy !== undefined && object.easy !== null) {
+      message.easy = object.easy;
+    } else {
+      message.easy = 0;
+    }
+    if (object.commentsCount !== undefined && object.commentsCount !== null) {
+      message.commentsCount = object.commentsCount;
+    } else {
+      message.commentsCount = 0;
+    }
+    if (object.ratingsCount !== undefined && object.ratingsCount !== null) {
+      message.ratingsCount = object.ratingsCount;
+    } else {
+      message.ratingsCount = 0;
+    }
     return message;
   },
   toJSON(message: CourseInfo): unknown {
@@ -674,6 +866,11 @@ export const CourseInfo = {
     obj.preRequisite = message.preRequisite ? RuleInfo.toJSON(message.preRequisite) : undefined;
     obj.coRequisite = message.coRequisite ? RuleInfo.toJSON(message.coRequisite) : undefined;
     obj.antiRequisite = message.antiRequisite ? RuleInfo.toJSON(message.antiRequisite) : undefined;
+    obj.liked = message.liked || 0;
+    obj.useful = message.useful || 0;
+    obj.easy = message.easy || 0;
+    obj.commentsCount = message.commentsCount || 0;
+    obj.ratingsCount = message.ratingsCount || 0;
     return obj;
   },
 };
@@ -816,6 +1013,7 @@ export const PaginationInfoResponse = {
     writer.uint32(8).int32(message.totalPages);
     writer.uint32(16).int32(message.currentPage);
     writer.uint32(24).int32(message.limit);
+    writer.uint32(32).int32(message.totalResults);
     return writer;
   },
   decode(input: Uint8Array | Reader, length?: number): PaginationInfoResponse {
@@ -833,6 +1031,9 @@ export const PaginationInfoResponse = {
           break;
         case 3:
           message.limit = reader.int32();
+          break;
+        case 4:
+          message.totalResults = reader.int32();
           break;
         default:
           reader.skipType(tag & 7);
@@ -858,6 +1059,11 @@ export const PaginationInfoResponse = {
     } else {
       message.limit = 0;
     }
+    if (object.totalResults !== undefined && object.totalResults !== null) {
+      message.totalResults = Number(object.totalResults);
+    } else {
+      message.totalResults = 0;
+    }
     return message;
   },
   fromPartial(object: DeepPartial<PaginationInfoResponse>): PaginationInfoResponse {
@@ -877,6 +1083,11 @@ export const PaginationInfoResponse = {
     } else {
       message.limit = 0;
     }
+    if (object.totalResults !== undefined && object.totalResults !== null) {
+      message.totalResults = object.totalResults;
+    } else {
+      message.totalResults = 0;
+    }
     return message;
   },
   toJSON(message: PaginationInfoResponse): unknown {
@@ -884,6 +1095,69 @@ export const PaginationInfoResponse = {
     obj.totalPages = message.totalPages || 0;
     obj.currentPage = message.currentPage || 0;
     obj.limit = message.limit || 0;
+    obj.totalResults = message.totalResults || 0;
+    return obj;
+  },
+};
+
+export const Sort = {
+  encode(message: Sort, writer: Writer = Writer.create()): Writer {
+    writer.uint32(8).int32(message.sortBy);
+    writer.uint32(16).int32(message.order);
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): Sort {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseSort } as Sort;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.sortBy = reader.int32() as any;
+          break;
+        case 2:
+          message.order = reader.int32() as any;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): Sort {
+    const message = { ...baseSort } as Sort;
+    if (object.sortBy !== undefined && object.sortBy !== null) {
+      message.sortBy = Sort_SortBy.fromJSON(object.sortBy);
+    } else {
+      message.sortBy = 1;
+    }
+    if (object.order !== undefined && object.order !== null) {
+      message.order = Sort_Order.fromJSON(object.order);
+    } else {
+      message.order = 1;
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<Sort>): Sort {
+    const message = { ...baseSort } as Sort;
+    if (object.sortBy !== undefined && object.sortBy !== null) {
+      message.sortBy = object.sortBy;
+    } else {
+      message.sortBy = 1;
+    }
+    if (object.order !== undefined && object.order !== null) {
+      message.order = object.order;
+    } else {
+      message.order = 1;
+    }
+    return message;
+  },
+  toJSON(message: Sort): unknown {
+    const obj: any = {};
+    obj.sortBy = Sort_SortBy.toJSON(message.sortBy);
+    obj.order = Sort_Order.toJSON(message.order);
     return obj;
   },
 };
@@ -893,6 +1167,7 @@ export const SearchCourseRequest = {
     if (message.pagination !== undefined && message.pagination !== undefined) {
       PaginationInfoRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
     }
+    writer.uint32(16).bool(message.basicInfoOnly);
     return writer;
   },
   decode(input: Uint8Array | Reader, length?: number): SearchCourseRequest {
@@ -904,6 +1179,9 @@ export const SearchCourseRequest = {
       switch (tag >>> 3) {
         case 1:
           message.pagination = PaginationInfoRequest.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.basicInfoOnly = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -919,6 +1197,11 @@ export const SearchCourseRequest = {
     } else {
       message.pagination = undefined;
     }
+    if (object.basicInfoOnly !== undefined && object.basicInfoOnly !== null) {
+      message.basicInfoOnly = Boolean(object.basicInfoOnly);
+    } else {
+      message.basicInfoOnly = false;
+    }
     return message;
   },
   fromPartial(object: DeepPartial<SearchCourseRequest>): SearchCourseRequest {
@@ -928,11 +1211,17 @@ export const SearchCourseRequest = {
     } else {
       message.pagination = undefined;
     }
+    if (object.basicInfoOnly !== undefined && object.basicInfoOnly !== null) {
+      message.basicInfoOnly = object.basicInfoOnly;
+    } else {
+      message.basicInfoOnly = false;
+    }
     return message;
   },
   toJSON(message: SearchCourseRequest): unknown {
     const obj: any = {};
     obj.pagination = message.pagination ? PaginationInfoRequest.toJSON(message.pagination) : undefined;
+    obj.basicInfoOnly = message.basicInfoOnly || false;
     return obj;
   },
 };
@@ -1178,6 +1467,9 @@ export const StudentProfile = {
     for (const v of message.degrees) {
       writer.uint32(26).string(v!);
     }
+    for (const v of message.shortList) {
+      writer.uint32(34).string(v!);
+    }
     return writer;
   },
   decode(input: Uint8Array | Reader, length?: number): StudentProfile {
@@ -1186,6 +1478,7 @@ export const StudentProfile = {
     const message = { ...baseStudentProfile } as StudentProfile;
     message.labels = [];
     message.degrees = [];
+    message.shortList = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1198,6 +1491,9 @@ export const StudentProfile = {
         case 3:
           message.degrees.push(reader.string());
           break;
+        case 4:
+          message.shortList.push(reader.string());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1209,6 +1505,7 @@ export const StudentProfile = {
     const message = { ...baseStudentProfile } as StudentProfile;
     message.labels = [];
     message.degrees = [];
+    message.shortList = [];
     if (object.schedule !== undefined && object.schedule !== null) {
       message.schedule = Schedule.fromJSON(object.schedule);
     } else {
@@ -1224,12 +1521,18 @@ export const StudentProfile = {
         message.degrees.push(String(e));
       }
     }
+    if (object.shortList !== undefined && object.shortList !== null) {
+      for (const e of object.shortList) {
+        message.shortList.push(String(e));
+      }
+    }
     return message;
   },
   fromPartial(object: DeepPartial<StudentProfile>): StudentProfile {
     const message = { ...baseStudentProfile } as StudentProfile;
     message.labels = [];
     message.degrees = [];
+    message.shortList = [];
     if (object.schedule !== undefined && object.schedule !== null) {
       message.schedule = Schedule.fromPartial(object.schedule);
     } else {
@@ -1243,6 +1546,11 @@ export const StudentProfile = {
     if (object.degrees !== undefined && object.degrees !== null) {
       for (const e of object.degrees) {
         message.degrees.push(e);
+      }
+    }
+    if (object.shortList !== undefined && object.shortList !== null) {
+      for (const e of object.shortList) {
+        message.shortList.push(e);
       }
     }
     return message;
@@ -1259,6 +1567,11 @@ export const StudentProfile = {
       obj.degrees = message.degrees.map(e => e || "");
     } else {
       obj.degrees = [];
+    }
+    if (message.shortList) {
+      obj.shortList = message.shortList.map(e => e || "");
+    } else {
+      obj.shortList = [];
     }
     return obj;
   },
@@ -1856,6 +2169,83 @@ export const BatchGetCourseResponse = {
     } else {
       obj.results = [];
     }
+    return obj;
+  },
+};
+
+export const EventRequest = {
+  encode(message: EventRequest, writer: Writer = Writer.create()): Writer {
+    writer.uint32(10).string(message.type);
+    writer.uint32(18).string(message.subject);
+    writer.uint32(26).string(message.data);
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): EventRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseEventRequest } as EventRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.type = reader.string();
+          break;
+        case 2:
+          message.subject = reader.string();
+          break;
+        case 3:
+          message.data = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): EventRequest {
+    const message = { ...baseEventRequest } as EventRequest;
+    if (object.type !== undefined && object.type !== null) {
+      message.type = String(object.type);
+    } else {
+      message.type = "";
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = String(object.subject);
+    } else {
+      message.subject = "";
+    }
+    if (object.data !== undefined && object.data !== null) {
+      message.data = String(object.data);
+    } else {
+      message.data = "";
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<EventRequest>): EventRequest {
+    const message = { ...baseEventRequest } as EventRequest;
+    if (object.type !== undefined && object.type !== null) {
+      message.type = object.type;
+    } else {
+      message.type = "";
+    }
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = object.subject;
+    } else {
+      message.subject = "";
+    }
+    if (object.data !== undefined && object.data !== null) {
+      message.data = object.data;
+    } else {
+      message.data = "";
+    }
+    return message;
+  },
+  toJSON(message: EventRequest): unknown {
+    const obj: any = {};
+    obj.type = message.type || "";
+    obj.subject = message.subject || "";
+    obj.data = message.data || "";
     return obj;
   },
 };
