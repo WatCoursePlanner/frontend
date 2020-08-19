@@ -10,9 +10,9 @@ import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import {RootState} from "../duck/types";
 import {CheckResults, CoopStream, CreateStudentProfileRequest, StudentProfile} from "../proto/courses";
-import {fetchCoursesAction} from "../duck/actions/courses";
 import {URL_BASE} from "../constants/api";
 import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
+import {CachedCourses} from "../CachedCourses";
 
 const Container = styled.div`
       height: 100%;
@@ -28,12 +28,18 @@ const AppContainer = styled(DrawerAppContent)`
 
 type HomeProps = ConnectedProps<typeof connector>
 
-const Home = ({studentProfile, fetchCourses, fetchStudentProfile}: HomeProps) => {
+const Home = ({studentProfile, fetchStudentProfile}: HomeProps) => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
+    const [loading, setLoading] = useState(true);
     const [issues, setIssues] = useState<CheckResults>({issues: []});
     const location = useLocation();
+
+    CachedCourses.initialize().then((res) => {
+        if (!res) return
+        setLoading(false);
+    })
 
     useEffect(() => {
         fetchStudentProfile(CreateStudentProfileRequest.fromJSON({
@@ -68,6 +74,8 @@ const Home = ({studentProfile, fetchCourses, fetchStudentProfile}: HomeProps) =>
         console.log(`[Home] TODO Select ${code}`)
     }
 
+    if (loading) return <p>Loading</p>;
+
     return (
         <Container>
             <TopNav
@@ -100,8 +108,7 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    fetchStudentProfile: fetchStudentProfileAction,
-    fetchCourses: fetchCoursesAction,
+    fetchStudentProfile: fetchStudentProfileAction
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

@@ -5,6 +5,7 @@ import {Card, CardProps} from "@rmwc/card";
 import '@rmwc/card/styles';
 import '@rmwc/ripple/styles';
 import styled from "styled-components";
+import {CachedCourses} from "../../CachedCourses";
 
 
 type ScheduleCourseProps = {
@@ -19,7 +20,7 @@ const RootContainer = styled.div`
     background-color: transparent;
 `
 
-const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & {hovered: number}>`
+const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & { hovered: number }>`
     width: 100%;
     background-color: ${props => props.hovered ? '#fafafa' : 'white'};
     cursor: pointer;
@@ -83,7 +84,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                             {code}
                         </CourseCode>
                         <CourseName>
-                            {name}
+                            {name ?? CachedCourses.getByCode(code)?.name}
                         </CourseName>
                     </CardContainer>
                 </StyledCard>

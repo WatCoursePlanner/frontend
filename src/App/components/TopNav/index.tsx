@@ -16,6 +16,7 @@ import '@rmwc/top-app-bar/styles';
 import '@rmwc/menu/styles';
 import '@rmwc/badge/styles';
 import '@rmwc/avatar/styles';
+import {CachedCourses} from "../../CachedCourses";
 
 const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
       border-bottom: 1px solid #e0e0e0;
@@ -40,11 +41,12 @@ type TopNavProps = {
     toggleDrawer: () => void,
 }
 
-const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallback, onAutoCompleteSelect, issues}:
+const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAutoCompleteSelect, issues}:
                     TopNavProps & AutoCompleteCallbackProps & SearchBarProps & DegreeRequirementPopupProps &
                     ConnectedProps<typeof connector>) => {
     const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
     const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
+
     return (
         <StyledAppBar fixed theme={['surface']}>
             <TopAppBarRow>
@@ -65,7 +67,7 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallbac
                         searchCallback={searchCallback}
                         searchText={searchText}
                         setSearchText={setSearchText}
-                        options={courses.map((course: CourseInfo): AutoCompleteOption => {
+                        options={CachedCourses.get().map((course: CourseInfo): AutoCompleteOption => {
                             return {
                                 title: course.code,
                                 subTitle: course.name,
@@ -111,9 +113,7 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, courses, searchCallbac
     )
 }
 
-const mapState = (state: RootState) => ({
-    courses: state.courses.content,
-})
+const mapState = (state: RootState) => ({})
 
 const connector = connect(mapState)
 
