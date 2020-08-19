@@ -33,6 +33,25 @@ export interface ReParseRegressionTestResponse_Result {
   error: string;
 }
 
+export interface RuleImportItem {
+  rawRule: string;
+  condition: string;
+  completelyParsed: boolean;
+}
+
+export interface RuleImportRequest {
+  items: RuleImportItem[];
+}
+
+export interface RuleImportResponse {
+  result: { [key: string]: string };
+}
+
+export interface RuleImportResponse_ResultEntry {
+  key: string;
+  value: string;
+}
+
 const baseReParseConditionsResponse: object = {
   total: 0,
   success: 0,
@@ -59,6 +78,23 @@ const baseReParseRegressionTestResponse_Result: object = {
   old: "",
   new: "",
   error: "",
+};
+
+const baseRuleImportItem: object = {
+  rawRule: "",
+  condition: "",
+  completelyParsed: false,
+};
+
+const baseRuleImportRequest: object = {
+};
+
+const baseRuleImportResponse: object = {
+};
+
+const baseRuleImportResponse_ResultEntry: object = {
+  key: "",
+  value: "",
 };
 
 export const ReParseConditionsResponse = {
@@ -486,6 +522,258 @@ export const ReParseRegressionTestResponse_Result = {
     obj.old = message.old || "";
     obj.new = message.new || "";
     obj.error = message.error || "";
+    return obj;
+  },
+};
+
+export const RuleImportItem = {
+  encode(message: RuleImportItem, writer: Writer = Writer.create()): Writer {
+    writer.uint32(10).string(message.rawRule);
+    writer.uint32(18).string(message.condition);
+    writer.uint32(24).bool(message.completelyParsed);
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): RuleImportItem {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseRuleImportItem } as RuleImportItem;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.rawRule = reader.string();
+          break;
+        case 2:
+          message.condition = reader.string();
+          break;
+        case 3:
+          message.completelyParsed = reader.bool();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): RuleImportItem {
+    const message = { ...baseRuleImportItem } as RuleImportItem;
+    if (object.rawRule !== undefined && object.rawRule !== null) {
+      message.rawRule = String(object.rawRule);
+    } else {
+      message.rawRule = "";
+    }
+    if (object.condition !== undefined && object.condition !== null) {
+      message.condition = String(object.condition);
+    } else {
+      message.condition = "";
+    }
+    if (object.completelyParsed !== undefined && object.completelyParsed !== null) {
+      message.completelyParsed = Boolean(object.completelyParsed);
+    } else {
+      message.completelyParsed = false;
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<RuleImportItem>): RuleImportItem {
+    const message = { ...baseRuleImportItem } as RuleImportItem;
+    if (object.rawRule !== undefined && object.rawRule !== null) {
+      message.rawRule = object.rawRule;
+    } else {
+      message.rawRule = "";
+    }
+    if (object.condition !== undefined && object.condition !== null) {
+      message.condition = object.condition;
+    } else {
+      message.condition = "";
+    }
+    if (object.completelyParsed !== undefined && object.completelyParsed !== null) {
+      message.completelyParsed = object.completelyParsed;
+    } else {
+      message.completelyParsed = false;
+    }
+    return message;
+  },
+  toJSON(message: RuleImportItem): unknown {
+    const obj: any = {};
+    obj.rawRule = message.rawRule || "";
+    obj.condition = message.condition || "";
+    obj.completelyParsed = message.completelyParsed || false;
+    return obj;
+  },
+};
+
+export const RuleImportRequest = {
+  encode(message: RuleImportRequest, writer: Writer = Writer.create()): Writer {
+    for (const v of message.items) {
+      RuleImportItem.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): RuleImportRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseRuleImportRequest } as RuleImportRequest;
+    message.items = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.items.push(RuleImportItem.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): RuleImportRequest {
+    const message = { ...baseRuleImportRequest } as RuleImportRequest;
+    message.items = [];
+    if (object.items !== undefined && object.items !== null) {
+      for (const e of object.items) {
+        message.items.push(RuleImportItem.fromJSON(e));
+      }
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<RuleImportRequest>): RuleImportRequest {
+    const message = { ...baseRuleImportRequest } as RuleImportRequest;
+    message.items = [];
+    if (object.items !== undefined && object.items !== null) {
+      for (const e of object.items) {
+        message.items.push(RuleImportItem.fromPartial(e));
+      }
+    }
+    return message;
+  },
+  toJSON(message: RuleImportRequest): unknown {
+    const obj: any = {};
+    if (message.items) {
+      obj.items = message.items.map(e => e ? RuleImportItem.toJSON(e) : undefined);
+    } else {
+      obj.items = [];
+    }
+    return obj;
+  },
+};
+
+export const RuleImportResponse = {
+  encode(message: RuleImportResponse, writer: Writer = Writer.create()): Writer {
+    Object.entries(message.result).forEach(([key, value]) => {
+      RuleImportResponse_ResultEntry.encode({ key: key as any, value }, writer.uint32(10).fork()).ldelim();
+    })
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): RuleImportResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseRuleImportResponse } as RuleImportResponse;
+    message.result = {};
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          const entry1 = RuleImportResponse_ResultEntry.decode(reader, reader.uint32());
+          if (entry1.value !== undefined) {
+            message.result[entry1.key] = entry1.value;
+          }
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): RuleImportResponse {
+    const message = { ...baseRuleImportResponse } as RuleImportResponse;
+    message.result = {};
+    if (object.result !== undefined && object.result !== null) {
+      Object.entries(object.result).forEach(([key, value]) => {
+        message.result[key] = String(value);
+      })
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<RuleImportResponse>): RuleImportResponse {
+    const message = { ...baseRuleImportResponse } as RuleImportResponse;
+    message.result = {};
+    if (object.result !== undefined && object.result !== null) {
+      Object.entries(object.result).forEach(([key, value]) => {
+        if (value !== undefined) {
+          message.result[key] = String(value);
+        }
+      })
+    }
+    return message;
+  },
+  toJSON(message: RuleImportResponse): unknown {
+    const obj: any = {};
+    obj.result = message.result || undefined;
+    return obj;
+  },
+};
+
+export const RuleImportResponse_ResultEntry = {
+  encode(message: RuleImportResponse_ResultEntry, writer: Writer = Writer.create()): Writer {
+    writer.uint32(10).string(message.key);
+    writer.uint32(18).string(message.value);
+    return writer;
+  },
+  decode(input: Uint8Array | Reader, length?: number): RuleImportResponse_ResultEntry {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseRuleImportResponse_ResultEntry } as RuleImportResponse_ResultEntry;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.key = reader.string();
+          break;
+        case 2:
+          message.value = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): RuleImportResponse_ResultEntry {
+    const message = { ...baseRuleImportResponse_ResultEntry } as RuleImportResponse_ResultEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = String(object.key);
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = String(object.value);
+    } else {
+      message.value = "";
+    }
+    return message;
+  },
+  fromPartial(object: DeepPartial<RuleImportResponse_ResultEntry>): RuleImportResponse_ResultEntry {
+    const message = { ...baseRuleImportResponse_ResultEntry } as RuleImportResponse_ResultEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = object.key;
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = object.value;
+    } else {
+      message.value = "";
+    }
+    return message;
+  },
+  toJSON(message: RuleImportResponse_ResultEntry): unknown {
+    const obj: any = {};
+    obj.key = message.key || "";
+    obj.value = message.value || "";
     return obj;
   },
 };
