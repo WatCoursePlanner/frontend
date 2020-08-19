@@ -10,11 +10,10 @@ import CourseDetail from "./CourseDetail";
 import {CachedCourses} from "../../CachedCourses";
 import {Fade} from "@material-ui/core";
 import {PopperProps} from "@material-ui/core/Popper/Popper";
+import {CourseInfo} from "../../proto/courses";
 
 type ScheduleCourseProps = {
-    code: string,
-    index: number,
-    name: string | undefined
+    course: CourseInfo | null
 }
 
 const RootContainer = styled.div`
@@ -75,7 +74,7 @@ const StyledPopper = styled(Popper)<PopperProps>`
     max-height: 80vh;
 `
 
-const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
+const ScheduleCourse = ({course}: ScheduleCourseProps) => {
     const [hovered, setHovered] = useState(false);
     const [active, setActive] = useState(false);
     const toggleHover = () => setHovered(!hovered);
@@ -118,15 +117,15 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                         onMouseLeave={toggleHover}>
                         <CardContainer>
                             <CourseCode>
-                                {code}
+                                {course?.code ?? ''}
                             </CourseCode>
                             <CourseName>
-                                {name ?? CachedCourses.getByCode(code)?.name}
+                                {course?.name ?? CachedCourses.getByCode(course?.code ?? '')?.name ?? ''}
                             </CourseName>
                         </CardContainer>
                     </StyledCard>
                     <StyledPopper
-                        id={code} open={active} anchorEl={cardRef.current}
+                        id={course?.code} open={active} anchorEl={cardRef.current}
                         transition
                         placement="left-start"
                         modifiers={{
@@ -145,7 +144,7 @@ const ScheduleCourse = ({code, index, name}: ScheduleCourseProps) => {
                         {({TransitionProps}) => (
                             <Fade {...TransitionProps}>
                                 <div style={{maxHeight: '80vh'}}>
-                                    <CourseDetail course={CachedCourses.getByCode(code)} onDismiss={handleCloseDetail}/>
+                                    <CourseDetail course={course} onDismiss={handleCloseDetail}/>
                                 </div>
                             </Fade>
                         )}

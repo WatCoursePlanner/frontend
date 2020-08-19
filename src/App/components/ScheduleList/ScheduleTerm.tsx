@@ -98,11 +98,7 @@ const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, 
                            dropClass="card-ghost-drop"
                            {...options}>
                     {term.courseCodes.map((code, index) => (
-                        <ScheduleCourse
-                            key={code}
-                            code={code}
-                            index={index}
-                            name={courses[code] ? courses[code].name : undefined}/>
+                        <ScheduleCourse key={index} course={courses[code]}/>
                     ))}
                 </Container>
             </StyledContainer>
