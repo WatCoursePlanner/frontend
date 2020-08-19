@@ -1,6 +1,9 @@
 export interface CourseDisplayData {
     name: string;
     code: string;
+    like: number;
+    easy: number;
+    useful: number;
 }
 
 export type Order = "asc" | "desc";

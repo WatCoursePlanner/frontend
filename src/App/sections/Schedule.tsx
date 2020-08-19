@@ -12,7 +12,12 @@ import '@rmwc/fab/styles';
 import Spacer from "../components/Spacer";
 import {DragEndParams, DragStartParams} from "smooth-dnd/dist/src/exportTypes";
 import {DropResult} from "react-smooth-dnd";
-import {studentProfileAddCourse, studentProfileRemoveCourse} from "../duck/actions/studentProfile";
+import {
+    studentProfileAddCourse,
+    studentProfileAddShortlist,
+    studentProfileRemoveCourse,
+    studentProfileRemoveShortlist
+} from "../duck/actions/studentProfile";
 import {URL_BASE} from "../constants/api";
 import {CheckResults, FindSlotRequest} from "../proto/courses";
 
@@ -84,10 +89,9 @@ const StyledFab = styled(Fab)<FabProps>`
 
 type ScheduleProps = ConnectedProps<typeof connector>
 
-const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, removeCourseFromList}: ScheduleProps) => {
+const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, removeCourseFromList, addShortList, removeShortList}: ScheduleProps) => {
     const [shortlistOpen, setShortlistOpen] = useState(false)
     const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
-    const [shortList, setShortList] = useState<string[]>(['STAT 230', 'STAT 231', 'EMLS 129R'])
 
     const onDragEnd = (result: DragEndParams) => {
     }
@@ -96,14 +100,12 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
         // TODO: check before applying the changes
         if (dropResult.removedIndex === dropResult.addedIndex) return
         if (dropResult.removedIndex !== null) {
-            if (termName === "shortlist") setShortList(shortList.filter(c => c !== dropResult.payload))
+            if (termName === "shortlist") removeShortList(dropResult.payload)
             else removeCourseFromList(termName, dropResult.removedIndex)
         }
         if (dropResult.addedIndex !== null) {
-            if (termName === "shortlist") {
-                shortList.splice(dropResult.addedIndex, 0, dropResult.payload)
-                setShortList(shortList)
-            } else addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
+            if (termName === "shortlist") addShortList(dropResult.payload, dropResult.addedIndex)
+            else addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
         }
     }
 
@@ -123,7 +125,6 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
                 throw(error)
             });
     }
-
 
     return (
         <OuterContainer>
@@ -148,7 +149,7 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
                     icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}/>
             </ScheduleContainer>
             <ShortListContainer open={shortlistOpen}>
-                <ScheduleShortList shortlist={shortList}
+                <ScheduleShortList shortlist={studentProfile?.shortList ?? []}
                                    courses={profileCourses}
                                    options={{onDragEnd, onDragStart}}
                                    onDropWithTerm={onDropWithTerm}/>
@@ -165,7 +166,9 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
     addCourseToList: studentProfileAddCourse,
-    removeCourseFromList: studentProfileRemoveCourse
+    removeCourseFromList: studentProfileRemoveCourse,
+    addShortList: studentProfileAddShortlist,
+    removeShortList: studentProfileRemoveShortlist
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

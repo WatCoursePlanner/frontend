@@ -6,16 +6,18 @@ import styled from "styled-components";
 import {StyledIconButton} from ".";
 
 export type CourseTableRowProps = {
-    row: CourseInfo
+    row: CourseInfo,
+    shortListed: boolean,
+    setShortList: (code: string, shortListed: boolean) => void
 }
 
 const CodeCell = styled(TableCell)`
     width: 138px
 `
 
-const CourseTableRow = ({row}: CourseTableRowProps) => {
+const CourseTableRow = ({row, shortListed, setShortList}: CourseTableRowProps) => {
     const [hovered, setHovered] = useState(false);
-    const [shortListed, setShortListed] = useState(false);
+
     const toggleHover = () => setHovered(!hovered);
     return (
         <TableRow
@@ -29,6 +31,9 @@ const CourseTableRow = ({row}: CourseTableRowProps) => {
         >
             <CodeCell align="left">{row.code}</CodeCell>
             <TableCell align="left">{row.name}</TableCell>
+            <TableCell align="right">{Math.round(row.liked * 100)}%</TableCell>
+            <TableCell align="right">{Math.round(row.useful * 100)}%</TableCell>
+            <TableCell align="right">{Math.round(row.easy * 100)}%</TableCell>
             <TableCell align="right">
                 {
                     hovered ?
@@ -36,7 +41,7 @@ const CourseTableRow = ({row}: CourseTableRowProps) => {
                             filled={shortListed ? 1 : 0}
                             theme={shortListed ? 'primary' : ''}
                             icon={'shopping_cart'}
-                            onClick={() => setShortListed(!shortListed)}
+                            onClick={() => setShortList(row.code, !shortListed)}
                         />
                         : null
                 }
