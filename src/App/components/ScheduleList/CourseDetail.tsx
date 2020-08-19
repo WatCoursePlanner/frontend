@@ -10,8 +10,7 @@ import {Tooltip} from "@rmwc/tooltip";
 import {If, Then} from 'react-if'
 
 import '@rmwc/tooltip/styles';
-import {Requisite, RequisiteChecklist, RequisiteGroup} from "../Requisite";
-import RequisiteGroupChecklist from "../Requisite/RequisiteGroupChecklist";
+import {Requisite, RequisiteChecklist, RequisiteGroup, RequisiteGroupChecklist} from "../Requisite";
 
 function useDetectClickOutside(ref: React.MutableRefObject<any>, callback: () => void) {
     useEffect(() => {

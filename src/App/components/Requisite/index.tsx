@@ -1,4 +1,4 @@
-export {default as SecondaryRequisiteChecklist} from "./RequisiteGroupChecklist";
+export {default as RequisiteGroupChecklist} from "./RequisiteGroupChecklist";
 export {default as RequisiteChecklist} from "./RequisiteChecklist";
 
 export interface Requisite {
