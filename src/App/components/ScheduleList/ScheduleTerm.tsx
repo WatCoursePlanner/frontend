@@ -45,7 +45,7 @@ const StyledContainer = styled.div`
     }
     
     .smooth-dnd-container {
-      min-height: 80%;
+      min-height: 40vh;
     }
     
     .smooth-dnd-draggable-wrapper {
