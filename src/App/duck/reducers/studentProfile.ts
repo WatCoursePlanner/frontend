@@ -2,9 +2,11 @@ import {RootAction} from "../actions";
 import {StudentProfile} from "../../proto/courses";
 import {
     STUDENT_PROFILE_ADD_COURSE,
+    STUDENT_PROFILE_ADD_SHORTLIST,
     STUDENT_PROFILE_ERROR,
     STUDENT_PROFILE_INIT,
     STUDENT_PROFILE_REMOVE_COURSE,
+    STUDENT_PROFILE_REMOVE_SHORTLIST,
     STUDENT_PROFILE_SUCCESS
 } from "../actions/studentProfile";
 import _ from 'lodash';
@@ -76,6 +78,23 @@ const studentProfileReducer = (
             return {
                 ...state,
                 content: _.cloneDeep(doAddCourse())
+            };
+
+        case STUDENT_PROFILE_ADD_SHORTLIST:
+            if (action.index === null)
+                state.content!!.shortList.push(action.code)
+            else
+                state.content!!.shortList.splice(action.index, 0, action.code)
+            return {
+                ...state,
+                content: _.cloneDeep(state.content)
+            };
+
+        case STUDENT_PROFILE_REMOVE_SHORTLIST:
+            state.content!!.shortList = state.content!!.shortList.filter((code) => code !== action.code)
+            return {
+                ...state,
+                content: _.cloneDeep(state.content)
             };
 
         default:

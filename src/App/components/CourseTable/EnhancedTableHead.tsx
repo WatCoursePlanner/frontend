@@ -4,8 +4,6 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
-import IconButton from "@material-ui/core/IconButton";
-import FilterListIcon from "@material-ui/icons/FilterList";
 import styled from "styled-components";
 import {CourseDisplayData, Order} from "./CourseTableUtils";
 import {StyledIconButton} from "./index";
@@ -31,6 +29,9 @@ interface HeadCell {
 const headCells: HeadCell[] = [
     {id: "code", numeric: false, label: "Code"},
     {id: "name", numeric: false, label: "Name"},
+    {id: "like", numeric: true, label: "Like"},
+    {id: "useful", numeric: true, label: "Useful"},
+    {id: "easy", numeric: true, label: "Easy"},
 ];
 
 interface EnhancedTableProps {

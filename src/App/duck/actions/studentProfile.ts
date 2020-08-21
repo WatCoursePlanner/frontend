@@ -14,6 +14,8 @@ export const STUDENT_PROFILE_SUCCESS = 'STUDENT_PROFILE_SUCCESS';
 export const STUDENT_PROFILE_ERROR = 'STUDENT_PROFILE_ERROR';
 export const STUDENT_PROFILE_ADD_COURSE = 'STUDENT_PROFILE_ADD_COURSE';
 export const STUDENT_PROFILE_REMOVE_COURSE = 'STUDENT_PROFILE_REMOVE_COURSE';
+export const STUDENT_PROFILE_ADD_SHORTLIST = 'STUDENT_PROFILE_ADD_SHORTLIST';
+export const STUDENT_PROFILE_REMOVE_SHORTLIST = 'STUDENT_PROFILE_REMOVE_SHORTLIST';
 
 type StudentProfileInit = {
     type: typeof STUDENT_PROFILE_INIT,
@@ -66,6 +68,22 @@ export const studentProfileAddCourse = (termName: string, index: number, code: s
     code
 })
 
+export type StudentProfileAddToShortList = {
+    type: typeof STUDENT_PROFILE_ADD_SHORTLIST,
+    code: string,
+    index: number | null
+};
+
+export const studentProfileAddShortlist = (code: string, index: number | null = null) =>
+    ({type: STUDENT_PROFILE_ADD_SHORTLIST, code, index})
+
+export type StudentProfileRemoveFromShortList = {
+    type: typeof STUDENT_PROFILE_REMOVE_SHORTLIST,
+    code: string
+};
+
+export const studentProfileRemoveShortlist = (code: string) => ({type: STUDENT_PROFILE_REMOVE_SHORTLIST, code})
+
 export const fetchStudentProfileAction = (request: CreateStudentProfileRequest) => {
     return (dispatch: Dispatch) => {
         dispatch(studentProfileInit());
@@ -99,3 +117,5 @@ export type StudentProfileTypes =
     | StudentProfileError
     | StudentProfileAdd
     | StudentProfileRemove
+    | StudentProfileAddToShortList
+    | StudentProfileRemoveFromShortList
