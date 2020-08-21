@@ -50,6 +50,7 @@ const CourseCode = styled.span`
 `
 const CourseName = styled.span`
     font-size: 14px;
+    line-height: 20px;
     margin-top: 6px;
 `
 
@@ -145,15 +146,15 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
                 </CardActionIcons>
             </CardActions>
             <CardContainer>
-                <TitleContainer>
-                    <CourseCode>
-                        {course?.code ?? ''}
-                    </CourseCode>
-                    <CourseName>
-                        {course?.name ?? ''}
-                    </CourseName>
-                </TitleContainer>
                 <List nonInteractive={true}>
+                    <TitleContainer>
+                        <CourseCode>
+                            {course?.code ?? ''}
+                        </CourseCode>
+                        <CourseName>
+                            {course?.name ?? ''}
+                        </CourseName>
+                    </TitleContainer>
                     <StyledListItem ripple={false}>
                         <StyledListItemGraphic
                             className={'unselectable'} icon="notes"/>
