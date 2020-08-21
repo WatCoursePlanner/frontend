@@ -30,8 +30,7 @@ html {
   display: none !important
 }
 
-.mdc-button, .mdc-button__ripple {
-  border-radius: 20px !important;
+.mdc-button, .mdc-button__ripple, .mdc-chip, .mdc-chip__ripple {
   -webkit-mask-image: radial-gradient(white, black);
 }
 
