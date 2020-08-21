@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import {CourseInfo} from "../../proto/courses";
 import styled from "styled-components";
 import {StyledIconButton} from ".";
+import {If, Then} from "react-if";
 
 export type CourseTableRowProps = {
     row: CourseInfo,
@@ -35,16 +36,15 @@ const CourseTableRow = ({row, shortListed, setShortList}: CourseTableRowProps) =
             <TableCell align="right">{Math.round(row.useful * 100)}%</TableCell>
             <TableCell align="right">{Math.round(row.easy * 100)}%</TableCell>
             <TableCell align="right">
-                {
-                    hovered ?
+                <If condition={hovered || shortListed}>
+                    <Then>
                         <StyledIconButton
                             filled={shortListed ? 1 : 0}
                             theme={shortListed ? 'primary' : ''}
                             icon={'shopping_cart'}
-                            onClick={() => setShortList(row.code, !shortListed)}
-                        />
-                        : null
-                }
+                            onClick={() => setShortList(row.code, !shortListed)}/>
+                    </Then>
+                </If>
             </TableCell>
         </TableRow>
     )
