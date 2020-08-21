@@ -70,11 +70,7 @@ const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortL
                            dropClass="card-ghost-drop"
                            {...options}>
                     {shortlist.map((code, index) => (
-                        <ScheduleCourse
-                            key={code}
-                            code={code}
-                            index={index}
-                            name={courses[code]?.name ?? undefined}/>
+                        <ScheduleCourse key={index} course={courses[code]}/>
                     ))}
                 </Container>
             </StyledContainer>
