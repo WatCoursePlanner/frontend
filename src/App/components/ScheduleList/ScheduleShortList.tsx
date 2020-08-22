@@ -4,6 +4,7 @@ import ScheduleCourse from "./ScheduleCourse";
 import {CourseInfo} from "../../proto/courses";
 import styled from "styled-components";
 import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
+import {CachedCourses} from "../../utils";
 
 type ShortListProps = {
     shortlist: string[],
@@ -70,7 +71,7 @@ const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortL
                            dropClass="card-ghost-drop"
                            {...options}>
                     {shortlist.map((code, index) => (
-                        <ScheduleCourse key={index} course={courses[code]}/>
+                        <ScheduleCourse key={index} course={courses[code] ?? CachedCourses.getByCode(code)}/>
                     ))}
                 </Container>
             </StyledContainer>

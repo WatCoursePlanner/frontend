@@ -21,6 +21,7 @@ import {
 } from "../duck/actions/studentProfile";
 import {URL_BASE} from "../constants/api";
 import {CheckResults, FindSlotRequest} from "../proto/courses";
+import {fetchProfileCourseAction} from "../duck/actions/profileCourses";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
   position:absolute;
@@ -90,7 +91,7 @@ const StyledFab = styled(Fab)<FabProps>`
 
 type ScheduleProps = ConnectedProps<typeof connector>
 
-const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, removeCourseFromList, addShortList, removeShortList}: ScheduleProps) => {
+const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCourseToList, removeCourseFromList, addShortList, removeShortList}: ScheduleProps) => {
     const [shortlistOpen, setShortlistOpen] = useState(false)
     const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
 
@@ -108,6 +109,7 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
             if (termName === "shortlist") addShortList(dropResult.payload, dropResult.addedIndex)
             else addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
         }
+        checkCourses(studentProfile!); // TODO: check only once.
     }
 
     const onDragStart = (dragStart: DragStartParams) => {
@@ -161,7 +163,7 @@ const Schedule = ({studentProfile, loading, profileCourses, addCourseToList, rem
 
 const mapState = (state: RootState) => ({
     studentProfile: state.studentProfile.content,
-    profileCourses: state.profileCourses.content,
+    profileCourses: state.profileCourses.courses,
     loading: state.studentProfile.loading
 })
 
@@ -169,7 +171,8 @@ const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
     addCourseToList: studentProfileAddCourse,
     removeCourseFromList: studentProfileRemoveCourse,
     addShortList: studentProfileAddShortlist,
-    removeShortList: studentProfileRemoveShortlist
+    removeShortList: studentProfileRemoveShortlist,
+    checkCourses: fetchProfileCourseAction
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

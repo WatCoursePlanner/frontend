@@ -16,7 +16,7 @@ import '@rmwc/top-app-bar/styles';
 import '@rmwc/menu/styles';
 import '@rmwc/badge/styles';
 import '@rmwc/avatar/styles';
-import {CachedCourses} from "../../CachedCourses";
+import {CachedCourses} from "../../utils";
 
 const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
       border-bottom: 1px solid #e0e0e0;
@@ -89,8 +89,8 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
                                 className={"material-icons-outlined"}
                                 icon="info"
                                 onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>\
-                            {issues && issues.issues.length > 0 ?
-                                <Badge style={{marginRight: 40}} inset="0.75rem" label={issues.issues.length}/> : null}
+                            {issues && issues.length > 0 ?
+                                <Badge style={{marginRight: 40}} inset="0.75rem" label={issues.length}/> : null}
                         </BadgeAnchor>
                     </MenuSurfaceAnchor>
                     <MenuSurfaceAnchor>

@@ -12,7 +12,7 @@ import {RootState} from "../duck/types";
 import {CheckResults, CoopStream, CreateStudentProfileRequest, StudentProfile} from "../proto/courses";
 import {URL_BASE} from "../constants/api";
 import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
-import {CachedCourses} from "../CachedCourses";
+import {CachedCourses} from "../utils";
 
 const Container = styled.div`
       height: 100%;
@@ -28,12 +28,11 @@ const AppContainer = styled(DrawerAppContent)`
 
 type HomeProps = ConnectedProps<typeof connector>
 
-const Home = ({studentProfile, fetchStudentProfile}: HomeProps) => {
+const Home = ({profileIssues, fetchStudentProfile}: HomeProps) => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
     const [loading, setLoading] = useState(true);
-    const [issues, setIssues] = useState<CheckResults>({issues: []});
     const location = useLocation();
 
     CachedCourses.initialize().then((res) => {
@@ -48,23 +47,6 @@ const Home = ({studentProfile, fetchStudentProfile}: HomeProps) => {
             coopStream: CoopStream.STREAM_8
         }))
     }, [])
-
-    useEffect(() => {
-        if (!studentProfile) return
-
-        fetch(URL_BASE + '/profile/check', {
-            method: 'post',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(StudentProfile.toJSON(studentProfile!!))
-        })
-            .then(res => res.json())
-            .then(res => {
-                setIssues(res)
-            })
-            .catch(error => {
-                throw(error)
-            });
-    }, [studentProfile])
 
     const searchKeyword = () => {
         console.log(`[Home] TODO Implement search ${searchText}`)
@@ -84,7 +66,7 @@ const Home = ({studentProfile, fetchStudentProfile}: HomeProps) => {
                 toggleDrawer={() => setDrawerOpen(!drawerOpen)}
                 searchText={searchText}
                 setSearchText={setSearchText}
-                issues={issues}/>
+                issues={profileIssues}/>
             <Drawer open={drawerOpen} location={location}/>
             <AppContainer>
                 <Switch>
@@ -104,7 +86,7 @@ const Home = ({studentProfile, fetchStudentProfile}: HomeProps) => {
 }
 
 const mapState = (state: RootState) => ({
-    studentProfile: state.studentProfile.content
+    profileIssues: state.profileCourses.issues
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({

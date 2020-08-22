@@ -7,7 +7,7 @@ import '@rmwc/ripple/styles';
 import styled from "styled-components";
 import Popper from "@material-ui/core/Popper";
 import CourseDetail from "./CourseDetail";
-import {CachedCourses} from "../../CachedCourses";
+import {CachedCourses} from "../../utils";
 import {Fade} from "@material-ui/core";
 import {PopperProps} from "@material-ui/core/Popper/Popper";
 import {CourseInfo} from "../../proto/courses";
@@ -48,7 +48,7 @@ const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & { 
     box-shadow: ${props => props.active ? `0 6px 10px 0 rgba(0,0,0,0.14), 
                       0 1px 18px 0 rgba(0,0,0,0.12), 
                       0 3px 5px -1px rgba(0,0,0,0.2)` : ''};
-    border-color: ${props => props.active ? `transparent` : 'inherited' };
+    border-color: ${props => props.active ? `transparent` : 'inherited'};
     outline: none;
 }
 `
@@ -120,7 +120,7 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
                                 {course?.code ?? ''}
                             </CourseCode>
                             <CourseName>
-                                {course?.name ?? CachedCourses.getByCode(course?.code ?? '')?.name ?? ''}
+                                {course?.name ?? ''}
                             </CourseName>
                         </CardContainer>
                     </StyledCard>

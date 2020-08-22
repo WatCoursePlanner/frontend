@@ -4,6 +4,7 @@ import {CheckResults, CourseInfo, Schedule_TermSchedule} from "../../proto/cours
 import ScheduleCourse from "./ScheduleCourse";
 import styled from "styled-components";
 import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
+import {CachedCourses} from "../../utils";
 
 type ScheduleTermProps = {
     showYear: boolean,
@@ -98,7 +99,7 @@ const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, 
                            dropClass="card-ghost-drop"
                            {...options}>
                     {term.courseCodes.map((code, index) => (
-                        <ScheduleCourse key={index} course={courses[code]}/>
+                        <ScheduleCourse key={index} course={courses[code] ?? CachedCourses.getByCode(code)}/>
                     ))}
                 </Container>
             </StyledContainer>

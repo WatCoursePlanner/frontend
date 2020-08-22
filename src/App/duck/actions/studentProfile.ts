@@ -96,15 +96,7 @@ export const fetchStudentProfileAction = (request: CreateStudentProfileRequest) 
             .then(res => {
                 if (res.error) throw(res.error);
                 dispatch(studentProfileSuccess(res));
-                if (res.schedule.terms.length > 0) {
-                    let request = BatchGetCourseRequest.fromJSON("")
-                    request.courseCodes =
-                        // Flattening array with concat
-                        Array.prototype.concat.apply([],
-                            res.schedule.terms.map((term: Schedule_TermSchedule) => term.courseCodes))
-                            .filter((code: string) => shouldFetchProfileCourse(store.getState(), code))
-                    fetchProfileCourseAction(request)(dispatch);
-                }
+                fetchProfileCourseAction(res)(dispatch);
                 return res
             })
             .catch(error => dispatch(studentProfileError(error)));

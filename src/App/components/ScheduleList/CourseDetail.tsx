@@ -11,6 +11,7 @@ import {If, Then} from 'react-if'
 
 import '@rmwc/tooltip/styles';
 import {Requisite, RequisiteChecklist, RequisiteGroup, RequisiteGroupChecklist} from "../Requisite";
+import {RequisiteHelper} from "../../utils";
 
 function useDetectClickOutside(ref: React.MutableRefObject<any>, callback: () => void) {
     useEffect(() => {
@@ -19,6 +20,7 @@ function useDetectClickOutside(ref: React.MutableRefObject<any>, callback: () =>
                 callback()
             }
         }
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -98,29 +100,8 @@ const StyledListItem = styled(ListItem)<SimpleListItemProps>`
 `
 
 const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
-
-    const prerequisites: RequisiteGroup[] = [
-        {
-            requisites: [
-                {code: 'CS 137', met: true},
-                {code: 'CS 101', met: true},
-                {code: 'CS 102', met: false},
-            ],
-            requires: 2,
-            met: true
-        },
-        {
-            requisites: [
-                {code: 'CS 123', met: false},
-            ],
-            requires: 1,
-            met: false
-        },
-    ]
-
-    const antirequisites: Requisite[] = [
-        {code: 'CS 256', met: true},
-    ]
+    const prerequisites = RequisiteHelper.getPreRequisite(course);
+    const antirequisites = RequisiteHelper.getAntiRequisite(course);
 
     const wrapperRef = useRef(null);
     useDetectClickOutside(wrapperRef, onDismiss);
@@ -171,7 +152,7 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
                                     {prerequisites.length} Prerequisites
                                 </ListContentTitle>
                                 <ListContentSubtitle>
-                                    {`${prerequisites.filter(t => t.met).length} met, ${prerequisites.length - prerequisites.filter(t => t.met).length} not met`}
+                                    {`${prerequisites.filter((t: RequisiteGroup) => t.met).length} met, ${prerequisites.length - prerequisites.filter((t: RequisiteGroup) => t.met).length} not met`}
                                 </ListContentSubtitle>
                                 <RequisiteGroupChecklist requisiteGroups={prerequisites}/>
                             </ListContent>
@@ -187,9 +168,9 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
                                 </ListContentTitle>
                                 <ListContentSubtitle>
                                     {`has ${
-                                        antirequisites.filter(t => !t.met).length === 0
+                                        antirequisites.filter((t: Requisite) => !t.met).length === 0
                                             ? 'none'
-                                            : antirequisites.filter(t => !t.met).length
+                                            : antirequisites.filter((t: Requisite) => !t.met).length
                                     }`}
                                 </ListContentSubtitle>
                                 <RequisiteChecklist requisites={antirequisites}/>

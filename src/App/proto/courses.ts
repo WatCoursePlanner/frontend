@@ -100,6 +100,7 @@ export interface CreateStudentProfileRequest {
 
 export interface CheckResults {
   issues: CheckResults_Issue[];
+  checkedCourses: CourseInfo[];
 }
 
 export interface CheckResults_Issue {
@@ -1685,6 +1686,9 @@ export const CheckResults = {
     for (const v of message.issues) {
       CheckResults_Issue.encode(v!, writer.uint32(10).fork()).ldelim();
     }
+    for (const v of message.checkedCourses) {
+      CourseInfo.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
     return writer;
   },
   decode(input: Uint8Array | Reader, length?: number): CheckResults {
@@ -1692,11 +1696,15 @@ export const CheckResults = {
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseCheckResults } as CheckResults;
     message.issues = [];
+    message.checkedCourses = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
           message.issues.push(CheckResults_Issue.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.checkedCourses.push(CourseInfo.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -1708,9 +1716,15 @@ export const CheckResults = {
   fromJSON(object: any): CheckResults {
     const message = { ...baseCheckResults } as CheckResults;
     message.issues = [];
+    message.checkedCourses = [];
     if (object.issues !== undefined && object.issues !== null) {
       for (const e of object.issues) {
         message.issues.push(CheckResults_Issue.fromJSON(e));
+      }
+    }
+    if (object.checkedCourses !== undefined && object.checkedCourses !== null) {
+      for (const e of object.checkedCourses) {
+        message.checkedCourses.push(CourseInfo.fromJSON(e));
       }
     }
     return message;
@@ -1718,9 +1732,15 @@ export const CheckResults = {
   fromPartial(object: DeepPartial<CheckResults>): CheckResults {
     const message = { ...baseCheckResults } as CheckResults;
     message.issues = [];
+    message.checkedCourses = [];
     if (object.issues !== undefined && object.issues !== null) {
       for (const e of object.issues) {
         message.issues.push(CheckResults_Issue.fromPartial(e));
+      }
+    }
+    if (object.checkedCourses !== undefined && object.checkedCourses !== null) {
+      for (const e of object.checkedCourses) {
+        message.checkedCourses.push(CourseInfo.fromPartial(e));
       }
     }
     return message;
@@ -1731,6 +1751,11 @@ export const CheckResults = {
       obj.issues = message.issues.map(e => e ? CheckResults_Issue.toJSON(e) : undefined);
     } else {
       obj.issues = [];
+    }
+    if (message.checkedCourses) {
+      obj.checkedCourses = message.checkedCourses.map(e => e ? CourseInfo.toJSON(e) : undefined);
+    } else {
+      obj.checkedCourses = [];
     }
     return obj;
   },
