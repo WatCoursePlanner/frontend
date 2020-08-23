@@ -24,33 +24,30 @@ const RootContainer = styled.div`
 `
 
 const StyledContainer = styled.div`
-    display: flex;
-    overflow: hidden;
-    flex-direction: column;
     flex-grow: 1;
     min-width: 296px;
+    overflow-y: auto;
     margin-left: -16px;
     margin-top: -4px;
+    padding: 8px 0 16px 0;
+    scrollbar-color: #ececec transparent;
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent; 
+    }
+    ::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background: #ececec; 
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e0e0e0; 
+    }
     
     .smooth-dnd-container {
-      overflow-y: auto;
-      flex-grow: 1;
-      padding: 8px 0 16px 0;
-      scrollbar-color: #ececec transparent;
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent; 
-      }
-      ::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        background: #ececec; 
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #e0e0e0; 
-      }
-     }
+      min-height: 40vh;
+    }
     
     .smooth-dnd-draggable-wrapper {
       overflow: visible !important;
@@ -82,7 +79,7 @@ const Row = styled.div`
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    margin-bottom: 16px;
+    margin-bottom: 2vh;
 `
 
 const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, issues}: ScheduleTermProps) => {
