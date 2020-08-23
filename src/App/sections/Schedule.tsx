@@ -94,6 +94,7 @@ type ScheduleProps = ConnectedProps<typeof connector>
 const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCourseToList, removeCourseFromList, addShortList, removeShortList}: ScheduleProps) => {
     const [shortlistOpen, setShortlistOpen] = useState(false)
     const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
+    const [firstDrop, setFirstDrop] = useState(false)
 
     const onDragEnd = (result: DragEndParams) => {
     }
@@ -109,7 +110,15 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
             if (termName === "shortlist") addShortList(dropResult.payload, dropResult.addedIndex)
             else addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
         }
-        checkCourses(studentProfile!); // TODO: check only once.
+        // Don't update if both are not null, i.e. move to the same column
+        if (dropResult.removedIndex === null || dropResult.addedIndex === null) {
+            if (!firstDrop) {
+                setFirstDrop(true)
+            } else {
+                checkCourses(studentProfile!)
+                setFirstDrop(false)
+            }
+        }
     }
 
     const onDragStart = (dragStart: DragStartParams) => {
