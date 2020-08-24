@@ -1,6 +1,7 @@
 import {CheckResults, CheckResults_Issue, CourseInfo, StudentProfile} from "../../proto/courses";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {URL_BASE} from "../../constants/api";
+import {RootState} from "../store";
 
 export type ProfileCoursesState = {
     readonly courses: { [courseCode: string]: CourseInfo },
@@ -11,18 +12,18 @@ export type ProfileCoursesState = {
 
 export const fetchProfileCourseAction = createAsyncThunk(
     'profileCourses/fetchProfileCourseAction',
-    async (profile: StudentProfile, thunkAPI) => {
+    async (profile: StudentProfile | null, {getState, dispatch}) => {
         const resp = await fetch(URL_BASE + '/profile/check', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(StudentProfile.toJSON(profile))
+            body: JSON.stringify(StudentProfile.toJSON(profile ?? (getState() as RootState).studentProfile.content!))
         })
 
         const res = await resp.json()
 
         if (res.error) throw res.error
 
-        thunkAPI.dispatch(profileCourses.actions.setCheckResults(res))
+        dispatch(profileCourses.actions.setCheckResults(res))
     }
 )
 
