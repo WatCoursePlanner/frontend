@@ -13,9 +13,9 @@ import '@rmwc/circular-progress/styles';
 import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import CourseTableRowPlaceholder from "./CourseTableRowPlaceholder";
-import {RootState} from "../../duck/store";
-import {doSearch} from "../../duck/slices/search";
-import studentProfile from "../../duck/slices/studentProfile";
+import {RootState} from "../../redux/store";
+import {doSearch} from "../../redux/slices/search";
+import studentProfile from "../../redux/slices/studentProfile";
 
 const Root = styled.div`
   width: 100%;

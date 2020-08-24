@@ -4,7 +4,7 @@ import {Container} from "@material-ui/core";
 import TranscriptReader from "../components/TranscriptReader";
 import {CreateStudentProfileRequest} from "../proto/courses";
 import {useDispatch} from "react-redux";
-import {fetchStudentProfile} from "../duck/slices/studentProfile";
+import {fetchStudentProfile} from "../redux/slices/studentProfile";
 
 const Welcome = () => {
     const dispatch = useDispatch()

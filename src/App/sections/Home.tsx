@@ -10,8 +10,8 @@ import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import {CoopStream, CreateStudentProfileRequest} from "../proto/courses";
 import {CachedCourses} from "../utils";
-import {fetchStudentProfile} from "../duck/slices/studentProfile";
-import {RootState} from "../duck/store";
+import {fetchStudentProfile} from "../redux/slices/studentProfile";
+import {RootState} from "../redux/store";
 
 const Container = styled.div`
       height: 100%;

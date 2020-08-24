@@ -4,7 +4,7 @@ import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
 import '@rmwc/button/styles';
 import {connect, ConnectedProps} from "react-redux";
-import {RootState} from "../duck/store";
+import {RootState} from "../redux/store";
 import {bindActionCreators, Dispatch} from "redux";
 import {ScheduleShortList, TermList} from "../components/ScheduleList";
 
@@ -15,8 +15,8 @@ import {DragEndParams, DragStartParams} from "smooth-dnd/dist/src/exportTypes";
 import {DropResult} from "react-smooth-dnd";
 import {URL_BASE} from "../constants/api";
 import {CheckResults, FindSlotRequest} from "../proto/courses";
-import studentProfile from "../duck/slices/studentProfile";
-import {fetchProfileCourseAction} from "../duck/slices/profileCourses";
+import studentProfile from "../redux/slices/studentProfile";
+import {fetchProfileCourseAction} from "../redux/slices/profileCourses";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
   position:absolute;
