@@ -10,12 +10,12 @@ import {CourseDisplayData, Order} from "./CourseTableUtils";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
 import {TablePagination} from "@material-ui/core";
 import '@rmwc/circular-progress/styles';
-import {RootState} from "../../duck/types";
 import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
-import {doSearchAction} from "../../duck/actions/search";
 import CourseTableRowPlaceholder from "./CourseTableRowPlaceholder";
-import {studentProfileAddShortlist, studentProfileRemoveShortlist} from "../../duck/actions/studentProfile";
+import {RootState} from "../../duck/store";
+import {doSearch} from "../../duck/slices/search";
+import studentProfile from "../../duck/slices/studentProfile";
 
 const Root = styled.div`
   width: 100%;
@@ -82,8 +82,8 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error, shortLis
     };
 
     const setShortList = (code: string, shortlist: boolean) => {
-        if (shortlist) addShortList(code);
-        else removeShortList(code);
+        if (shortlist) addShortList({code, index: null});
+        else removeShortList({code});
     };
 
     return (
@@ -129,17 +129,17 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error, shortLis
 }
 
 const mapState = (state: RootState) => ({
-    loading: state.searchResults.loading,
-    error: state.searchResults.error,
-    rows: state.searchResults.content,
-    pagination: state.searchResults.pagination,
+    loading: state.search.loading,
+    error: state.search.error,
+    rows: state.search.content,
+    pagination: state.search.pagination,
     shortList: state.studentProfile.content?.shortList
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    doSearchAction: doSearchAction,
-    addShortList: studentProfileAddShortlist,
-    removeShortList: studentProfileRemoveShortlist
+    doSearchAction: doSearch,
+    addShortList: studentProfile.actions.addShortlist,
+    removeShortList: studentProfile.actions.removeShortlist
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

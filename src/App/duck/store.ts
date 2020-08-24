@@ -1,11 +1,14 @@
-import thunk from "redux-thunk";
-import {applyMiddleware, createStore} from "redux";
-import rootReducer from "./reducers";
-import {composeWithDevTools} from "redux-devtools-extension";
+import {configureStore} from "@reduxjs/toolkit";
+import profileCourses from "./slices/profileCourses";
+import studentProfile from "./slices/studentProfile";
+import search from "./slices/search";
 
-const middleware = [thunk];
+export const store = configureStore({
+    reducer: {
+        profileCourses: profileCourses.reducer,
+        studentProfile: studentProfile.reducer,
+        search: search.reducer
+    }
+})
 
-// const store = createStore(rootReducer, applyMiddleware(...middleware))
-export const store = createStore(rootReducer, composeWithDevTools(
-    applyMiddleware(...middleware),
-));
+export type RootState = ReturnType<typeof store.getState>

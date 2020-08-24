@@ -8,11 +8,10 @@ import Drawer from "../components/Drawer";
 import TopNav from "../components/TopNav";
 import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
-import {RootState} from "../duck/types";
-import {CheckResults, CoopStream, CreateStudentProfileRequest, StudentProfile} from "../proto/courses";
-import {URL_BASE} from "../constants/api";
-import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
+import {CoopStream, CreateStudentProfileRequest} from "../proto/courses";
 import {CachedCourses} from "../utils";
+import {fetchStudentProfile} from "../duck/slices/studentProfile";
+import {RootState} from "../duck/store";
 
 const Container = styled.div`
       height: 100%;
@@ -90,7 +89,7 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    fetchStudentProfile: fetchStudentProfileAction
+    fetchStudentProfile: fetchStudentProfile
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

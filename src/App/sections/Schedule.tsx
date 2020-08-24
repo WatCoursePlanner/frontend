@@ -4,7 +4,7 @@ import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
 import '@rmwc/button/styles';
 import {connect, ConnectedProps} from "react-redux";
-import {RootState} from "../duck/types";
+import {RootState} from "../duck/store";
 import {bindActionCreators, Dispatch} from "redux";
 import {ScheduleShortList, TermList} from "../components/ScheduleList";
 
@@ -13,15 +13,10 @@ import '@rmwc/tooltip/styles';
 import Spacer from "../components/Spacer";
 import {DragEndParams, DragStartParams} from "smooth-dnd/dist/src/exportTypes";
 import {DropResult} from "react-smooth-dnd";
-import {
-    studentProfileAddCourse,
-    studentProfileAddShortlist,
-    studentProfileRemoveCourse,
-    studentProfileRemoveShortlist
-} from "../duck/actions/studentProfile";
 import {URL_BASE} from "../constants/api";
 import {CheckResults, FindSlotRequest} from "../proto/courses";
-import {fetchProfileCourseAction} from "../duck/actions/profileCourses";
+import studentProfile from "../duck/slices/studentProfile";
+import {fetchProfileCourseAction} from "../duck/slices/profileCourses";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
   position:absolute;
@@ -97,6 +92,7 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
     const [firstDrop, setFirstDrop] = useState(false)
 
     const onDragEnd = (result: DragEndParams) => {
+        setFirstDrop(false)
     }
 
     const onDropWithTerm = (dropResult: DropResult, termName: string) => {
@@ -104,17 +100,19 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
         if (dropResult.removedIndex === dropResult.addedIndex) return
         if (dropResult.removedIndex !== null) {
             if (termName === "shortlist") removeShortList(dropResult.payload)
-            else removeCourseFromList(termName, dropResult.removedIndex)
+            else removeCourseFromList({termName, index: dropResult.removedIndex})
         }
         if (dropResult.addedIndex !== null) {
-            if (termName === "shortlist") addShortList(dropResult.payload, dropResult.addedIndex)
-            else addCourseToList(termName, dropResult.addedIndex, dropResult.payload)
+            if (termName === "shortlist") addShortList({code: dropResult.payload, index: dropResult.addedIndex})
+            else addCourseToList({termName, index: dropResult.addedIndex, code: dropResult.payload})
         }
         // Don't update if both are not null, i.e. move to the same column
         if (dropResult.removedIndex === null || dropResult.addedIndex === null) {
+            // Update on the second drop callback (i.e. when firstDrop === true)
             if (!firstDrop) {
                 setFirstDrop(true)
             } else {
+                // FIXME: the state might not be changed here yet.
                 checkCourses(studentProfile!)
                 setFirstDrop(false)
             }
@@ -177,10 +175,10 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    addCourseToList: studentProfileAddCourse,
-    removeCourseFromList: studentProfileRemoveCourse,
-    addShortList: studentProfileAddShortlist,
-    removeShortList: studentProfileRemoveShortlist,
+    addCourseToList: studentProfile.actions.addCourse,
+    removeCourseFromList: studentProfile.actions.removeCourse,
+    addShortList: studentProfile.actions.addShortlist,
+    removeShortList: studentProfile.actions.removeShortlist,
     checkCourses: fetchProfileCourseAction
 }, dispatch)
 

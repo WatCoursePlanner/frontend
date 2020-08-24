@@ -3,17 +3,13 @@ import {AppContainer} from "react-hot-loader";
 import {Container} from "@material-ui/core";
 import TranscriptReader from "../components/TranscriptReader";
 import {CreateStudentProfileRequest} from "../proto/courses";
-import {connect, ConnectedProps} from "react-redux";
-import {RootState} from "../duck/types";
-import {bindActionCreators, Dispatch} from "redux";
-import {fetchStudentProfileAction} from "../duck/actions/studentProfile";
+import {useDispatch} from "react-redux";
+import {fetchStudentProfile} from "../duck/slices/studentProfile";
 
-
-type WelcomeProps = ConnectedProps<typeof connector>
-
-const Welcome = ({fetchStudentProfile}: WelcomeProps) => {
+const Welcome = () => {
+    const dispatch = useDispatch()
     const importCallback = (request: CreateStudentProfileRequest) => {
-        fetchStudentProfile(request)
+        dispatch(fetchStudentProfile(request))
     }
     return (
         <Container>
@@ -24,13 +20,4 @@ const Welcome = ({fetchStudentProfile}: WelcomeProps) => {
     );
 };
 
-const mapState = (state: RootState) => ({
-})
-
-const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    fetchStudentProfile: fetchStudentProfileAction
-}, dispatch)
-
-const connector = connect(mapState, mapDispatch)
-
-export default connector(Welcome)
+export default Welcome

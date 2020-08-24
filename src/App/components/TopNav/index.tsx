@@ -7,8 +7,6 @@ import styled from "styled-components";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
 import AutoCompleteSearchBar, {AutoCompleteCallbackProps, AutoCompleteOption} from "../AutoCompleteSearchBar"
 import DegreeRequirementPopup, {DegreeRequirementPopupProps} from "./DegreeRequirementPopup";
-import {RootState} from "../../duck/types";
-import {connect, ConnectedProps} from "react-redux";
 import {CourseInfo} from "../../proto/courses";
 import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
 import Popup from "../Popup";
@@ -42,8 +40,7 @@ type TopNavProps = {
 }
 
 const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAutoCompleteSelect, issues}:
-                    TopNavProps & AutoCompleteCallbackProps & SearchBarProps & DegreeRequirementPopupProps &
-                    ConnectedProps<typeof connector>) => {
+                    TopNavProps & AutoCompleteCallbackProps & SearchBarProps & DegreeRequirementPopupProps) => {
     const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
     const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
 
@@ -113,8 +110,4 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
     )
 }
 
-const mapState = (state: RootState) => ({})
-
-const connector = connect(mapState)
-
-export default connector(TopNav)
+export default TopNav
