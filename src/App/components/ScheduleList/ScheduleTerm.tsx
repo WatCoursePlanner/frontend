@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Container} from 'react-smooth-dnd';
 import {CheckResults, CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
 import ScheduleCourse from "./ScheduleCourse";
@@ -11,40 +11,83 @@ type ScheduleTermProps = {
     showYear: boolean,
     term: Schedule_TermSchedule,
     courses: { [courseCode: string]: CourseInfo }
-    index: number,
     options: ContainerOptions,
     onDropWithTerm: (result: DropResult, termName: string) => void,
     issues: CheckResults | null
 }
 
-const RootContainer = styled.div`
-    margin-left: 56px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-`
-
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ scrolled: number }>`
     flex-grow: 1;
-    min-width: 300px;
-    overflow-y: hidden;
-    margin-left: -16px;
-    margin-top: -4px;
-    padding: 8px 0 16px 0;
-    ${cleanScrollBar}
+    overflow-y: auto;
+    padding: 5px 0 16px 0;
+    ${cleanScrollBar};
+    
+    &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 8px;
+        right: 12px;
+        height: 8px;
+        z-index: 100;
+        background-color: transparent;
+        box-shadow: inset 0 4px 4px 0 rgba(0,0,0,.14), inset 0 4px 2px -2px rgba(0,0,0,.12);
+        transition: opacity .2s;
+        opacity: ${props => props.scrolled ? 1 : 0};
+    }
+    
+    &:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 12px;
+        width: 8px;
+        height: 8px;
+        background-image: linear-gradient(to left,white,rgba(255,255,255,0));
+        z-index: 100;
+    }
     
     :hover {
       overflow-y: auto;
     }
     
     .smooth-dnd-container {
-      min-height: 40vh;
+        position: unset;
+        min-height: 40vh;
+        
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 8px;
+            width: 8px;
+            height: 8px;
+            background-image: linear-gradient(to right,white,rgba(255,255,255,0));
+            z-index: 100;
+        }
     }
     
     .smooth-dnd-draggable-wrapper {
       overflow: visible !important;
       background-color: transparent;
     }
+`
+
+const ContainerWrapper = styled.div`
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    min-width: 300px;
+    margin-top: -4px;
+    margin-left: -16px;
+`
+
+const RootContainer = styled.div`
+    margin-left: 56px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 `
 
 const Year = styled.span`
@@ -71,10 +114,20 @@ const Row = styled.div`
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    margin-bottom: 2vh;
+    margin-bottom: 16px;
+    min-height: 24px;
 `
 
-const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, issues}: ScheduleTermProps) => {
+const ScheduleTerm = ({term, courses, showYear, options, onDropWithTerm, issues}: ScheduleTermProps) => {
+    const [scrolled, setScrolled] = useState(false)
+    const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+        if (e.currentTarget.scrollTop > 0) {
+            if (!scrolled) setScrolled(true)
+        } else {
+            if (scrolled) setScrolled(false)
+        }
+    }
+
     return (
         <RootContainer>
             <Year>{showYear ? term.year : ''}</Year>
@@ -82,7 +135,8 @@ const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, 
                 <TermName>{term.term.toString().toLowerCase()}</TermName>
                 <TermCode>{term.termName}</TermCode>
             </Row>
-            <StyledContainer>
+            <ContainerWrapper>
+            <StyledContainer scrolled={scrolled ? 1 : 0} onScroll={handleScroll}>
                 <Container groupName={'terms'}
                            dropPlaceholder={{className: 'drop-placeholder'}}
                            getChildPayload={idx => term.courseCodes[idx]}
@@ -95,6 +149,7 @@ const ScheduleTerm = ({term, index, courses, showYear, options, onDropWithTerm, 
                     ))}
                 </Container>
             </StyledContainer>
+            </ContainerWrapper>
         </RootContainer>
     )
 }

@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useRef, useState} from "react";
 import styled from "styled-components";
 import {Card, CardActionIcon, CardActionIcons, CardActions, CardProps} from "@rmwc/card";
 
@@ -13,7 +13,7 @@ import '@rmwc/tooltip/styles';
 import {Requisite, RequisiteChecklist, RequisiteGroup, RequisiteGroupChecklist} from "../Requisite";
 import {RequisiteHelper} from "../../utils";
 import {useDetectClickOutside} from "../../hooks";
-import {cleanScrollBar, cleanScrollBarWithWhiteBorder} from "../../constants/styles";
+import {cleanScrollBarWithWhiteBorder} from "../../constants/styles";
 
 type CourseDetailProps = {
     course: CourseInfo | null,
@@ -21,6 +21,7 @@ type CourseDetailProps = {
 }
 
 const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement>>`
+    position: relative;
     max-height: 80vh;
     min-width: 300px;
     background-color: white;
@@ -43,12 +44,26 @@ const CourseName = styled.span`
     margin-top: 6px;
 `
 
-const CardContainer = styled.div`
+const CardContainer = styled.div<{ scrolled: number }>`
     display: flex;
     flex-direction: column;
     padding: 18px 12px;
     overflow-y: auto;
-    ${cleanScrollBarWithWhiteBorder}
+    ${cleanScrollBarWithWhiteBorder};
+    
+    &:before {
+        content: "";
+        position: absolute;
+        top: 52px;
+        left: 0;
+        right: 0;
+        height: 8px;
+        z-index: 505;
+        background-color: transparent;
+        box-shadow: inset 0 2px 2px 0 rgba(0,0,0,.12);
+        transition: opacity .2s;
+        opacity: ${props => props.scrolled ? 1 : 0};
+    }
 `
 
 const TitleContainer = styled.div`
@@ -91,6 +106,15 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
     const prerequisites = RequisiteHelper.getPreRequisite(course);
     const antirequisites = RequisiteHelper.getAntiRequisite(course);
 
+    const [scrolled, setScrolled] = useState(false)
+    const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+        if (e.currentTarget.scrollTop > 0) {
+            if (!scrolled) setScrolled(true)
+        } else {
+            if (scrolled) setScrolled(false)
+        }
+    }
+
     const wrapperRef = useRef(null);
     useDetectClickOutside(wrapperRef, onDismiss);
 
@@ -114,7 +138,7 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
                     </Tooltip>
                 </CardActionIcons>
             </CardActions>
-            <CardContainer>
+            <CardContainer scrolled={scrolled ? 1 : 0} onScroll={handleScroll}>
                 <List nonInteractive={true}>
                     <TitleContainer>
                         <CourseCode>
