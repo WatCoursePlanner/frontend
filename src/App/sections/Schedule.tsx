@@ -112,8 +112,7 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
             if (!firstDrop) {
                 setFirstDrop(true)
             } else {
-                // FIXME: the state might not be changed here yet.
-                checkCourses(studentProfile!)
+                checkCourses(null)
                 setFirstDrop(false)
             }
         }
