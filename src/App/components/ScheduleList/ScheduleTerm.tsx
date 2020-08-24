@@ -5,6 +5,7 @@ import ScheduleCourse from "./ScheduleCourse";
 import styled from "styled-components";
 import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
 import {CachedCourses} from "../../utils";
+import {cleanScrollBar} from "../../constants/styles";
 
 type ScheduleTermProps = {
     showYear: boolean,
@@ -25,24 +26,15 @@ const RootContainer = styled.div`
 
 const StyledContainer = styled.div`
     flex-grow: 1;
-    min-width: 296px;
-    overflow-y: auto;
+    min-width: 300px;
+    overflow-y: hidden;
     margin-left: -16px;
     margin-top: -4px;
     padding: 8px 0 16px 0;
-    scrollbar-color: #ececec transparent;
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent; 
-    }
-    ::-webkit-scrollbar-thumb {
-      border-radius: 4px;
-      background: #ececec; 
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #e0e0e0; 
+    ${cleanScrollBar}
+    
+    :hover {
+      overflow-y: auto;
     }
     
     .smooth-dnd-container {

@@ -22,7 +22,7 @@ const RootContainer = styled.div`
 
 const StyledContainer = styled.div`
     flex-grow: 1;
-    min-width: 296px;
+    min-width: 300px;
     overflow-y: auto;
     margin-left: -16px;
     margin-top: -4px;

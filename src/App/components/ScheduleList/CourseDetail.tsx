@@ -13,6 +13,7 @@ import '@rmwc/tooltip/styles';
 import {Requisite, RequisiteChecklist, RequisiteGroup, RequisiteGroupChecklist} from "../Requisite";
 import {RequisiteHelper} from "../../utils";
 import {useDetectClickOutside} from "../../hooks";
+import {cleanScrollBar, cleanScrollBarWithWhiteBorder} from "../../constants/styles";
 
 type CourseDetailProps = {
     course: CourseInfo | null,
@@ -47,6 +48,7 @@ const CardContainer = styled.div`
     flex-direction: column;
     padding: 18px 12px;
     overflow-y: auto;
+    ${cleanScrollBarWithWhiteBorder}
 `
 
 const TitleContainer = styled.div`
