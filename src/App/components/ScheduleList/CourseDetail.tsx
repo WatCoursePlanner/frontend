@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {useRef} from "react";
 import styled from "styled-components";
 import {Card, CardActionIcon, CardActionIcons, CardActions, CardProps} from "@rmwc/card";
 
@@ -12,21 +12,7 @@ import {If, Then} from 'react-if'
 import '@rmwc/tooltip/styles';
 import {Requisite, RequisiteChecklist, RequisiteGroup, RequisiteGroupChecklist} from "../Requisite";
 import {RequisiteHelper} from "../../utils";
-
-function useDetectClickOutside(ref: React.MutableRefObject<any>, callback: () => void) {
-    useEffect(() => {
-        function handleClickOutside(event: any) {
-            if (ref.current && !ref.current.contains(event.target)) {
-                callback()
-            }
-        }
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [ref]);
-}
+import {useDetectClickOutside} from "../../hooks";
 
 type CourseDetailProps = {
     course: CourseInfo | null,
