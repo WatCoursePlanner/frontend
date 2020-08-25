@@ -42,6 +42,7 @@ type MyDrawerProps = {
 
 const MyDrawer = ({open, location, shadow}: MyDrawerProps) => (
   <StyledDrawer
+      className={'unselectable'}
       shadow={shadow ? 1 : 0}
       dismissible
       open={open}>

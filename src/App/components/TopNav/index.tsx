@@ -47,7 +47,7 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
     return (
         <StyledAppBar fixed theme={['surface']}>
             <TopAppBarRow>
-                <TopAppBarSection alignStart>
+                <TopAppBarSection alignStart className={'unselectable'}>
                     <AppBarButton
                         icon="menu"
                         onMouseDown={(e) => {
@@ -85,9 +85,9 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
                             <InfoButton
                                 className={"material-icons-outlined"}
                                 icon="info"
-                                onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>\
+                                onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>
                             {issues && issues.length > 0 ?
-                                <Badge style={{marginRight: 40}} inset="0.75rem" label={issues.length}/> : null}
+                                <Badge className={'unselectable'} style={{marginRight: 40}} inset="0.75rem" label={issues.length}/> : null}
                         </BadgeAnchor>
                     </MenuSurfaceAnchor>
                     <MenuSurfaceAnchor>
