@@ -68,7 +68,7 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
                             return {
                                 title: course.code,
                                 subTitle: course.name,
-                                weight: 0 // TODO assign weight
+                                weight: course.ratingsCount
                             }
                         })}
                     />
