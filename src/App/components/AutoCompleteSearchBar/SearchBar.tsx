@@ -5,6 +5,7 @@ import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-butto
 import Paper from "@material-ui/core/Paper";
 import {AutocompleteRenderInputParams} from "@material-ui/lab";
 import {Tooltip} from "@material-ui/core";
+import {If, Then} from "react-if";
 
 const StyledInputBase = styled(InputBase)`
       margin-left: 16px;
@@ -54,14 +55,18 @@ const SearchBar = ({autoCompleteRenderProps, searchText, setSearchText, searchCa
                     }
                 }}
             />
-            <Tooltip title={'Clear'}>
-                <AppBarButton
-                    className={searchText === '' ? 'hidden' : ''}
-                    icon={'close'}
-                    onClick={() => {
-                        setSearchText('')
-                    }}/>
-            </Tooltip>
+            <If condition={searchText !== ''}>
+                <Then>
+                    <Tooltip
+                        title={'Clear'}>
+                        <AppBarButton
+                            icon={'close'}
+                            onClick={() => {
+                                setSearchText('')
+                            }}/>
+                    </Tooltip>
+                </Then>
+            </If>
         </StyledSearchBar>
     )
 }
