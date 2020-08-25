@@ -6,6 +6,8 @@ import styled from "styled-components";
 
 import '@rmwc/drawer/styles';
 import '@rmwc/list/styles';
+import {store} from "../../redux/store";
+import ui from "../../redux/slices/ui";
 
 const StyledDrawer = styled(Drawer)<DrawerProps & React.HTMLProps<HTMLDivElement> & { shadow: number }>`
     width: 276px;
@@ -49,7 +51,9 @@ const MyDrawer = ({open, location, shadow}: MyDrawerProps) => (
     <DrawerContent>
       <List>
         {['schedule', 'discover'].map((route, index) => (
-          <Link key={route} to={'/home/' + route} style={{textDecoration: 'none'}}>
+          <Link key={route} to={'/home/' + route} style={{textDecoration: 'none'}} onClick={
+            () => store.dispatch(ui.actions.setDrawerShadow(false))
+          }>
             <CustomListItem
               activated={location?.pathname === '/home/' + route}>
               <ListItemGraphic
