@@ -24,7 +24,6 @@ const TermList = ({issues, studentProfile, profileCourses, options, onDropWithTe
                 key={term.termName}
                 issues={issues?issues[term.termName]:null}
                 term={term}
-                index={index}
                 courses={profileCourses}
                 showYear={showYear}
                 options={options}

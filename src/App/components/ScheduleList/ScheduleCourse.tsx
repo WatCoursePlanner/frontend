@@ -7,7 +7,6 @@ import '@rmwc/ripple/styles';
 import styled from "styled-components";
 import Popper from "@material-ui/core/Popper";
 import CourseDetail from "./CourseDetail";
-import {CachedCourses} from "../../utils";
 import {Fade} from "@material-ui/core";
 import {PopperProps} from "@material-ui/core/Popper/Popper";
 import {CourseInfo} from "../../proto/courses";

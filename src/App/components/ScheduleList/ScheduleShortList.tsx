@@ -55,7 +55,8 @@ const StyledContainer = styled.div`
 const Title = styled.span`
     font-size: 20px;
     font-weight: 600;
-    margin: 5vh 0 2vh 0;
+    margin: 5vh 0 16px 0;
+    min-height: 24px;
 `
 
 const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortListProps) => {
