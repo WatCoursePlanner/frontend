@@ -29,11 +29,11 @@ const StyledContainer = styled.div<{ scrolled: number }>`
         left: 8px;
         right: 12px;
         height: 8px;
-        z-index: 100;
         background-color: transparent;
         box-shadow: inset 0 4px 4px 0 rgba(0,0,0,.14), inset 0 4px 2px -2px rgba(0,0,0,.12);
         transition: opacity .2s;
         opacity: ${props => props.scrolled ? 1 : 0};
+        z-index: 2;
     }
     
     &:after {
@@ -44,7 +44,7 @@ const StyledContainer = styled.div<{ scrolled: number }>`
         width: 8px;
         height: 8px;
         background-image: linear-gradient(to left,white,rgba(255,255,255,0));
-        z-index: 100;
+        z-index: 2;
     }
     
     :hover {
@@ -63,7 +63,7 @@ const StyledContainer = styled.div<{ scrolled: number }>`
             width: 8px;
             height: 8px;
             background-image: linear-gradient(to right,white,rgba(255,255,255,0));
-            z-index: 100;
+            z-index: 2;
         }
     }
     
@@ -87,7 +87,6 @@ const RootContainer = styled.div`
     height: 100%;
     display: flex;
     flex-direction: column;
-    position: relative;
 `
 
 const Year = styled.span`

@@ -4,7 +4,7 @@ import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
 import '@rmwc/button/styles';
 import {connect, ConnectedProps} from "react-redux";
-import {RootState} from "../redux/store";
+import {RootState, store} from "../redux/store";
 import {bindActionCreators, Dispatch} from "redux";
 import {ScheduleShortList, TermList} from "../components/ScheduleList";
 
@@ -17,6 +17,7 @@ import {URL_BASE} from "../constants/api";
 import {CheckResults, FindSlotRequest} from "../proto/courses";
 import studentProfile from "../redux/slices/studentProfile";
 import {fetchProfileCourseAction} from "../redux/slices/profileCourses";
+import ui from "../redux/slices/ui";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
   position:absolute;
@@ -54,7 +55,7 @@ const ScheduleContainer = styled.div`
     display: flex;
     flex-grow: 1;
     align-items: center;
-    overflow-x: auto;
+    overflow-x: hidden;
     position: relative;
     width: auto;
 `
@@ -90,6 +91,14 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
     const [shortlistOpen, setShortlistOpen] = useState(false)
     const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
     const [firstDrop, setFirstDrop] = useState(false)
+
+    const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+        if (e.currentTarget.scrollLeft > 0) {
+            if (!store.getState().ui.drawerShadow) store.dispatch(ui.actions.setDrawerShadow(true))
+        } else {
+            if (store.getState().ui.drawerShadow) store.dispatch(ui.actions.setDrawerShadow(false))
+        }
+    }
 
     const onDragEnd = (result: DragEndParams) => {
         setFirstDrop(false)
@@ -138,7 +147,7 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
     return (
         <OuterContainer>
             <ScheduleContainer>
-                <ScheduleListContainer>
+                <ScheduleListContainer onScroll={handleScroll}>
                     <Spacer minWidth={'16px'} minHeight={'100%'}/>
                     <TermList
                         profileCourses={profileCourses}
@@ -178,7 +187,7 @@ const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
     removeCourseFromList: studentProfile.actions.removeCourse,
     addShortList: studentProfile.actions.addShortlist,
     removeShortList: studentProfile.actions.removeShortlist,
-    checkCourses: fetchProfileCourseAction
+    checkCourses: fetchProfileCourseAction,
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

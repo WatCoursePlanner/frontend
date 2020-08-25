@@ -58,7 +58,7 @@ const CardContainer = styled.div<{ scrolled: number }>`
         left: 0;
         right: 0;
         height: 8px;
-        z-index: 505;
+        z-index: 5;
         background-color: transparent;
         box-shadow: inset 0 2px 2px 0 rgba(0,0,0,.12);
         transition: opacity .2s;
