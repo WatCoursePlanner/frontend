@@ -10,6 +10,7 @@ import CourseDetail from "./CourseDetail";
 import {Fade} from "@material-ui/core";
 import {PopperProps} from "@material-ui/core/Popper/Popper";
 import {CourseInfo} from "../../proto/courses";
+import {RequisiteHelper} from "../../utils";
 
 type ScheduleCourseProps = {
     course: CourseInfo | null
@@ -62,6 +63,14 @@ const CourseCode = styled.span`
     font-size: 18px;
     font-weight: 500
 `
+
+const Error = styled.span`
+    float: right;
+    color: #FF0000;
+    font-family: "Material Icons";
+    font-size: 22px;
+`
+
 const CourseName = styled.span`
     font-size: 14px;
     margin-top: 6px;
@@ -91,6 +100,13 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
         setActive(!active)
     }
 
+    const allConditionsMet = (() => {
+        if (!course) return true
+        const prerequisites = RequisiteHelper.getPreRequisite(course)
+        const antirequisites = RequisiteHelper.getAntiRequisite(course)
+        return prerequisites.every((r) => r.met) && antirequisites.every((r) => r.met)
+    })()
+
     return (
         <Draggable>
             <RootContainer>
@@ -98,7 +114,7 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
                     <StyledCard
                         outlined
                         ref={cardRef}
-                        className={'unselectable'}
+                        className={`unselectable${!allConditionsMet ? ' unmet-requisites' : ''}`}
                         id={'course-card'}
                         tabIndex={0}
                         active={active ? 1 : 0}
@@ -117,6 +133,7 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
                         <CardContainer>
                             <CourseCode>
                                 {course?.code ?? ''}
+                                {!allConditionsMet ? (<Error>error</Error>) : null}
                             </CourseCode>
                             <CourseName>
                                 {course?.name ?? ''}
