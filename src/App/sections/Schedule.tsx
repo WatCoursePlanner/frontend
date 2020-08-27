@@ -147,7 +147,7 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
     return (
         <OuterContainer>
             <ScheduleContainer>
-                <ScheduleListContainer onScroll={handleScroll}>
+                <ScheduleListContainer id={'schedule-list'} onScroll={handleScroll}>
                     <Spacer minWidth={'16px'} minHeight={'100%'}/>
                     <TermList
                         profileCourses={profileCourses}
