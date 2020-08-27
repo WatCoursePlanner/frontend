@@ -79,6 +79,16 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
     const toggleHover = () => setHovered(!hovered);
     const cardRef = useRef();
 
+    const timerRef: any = useRef(null);
+
+    // Width of the edge within which the horizontal scrolling
+    // will be triggered while dragging
+    const scrollEdgeSize = 150;
+
+    // # of pixels to scroll horizontally while dragging,
+    // determines the scroll speed
+    const maxScrollStep = 20;
+
     const handleSelectCourse = () => {
         setActive(true)
     }
@@ -90,6 +100,89 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
     const toggleActive = () => {
         setActive(!active)
     }
+
+    // The following functions implements the horizontal
+    // scrolling of schedule list while dragging courses
+    const handleMouseDown = () => {
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+    };
+
+    // Scroll the element based on mouse movement
+    const handleMouseMove = (e: any) => {
+        const element: HTMLElement | null = document.getElementById('schedule-list');
+        if (!element) return;
+
+        // X coordinate of the mouse within the scroll view
+        const viewportX = e.clientX - element.getBoundingClientRect().left;
+        // Visible width of the scroll view
+        const viewportWidth = element.getBoundingClientRect().width;
+
+        const edgeLeft = scrollEdgeSize;
+        const edgeRight = (viewportWidth - scrollEdgeSize);
+
+        const isInLeftEdge = (viewportX < edgeLeft);
+        const isInRightEdge = (viewportX > edgeRight);
+
+        if (!(isInLeftEdge || isInRightEdge)) {
+            clearTimeout(timerRef.current);
+            return;
+        }
+
+        // Entire width of the scroll view, including overflowed part
+        const elementWidth = element.scrollWidth
+        // Available space for scrolling
+        const maxScrollX = (elementWidth - viewportWidth);
+
+        const adjustWindowScroll = () => {
+            if (!element) return;
+            const currentScrollX = element.scrollLeft;
+            const canScrollLeft = (currentScrollX > 0);
+            const canScrollRight = (currentScrollX < maxScrollX);
+
+            let nextScrollX: number = currentScrollX
+
+            // Calculate the position to scroll to.
+            // Scroll speed is proportionate to how close
+            // the mouse is towards the edges
+            if (isInLeftEdge && canScrollLeft) {
+                const intensity = ((edgeLeft - viewportX) / scrollEdgeSize);
+                nextScrollX = (nextScrollX - (maxScrollStep * intensity));
+            } else if (isInRightEdge && canScrollRight) {
+                const intensity = ((viewportX - edgeRight) / scrollEdgeSize);
+                nextScrollX = (nextScrollX + (maxScrollStep * intensity));
+            }
+
+            // Bounds
+            nextScrollX = Math.max(0, Math.min(maxScrollX, nextScrollX));
+
+            if (nextScrollX !== currentScrollX) {
+                element.scrollTo(nextScrollX, element.scrollTop);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        const checkForWindowScroll = () => {
+            clearTimeout(timerRef.current);
+
+            // If possible, keep scrolling when the mouse has
+            // stopped moving but is still within range,
+            // updates every 10ms
+            if (adjustWindowScroll()) {
+                timerRef.current = setTimeout(checkForWindowScroll, 10);
+            }
+        };
+
+        checkForWindowScroll()
+    }
+
+    const handleMouseUp = () => {
+        clearTimeout(timerRef.current)
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+    };
 
     return (
         <Draggable>
@@ -103,6 +196,7 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
                         tabIndex={0}
                         active={active ? 1 : 0}
                         hovered={hovered ? 1 : 0}
+                        onMouseDown={handleMouseDown}
                         onClick={handleSelectCourse}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
