@@ -52,19 +52,8 @@ const StyledContainer = styled.div<{ scrolled: number }>`
     }
     
     .smooth-dnd-container {
-        position: unset;
+        position: relative;
         min-height: 40vh;
-        
-        &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 8px;
-            width: 8px;
-            height: 8px;
-            background-image: linear-gradient(to right,white,rgba(255,255,255,0));
-            z-index: 2;
-        }
     }
     
     .smooth-dnd-draggable-wrapper {
@@ -80,6 +69,17 @@ const ContainerWrapper = styled.div`
     min-width: 300px;
     margin-top: -4px;
     margin-left: -16px;
+    
+    &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 8px;
+        width: 8px;
+        height: 8px;
+        background-image: linear-gradient(to right,white,rgba(255,255,255,0));
+        z-index: 3;
+    }
 `
 
 const RootContainer = styled.div`
