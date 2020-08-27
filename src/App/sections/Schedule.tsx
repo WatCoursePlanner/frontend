@@ -87,8 +87,19 @@ const StyledFab = styled(Fab)<FabProps>`
 
 type ScheduleProps = ConnectedProps<typeof connector>
 
-const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCourseToList, removeCourseFromList, addShortList, removeShortList}: ScheduleProps) => {
-    const [shortlistOpen, setShortlistOpen] = useState(false)
+const Schedule = (
+    {
+        studentProfile,
+        loading,
+        checkCourses,
+        profileCourses,
+        addCourseToList,
+        removeCourseFromList,
+        addShortList,
+        removeShortList,
+        shortlistOpen,
+        setShortlistOpen
+    }: ScheduleProps) => {
     const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
     const [firstDrop, setFirstDrop] = useState(false)
 
@@ -179,7 +190,8 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
 const mapState = (state: RootState) => ({
     studentProfile: state.studentProfile.content,
     profileCourses: state.profileCourses.courses,
-    loading: state.studentProfile.loading
+    loading: state.studentProfile.loading,
+    shortlistOpen: state.ui.shortlistOpen,
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
@@ -188,6 +200,7 @@ const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
     addShortList: studentProfile.actions.addShortlist,
     removeShortList: studentProfile.actions.removeShortlist,
     checkCourses: fetchProfileCourseAction,
+    setShortlistOpen: ui.actions.setShortlistOpen,
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

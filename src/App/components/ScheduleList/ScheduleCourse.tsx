@@ -10,8 +10,10 @@ import CourseDetail from "./CourseDetail";
 import {Fade} from "@material-ui/core";
 import {PopperProps} from "@material-ui/core/Popper/Popper";
 import {CourseInfo} from "../../proto/courses";
+import {RootState} from "../../redux/store";
+import {connect, ConnectedProps} from "react-redux";
 
-type ScheduleCourseProps = {
+type ScheduleCourseProps = ConnectedProps<typeof connector> & {
     course: CourseInfo | null
 }
 
@@ -73,7 +75,7 @@ const StyledPopper = styled(Popper)<PopperProps>`
     max-height: 80vh;
 `
 
-const ScheduleCourse = ({course}: ScheduleCourseProps) => {
+const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
     const [hovered, setHovered] = useState(false);
     const [active, setActive] = useState(false);
     const toggleHover = () => setHovered(!hovered);
@@ -137,8 +139,11 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
         const adjustWindowScroll = () => {
             if (!element) return;
             const currentScrollX = element.scrollLeft;
-            const canScrollLeft = (currentScrollX > 0);
-            const canScrollRight = (currentScrollX < maxScrollX);
+            let canScrollLeft = (currentScrollX > 0);
+            let canScrollRight = (currentScrollX < maxScrollX);
+
+            // Disable scrolling right when shortlist is open
+            if (shortlistOpen) canScrollRight = false;
 
             let nextScrollX: number = currentScrollX
 
@@ -248,4 +253,11 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
     )
 }
 
-export default ScheduleCourse
+
+const mapState = (state: RootState) => ({
+    shortlistOpen: state.ui.shortlistOpen,
+})
+
+const connector = connect(mapState)
+
+export default connector(ScheduleCourse)
