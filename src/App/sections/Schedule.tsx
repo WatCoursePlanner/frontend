@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Button, ButtonHTMLProps, ButtonProps} from "@rmwc/button";
 import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
@@ -111,6 +111,38 @@ const Schedule = (
         }
     }
 
+    const handleWheel = (e: any) => {
+        // Ignore touchpad scrolls
+        // May not work on Firefox (only scrolls with horizontal component are ignores)
+        // see https://stackoverflow.com/a/56948026/7939451
+        const isTouchPad = e.wheelDeltaY ? (e.wheelDeltaY === -3 * e.deltaY) : false
+        if (e.deltaX || isTouchPad) return;
+
+        // Ignore if is hovering over a vertically scrollable course-list
+        const courseListElements: Element[] = Array.from(document.getElementsByClassName("course-list"))
+        if (courseListElements.some((element) => {
+            return element.contains(e.target) && element.scrollHeight > element.clientHeight
+        })) return
+
+        const element: HTMLElement | null = document.getElementById('schedule-list')
+        if (!element) return;
+
+        // Move the board 80 pixes on every wheel event
+        if (Math.sign(e.deltaY) === 1) {
+            element.scrollTo(element.scrollLeft + 80, 0);
+        } else if (Math.sign(e.deltaY) === -1) {
+            element.scrollTo(element.scrollLeft - 80, 0);
+        }
+    };
+
+    useEffect(() => {
+        const element = document.getElementById('schedule-list')!!;
+        element.addEventListener("wheel", handleWheel);
+        return () => {
+            element.removeEventListener("wheel", handleWheel);
+        }
+    }, [])
+
     const onDragEnd = (result: DragEndParams) => {
         setFirstDrop(false)
     }
@@ -158,7 +190,9 @@ const Schedule = (
     return (
         <OuterContainer>
             <ScheduleContainer>
-                <ScheduleListContainer id={'schedule-list'} onScroll={handleScroll}>
+                <ScheduleListContainer
+                    id={'schedule-list'}
+                    onScroll={handleScroll}>
                     <Spacer minWidth={'16px'} minHeight={'100%'}/>
                     <TermList
                         profileCourses={profileCourses}

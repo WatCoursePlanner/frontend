@@ -101,6 +101,7 @@ const CourseList = ({term, onDropWithTerm, options, courses, shortlist, issues}:
     return (
         <CourseListWrapper>
             <StyledContainer
+                className={'course-list'}
                 scrolled={scrolled ? 1 : 0}
                 onScroll={handleScroll}>
                 <Container
