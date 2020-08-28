@@ -12,6 +12,7 @@ import {PopperProps} from "@material-ui/core/Popper/Popper";
 import {CourseInfo} from "../../proto/courses";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
+import {RequisiteHelper} from "../../utils";
 
 type ScheduleCourseProps = ConnectedProps<typeof connector> & {
     course: CourseInfo | null
@@ -64,6 +65,14 @@ const CourseCode = styled.span`
     font-size: 18px;
     font-weight: 500
 `
+
+const Error = styled.span`
+    float: right;
+    color: #FF0000;
+    font-family: "Material Icons";
+    font-size: 22px;
+`
+
 const CourseName = styled.span`
     font-size: 14px;
     margin-top: 6px;
@@ -189,6 +198,12 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
     };
+    const allConditionsMet = (() => {
+        if (!course) return true
+        const prerequisites = RequisiteHelper.getPreRequisite(course)
+        const antirequisites = RequisiteHelper.getAntiRequisite(course)
+        return prerequisites.every((r) => r.met) && antirequisites.every((r) => r.met)
+    })()
 
     return (
         <Draggable>
@@ -197,7 +212,7 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
                     <StyledCard
                         outlined
                         ref={cardRef}
-                        className={'unselectable'}
+                        className={`unselectable${!allConditionsMet ? ' unmet-requisites' : ''}`}
                         id={'course-card'}
                         tabIndex={0}
                         active={active ? 1 : 0}
@@ -217,6 +232,7 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
                         <CardContainer>
                             <CourseCode>
                                 {course?.code ?? ''}
+                                {!allConditionsMet ? (<Error>error</Error>) : null}
                             </CourseCode>
                             <CourseName>
                                 {course?.name ?? ''}
