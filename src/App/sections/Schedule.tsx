@@ -113,10 +113,10 @@ const Schedule = (
 
     const handleWheel = (e: any) => {
         // Ignore touchpad scrolls
-        // May not work on Firefox (only scrolls with horizontal component are ignores)
+        // May not work on Firefox (only the scrolls with horizontal (X) component are ignored)
         // see https://stackoverflow.com/a/56948026/7939451
         const isTouchPad = e.wheelDeltaY ? (e.wheelDeltaY === -3 * e.deltaY) : false
-        if (e.deltaX || isTouchPad) return;
+        if (e.deltaX || isTouchPad) return
 
         // Ignore if is hovering over a vertically scrollable course-list
         const courseListElements: Element[] = Array.from(document.getElementsByClassName("course-list"))
@@ -129,17 +129,18 @@ const Schedule = (
 
         // Move the board 80 pixes on every wheel event
         if (Math.sign(e.deltaY) === 1) {
-            element.scrollTo(element.scrollLeft + 80, 0);
+            element.scrollTo(element.scrollLeft + 80, 0)
         } else if (Math.sign(e.deltaY) === -1) {
-            element.scrollTo(element.scrollLeft - 80, 0);
+            element.scrollTo(element.scrollLeft - 80, 0)
         }
     };
 
     useEffect(() => {
-        const element = document.getElementById('schedule-list')!!;
-        element.addEventListener("wheel", handleWheel);
+        const element = document.getElementById('schedule-list')!!
+        element.addEventListener("wheel", handleWheel)
         return () => {
-            element.removeEventListener("wheel", handleWheel);
+            element.removeEventListener("wheel", handleWheel)
+            store.dispatch(ui.actions.setDrawerShadow(false))
         }
     }, [])
 

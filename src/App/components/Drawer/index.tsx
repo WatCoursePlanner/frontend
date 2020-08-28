@@ -51,9 +51,7 @@ const MyDrawer = ({open, location, shadow}: MyDrawerProps) => (
     <DrawerContent>
       <List>
         {['schedule', 'discover'].map((route, index) => (
-          <Link key={route} to={'/home/' + route} style={{textDecoration: 'none'}} onClick={
-            () => store.dispatch(ui.actions.setDrawerShadow(false))
-          }>
+          <Link key={route} to={'/home/' + route} style={{textDecoration: 'none'}}>
             <CustomListItem
               activated={location?.pathname === '/home/' + route}>
               <ListItemGraphic

@@ -87,7 +87,7 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
     // will be triggered while dragging
     const scrollEdgeSize = 150;
 
-    // # of pixels to scroll horizontally while dragging,
+    // # of pixels to scroll horizontally in each update while dragging,
     // determines the scroll speed
     const maxScrollStep = 20;
 
@@ -106,25 +106,25 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
     // The following functions implements the horizontal
     // scrolling of schedule list while dragging courses
     const handleMouseDown = () => {
-        document.addEventListener("mousemove", handleMouseMove);
-        document.addEventListener("mouseup", handleMouseUp);
+        document.addEventListener("mousemove", handleMouseMove)
+        document.addEventListener("mouseup", handleMouseUp)
     };
 
     // Scroll the element based on mouse movement
     const handleMouseMove = (e: any) => {
-        const element: HTMLElement | null = document.getElementById('schedule-list');
-        if (!element) return;
+        const element: HTMLElement | null = document.getElementById('schedule-list')
+        if (!element) return
 
         // X coordinate of the mouse within the scroll view
-        const viewportX = e.clientX - element.getBoundingClientRect().left;
+        const viewportX = e.clientX - element.getBoundingClientRect().left
         // Visible width of the scroll view
-        const viewportWidth = element.getBoundingClientRect().width;
+        const viewportWidth = element.getBoundingClientRect().width
 
-        const edgeLeft = scrollEdgeSize;
-        const edgeRight = (viewportWidth - scrollEdgeSize);
+        const edgeLeft = scrollEdgeSize
+        const edgeRight = viewportWidth - scrollEdgeSize
 
-        const isInLeftEdge = (viewportX < edgeLeft);
-        const isInRightEdge = (viewportX > edgeRight);
+        const isInLeftEdge = viewportX < edgeLeft
+        const isInRightEdge = viewportX > edgeRight
 
         if (!(isInLeftEdge || isInRightEdge)) {
             clearTimeout(timerRef.current);
@@ -134,16 +134,16 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
         // Entire width of the scroll view, including overflowed part
         const elementWidth = element.scrollWidth
         // Available space for scrolling
-        const maxScrollX = (elementWidth - viewportWidth);
+        const maxScrollX = elementWidth - viewportWidth
 
         const adjustWindowScroll = () => {
             if (!element) return;
             const currentScrollX = element.scrollLeft;
-            let canScrollLeft = (currentScrollX > 0);
-            let canScrollRight = (currentScrollX < maxScrollX);
+            let canScrollLeft = currentScrollX > 0
+            let canScrollRight = currentScrollX < maxScrollX
 
             // Disable scrolling right when shortlist is open
-            if (shortlistOpen) canScrollRight = false;
+            if (shortlistOpen) canScrollRight = false
 
             let nextScrollX: number = currentScrollX
 
@@ -151,35 +151,36 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
             // Scroll speed is proportionate to how close
             // the mouse is towards the edges
             if (isInLeftEdge && canScrollLeft) {
-                const intensity = ((edgeLeft - viewportX) / scrollEdgeSize);
-                nextScrollX = (nextScrollX - (maxScrollStep * intensity));
+                const intensity = (edgeLeft - viewportX) / scrollEdgeSize
+                nextScrollX = nextScrollX - (maxScrollStep * intensity)
             } else if (isInRightEdge && canScrollRight) {
-                const intensity = ((viewportX - edgeRight) / scrollEdgeSize);
-                nextScrollX = (nextScrollX + (maxScrollStep * intensity));
+                const intensity = (viewportX - edgeRight) / scrollEdgeSize
+                nextScrollX = nextScrollX + (maxScrollStep * intensity)
             }
 
             // Bounds
-            nextScrollX = Math.max(0, Math.min(maxScrollX, nextScrollX));
+            nextScrollX = Math.max(0, Math.min(maxScrollX, nextScrollX))
 
             if (nextScrollX !== currentScrollX) {
                 element.scrollTo(nextScrollX, element.scrollTop);
-                return true;
+                return true
             } else {
-                return false;
+                return false
             }
         }
 
         const checkForWindowScroll = () => {
-            clearTimeout(timerRef.current);
+            clearTimeout(timerRef.current)
 
             // If possible, keep scrolling when the mouse has
-            // stopped moving but is still within range,
+            // stopped moving but is still within the edge,
             // updates every 10ms
             if (adjustWindowScroll()) {
-                timerRef.current = setTimeout(checkForWindowScroll, 10);
+                timerRef.current = setTimeout(checkForWindowScroll, 10)
             }
         };
 
+        // Kick off
         checkForWindowScroll()
     }
 
