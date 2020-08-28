@@ -45,7 +45,7 @@ const PaginationWrapper = styled.div`
 
 type CourseTableProps = ConnectedProps<typeof connector>
 
-const CourseTable = ({doSearchAction, pagination, rows, loading, error, shortList, addShortList, removeShortList}: CourseTableProps) => {
+const CourseTable = ({doSearchAction, search, shortList, addShortList, removeShortList}: CourseTableProps) => {
 
     const [order, setOrder] = React.useState<Order>("asc");
     const [orderBy, setOrderBy] = React.useState<keyof CourseDisplayData>("code");
@@ -57,9 +57,10 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error, shortLis
             pagination: {
                 zeroBasedPage: page,
                 limit: rowsPerPage
-            }
+            },
+            searchQuery: search.query
         }))
-    }, [page, rowsPerPage])
+    }, [page, rowsPerPage, search.query])
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -98,14 +99,14 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error, shortLis
                         order={order}
                         orderBy={orderBy}
                         onRequestSort={handleRequestSort}
-                        rowCount={loading ? rowsPerPage : rows.length}
+                        rowCount={search.loading ? rowsPerPage : search.content.length}
                     />
                     <TableBody>
                         {
-                            loading || error
+                            search.loading || search.error
                                 ? Array.from(Array(rowsPerPage).keys())
                                     .map((row) => <CourseTableRowPlaceholder key={row}/>)
-                                : rows.map((row) =>
+                                : search.content.map((row) =>
                                     <CourseTableRow key={row.code}
                                                     row={row}
                                                     shortListed={shortList?.includes(row.code) ?? false}
@@ -118,7 +119,7 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error, shortLis
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50, 100]}
                     component="div"
-                    count={(pagination?.totalPages ?? 0) * rowsPerPage} // TODO: backend return accurate total count
+                    count={search.pagination?.totalResults ?? 0}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
@@ -129,10 +130,7 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error, shortLis
 }
 
 const mapState = (state: RootState) => ({
-    loading: state.search.loading,
-    error: state.search.error,
-    rows: state.search.content,
-    pagination: state.search.pagination,
+    search: state.search,
     shortList: state.studentProfile.content?.shortList
 })
 

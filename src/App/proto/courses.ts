@@ -54,6 +54,8 @@ export interface SearchCourseRequest {
    *  if true, do not return requisite info
    */
   basicInfoOnly: boolean;
+  searchQuery: string;
+  sort: Sort | undefined;
 }
 
 export interface SearchCourseResponse {
@@ -203,6 +205,7 @@ const baseSort: object = {
 
 const baseSearchCourseRequest: object = {
   basicInfoOnly: false,
+  searchQuery: "",
 };
 
 const baseSearchCourseResponse: object = {
@@ -1169,6 +1172,10 @@ export const SearchCourseRequest = {
       PaginationInfoRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
     }
     writer.uint32(16).bool(message.basicInfoOnly);
+    writer.uint32(26).string(message.searchQuery);
+    if (message.sort !== undefined && message.sort !== undefined) {
+      Sort.encode(message.sort, writer.uint32(34).fork()).ldelim();
+    }
     return writer;
   },
   decode(input: Uint8Array | Reader, length?: number): SearchCourseRequest {
@@ -1183,6 +1190,12 @@ export const SearchCourseRequest = {
           break;
         case 2:
           message.basicInfoOnly = reader.bool();
+          break;
+        case 3:
+          message.searchQuery = reader.string();
+          break;
+        case 4:
+          message.sort = Sort.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -1203,6 +1216,16 @@ export const SearchCourseRequest = {
     } else {
       message.basicInfoOnly = false;
     }
+    if (object.searchQuery !== undefined && object.searchQuery !== null) {
+      message.searchQuery = String(object.searchQuery);
+    } else {
+      message.searchQuery = "";
+    }
+    if (object.sort !== undefined && object.sort !== null) {
+      message.sort = Sort.fromJSON(object.sort);
+    } else {
+      message.sort = undefined;
+    }
     return message;
   },
   fromPartial(object: DeepPartial<SearchCourseRequest>): SearchCourseRequest {
@@ -1217,12 +1240,24 @@ export const SearchCourseRequest = {
     } else {
       message.basicInfoOnly = false;
     }
+    if (object.searchQuery !== undefined && object.searchQuery !== null) {
+      message.searchQuery = object.searchQuery;
+    } else {
+      message.searchQuery = "";
+    }
+    if (object.sort !== undefined && object.sort !== null) {
+      message.sort = Sort.fromPartial(object.sort);
+    } else {
+      message.sort = undefined;
+    }
     return message;
   },
   toJSON(message: SearchCourseRequest): unknown {
     const obj: any = {};
     obj.pagination = message.pagination ? PaginationInfoRequest.toJSON(message.pagination) : undefined;
     obj.basicInfoOnly = message.basicInfoOnly || false;
+    obj.searchQuery = message.searchQuery || "";
+    obj.sort = message.sort ? Sort.toJSON(message.sort) : undefined;
     return obj;
   },
 };
