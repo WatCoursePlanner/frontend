@@ -1,86 +1,12 @@
-import React, {useState} from "react";
-import {Container} from 'react-smooth-dnd';
-import {CheckResults, CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
-import ScheduleCourse from "./ScheduleCourse";
+import React from "react";
 import styled from "styled-components";
-import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
-import {CachedCourses} from "../../utils";
-import {cleanScrollBar} from "../../constants/styles";
+import CourseList, {CourseListProps} from "./CourseList";
+import {Schedule_TermSchedule} from "../../proto/courses";
 
 type ScheduleTermProps = {
-    showYear: boolean,
     term: Schedule_TermSchedule,
-    courses: { [courseCode: string]: CourseInfo }
-    options: ContainerOptions,
-    onDropWithTerm: (result: DropResult, termName: string) => void,
-    issues: CheckResults | null
+    showYear: boolean,
 }
-
-const StyledContainer = styled.div<{ scrolled: number }>`
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 5px 0 16px 0;
-    ${cleanScrollBar};
-    
-    &:before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 8px;
-        right: 12px;
-        height: 8px;
-        background-color: transparent;
-        box-shadow: inset 0 4px 4px 0 rgba(0,0,0,.14), inset 0 4px 2px -2px rgba(0,0,0,.12);
-        transition: opacity .2s;
-        opacity: ${props => props.scrolled ? 1 : 0};
-        z-index: 2;
-    }
-    
-    &:after {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 12px;
-        width: 8px;
-        height: 8px;
-        background-image: linear-gradient(to left,white,rgba(255,255,255,0));
-        z-index: 2;
-    }
-    
-    :hover {
-      overflow-y: auto;
-    }
-    
-    .smooth-dnd-container {
-        position: unset;
-        min-height: 40vh;
-        
-        &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 8px;
-            width: 8px;
-            height: 8px;
-            background-image: linear-gradient(to right,white,rgba(255,255,255,0));
-            z-index: 2;
-        }
-    }
-    
-    .smooth-dnd-draggable-wrapper {
-      overflow: visible !important;
-      background-color: transparent;
-    }
-`
-
-const ContainerWrapper = styled.div`
-    display: flex;
-    position: relative;
-    overflow: hidden;
-    min-width: 300px;
-    margin-top: -4px;
-    margin-left: -16px;
-`
 
 const RootContainer = styled.div`
     margin-left: 56px;
@@ -117,16 +43,7 @@ const Row = styled.div`
     min-height: 24px;
 `
 
-const ScheduleTerm = ({term, courses, showYear, options, onDropWithTerm, issues}: ScheduleTermProps) => {
-    const [scrolled, setScrolled] = useState(false)
-    const handleScroll = (e: React.UIEvent<HTMLElement>) => {
-        if (e.currentTarget.scrollTop > 0) {
-            if (!scrolled) setScrolled(true)
-        } else {
-            if (scrolled) setScrolled(false)
-        }
-    }
-
+const ScheduleTerm = ({term, courses, showYear, options, onDropWithTerm, issues}: ScheduleTermProps & CourseListProps) => {
     return (
         <RootContainer>
             <Year>{showYear ? term.year : ''}</Year>
@@ -134,21 +51,12 @@ const ScheduleTerm = ({term, courses, showYear, options, onDropWithTerm, issues}
                 <TermName>{term.term.toString().toLowerCase()}</TermName>
                 <TermCode>{term.termName}</TermCode>
             </Row>
-            <ContainerWrapper>
-            <StyledContainer scrolled={scrolled ? 1 : 0} onScroll={handleScroll}>
-                <Container groupName={'terms'}
-                           dropPlaceholder={{className: 'drop-placeholder'}}
-                           getChildPayload={idx => term.courseCodes[idx]}
-                           onDrop={(e) => onDropWithTerm(e, term.termName)}
-                           dragClass="card-ghost"
-                           dropClass="card-ghost-drop"
-                           {...options}>
-                    {term.courseCodes.map((code, index) => (
-                        <ScheduleCourse key={index} course={courses[code] ?? CachedCourses.getByCode(code)}/>
-                    ))}
-                </Container>
-            </StyledContainer>
-            </ContainerWrapper>
+            <CourseList
+                term={term}
+                courses={courses}
+                options={options}
+                onDropWithTerm={onDropWithTerm}
+                issues={issues}/>
         </RootContainer>
     )
 }

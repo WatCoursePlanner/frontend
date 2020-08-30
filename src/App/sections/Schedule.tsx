@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Button, ButtonHTMLProps, ButtonProps} from "@rmwc/button";
 import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
@@ -87,8 +87,19 @@ const StyledFab = styled(Fab)<FabProps>`
 
 type ScheduleProps = ConnectedProps<typeof connector>
 
-const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCourseToList, removeCourseFromList, addShortList, removeShortList}: ScheduleProps) => {
-    const [shortlistOpen, setShortlistOpen] = useState(false)
+const Schedule = (
+    {
+        studentProfile,
+        loading,
+        checkCourses,
+        profileCourses,
+        addCourseToList,
+        removeCourseFromList,
+        addShortList,
+        removeShortList,
+        shortlistOpen,
+        setShortlistOpen
+    }: ScheduleProps) => {
     const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
     const [firstDrop, setFirstDrop] = useState(false)
 
@@ -99,6 +110,39 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
             if (store.getState().ui.drawerShadow) store.dispatch(ui.actions.setDrawerShadow(false))
         }
     }
+
+    const handleWheel = (e: any) => {
+        // Ignore touchpad scrolls
+        // May not work on Firefox (only the scrolls with horizontal (X) component are ignored)
+        // see https://stackoverflow.com/a/56948026/7939451
+        const isTouchPad = e.wheelDeltaY ? (e.wheelDeltaY === -3 * e.deltaY) : false
+        if (e.deltaX || isTouchPad) return
+
+        // Ignore if is hovering over a vertically scrollable course-list
+        const courseListElements: Element[] = Array.from(document.getElementsByClassName("course-list"))
+        if (courseListElements.some((element) => {
+            return element.contains(e.target) && element.scrollHeight > element.clientHeight
+        })) return
+
+        const element: HTMLElement | null = document.getElementById('schedule-list')
+        if (!element) return;
+
+        // Move the board 80 pixes on every wheel event
+        if (Math.sign(e.deltaY) === 1) {
+            element.scrollTo(element.scrollLeft + 80, 0)
+        } else if (Math.sign(e.deltaY) === -1) {
+            element.scrollTo(element.scrollLeft - 80, 0)
+        }
+    };
+
+    useEffect(() => {
+        const element = document.getElementById('schedule-list')!!
+        element.addEventListener("wheel", handleWheel)
+        return () => {
+            element.removeEventListener("wheel", handleWheel)
+            store.dispatch(ui.actions.setDrawerShadow(false))
+        }
+    }, [])
 
     const onDragEnd = (result: DragEndParams) => {
         setFirstDrop(false)
@@ -147,7 +191,9 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
     return (
         <OuterContainer>
             <ScheduleContainer>
-                <ScheduleListContainer onScroll={handleScroll}>
+                <ScheduleListContainer
+                    id={'schedule-list'}
+                    onScroll={handleScroll}>
                     <Spacer minWidth={'16px'} minHeight={'100%'}/>
                     <TermList
                         profileCourses={profileCourses}
@@ -179,7 +225,8 @@ const Schedule = ({studentProfile, loading, checkCourses, profileCourses, addCou
 const mapState = (state: RootState) => ({
     studentProfile: state.studentProfile.content,
     profileCourses: state.profileCourses.courses,
-    loading: state.studentProfile.loading
+    loading: state.studentProfile.loading,
+    shortlistOpen: state.ui.shortlistOpen,
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
@@ -188,6 +235,7 @@ const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
     addShortList: studentProfile.actions.addShortlist,
     removeShortList: studentProfile.actions.removeShortlist,
     checkCourses: fetchProfileCourseAction,
+    setShortlistOpen: ui.actions.setShortlistOpen,
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

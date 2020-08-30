@@ -1,16 +1,9 @@
 import React from "react";
-import {Container} from "react-smooth-dnd";
-import ScheduleCourse from "./ScheduleCourse";
-import {CourseInfo} from "../../proto/courses";
 import styled from "styled-components";
-import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
-import {CachedCourses} from "../../utils";
+import CourseList, {CourseListProps} from "./CourseList";
 
 type ShortListProps = {
     shortlist: string[],
-    courses: { [courseCode: string]: CourseInfo },
-    options: ContainerOptions,
-    onDropWithTerm: (result: DropResult, termName: string) => void,
 }
 
 const RootContainer = styled.div`
@@ -20,38 +13,6 @@ const RootContainer = styled.div`
     flex-direction: column;
 `
 
-const StyledContainer = styled.div`
-    flex-grow: 1;
-    min-width: 300px;
-    overflow-y: auto;
-    margin-left: -16px;
-    margin-top: -4px;
-    padding: 8px 0 16px 0;
-    scrollbar-color: #ececec transparent;
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent; 
-    }
-    ::-webkit-scrollbar-thumb {
-      border-radius: 4px;
-      background: #ececec; 
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #e0e0e0; 
-    }
-    
-    .smooth-dnd-container {
-      min-height: 40vh;
-    }
-    
-    .smooth-dnd-draggable-wrapper {
-      overflow: visible !important;
-      background-color: transparent;
-    }
-`
-
 const Title = styled.span`
     font-size: 20px;
     font-weight: 600;
@@ -59,23 +20,15 @@ const Title = styled.span`
     min-height: 24px;
 `
 
-const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortListProps) => {
+const ScheduleShortList = ({shortlist, courses, onDropWithTerm, options}: ShortListProps & CourseListProps) => {
     return (
         <RootContainer>
             <Title>Shortlist</Title>
-            <StyledContainer>
-                <Container groupName={'terms'}
-                           dropPlaceholder={{className: 'drop-placeholder'}}
-                           getChildPayload={idx => shortlist[idx]}
-                           onDrop={(e) => onDropWithTerm(e, "shortlist")}
-                           dragClass="card-ghost"
-                           dropClass="card-ghost-drop"
-                           {...options}>
-                    {shortlist.map((code, index) => (
-                        <ScheduleCourse key={index} course={courses[code] ?? CachedCourses.getByCode(code)}/>
-                    ))}
-                </Container>
-            </StyledContainer>
+            <CourseList
+                shortlist={shortlist}
+                courses={courses}
+                options={options}
+                onDropWithTerm={onDropWithTerm}/>
         </RootContainer>
     )
 }

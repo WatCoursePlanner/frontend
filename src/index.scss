@@ -47,6 +47,7 @@ html {
 }
 
 .card-ghost {
+  margin-top: -5px;
   transition: 0.18s cubic-bezier(.25, .8, .25, 1);
   transform: rotateZ(5deg);
   cursor: move;

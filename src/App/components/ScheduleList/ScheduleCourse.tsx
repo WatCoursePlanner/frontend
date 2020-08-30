@@ -10,9 +10,11 @@ import CourseDetail from "./CourseDetail";
 import {Fade} from "@material-ui/core";
 import {PopperProps} from "@material-ui/core/Popper/Popper";
 import {CourseInfo} from "../../proto/courses";
+import {RootState} from "../../redux/store";
+import {connect, ConnectedProps} from "react-redux";
 import {RequisiteHelper} from "../../utils";
 
-type ScheduleCourseProps = {
+type ScheduleCourseProps = ConnectedProps<typeof connector> & {
     course: CourseInfo | null
 }
 
@@ -82,11 +84,21 @@ const StyledPopper = styled(Popper)<PopperProps>`
     max-height: 80vh;
 `
 
-const ScheduleCourse = ({course}: ScheduleCourseProps) => {
+const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
     const [hovered, setHovered] = useState(false);
     const [active, setActive] = useState(false);
     const toggleHover = () => setHovered(!hovered);
     const cardRef = useRef();
+
+    const timerRef: any = useRef(null);
+
+    // Width of the edge within which the horizontal scrolling
+    // will be triggered while dragging
+    const scrollEdgeSize = 150;
+
+    // # of pixels to scroll horizontally in each update while dragging,
+    // determines the scroll speed
+    const maxScrollStep = 20;
 
     const handleSelectCourse = () => {
         setActive(true)
@@ -100,6 +112,92 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
         setActive(!active)
     }
 
+    // The following functions implements the horizontal
+    // scrolling of schedule list while dragging courses
+    const handleMouseDown = () => {
+        document.addEventListener("mousemove", handleMouseMove)
+        document.addEventListener("mouseup", handleMouseUp)
+    };
+
+    // Scroll the element based on mouse movement
+    const handleMouseMove = (e: any) => {
+        const element: HTMLElement | null = document.getElementById('schedule-list')
+        if (!element) return
+
+        // X coordinate of the mouse within the scroll view
+        const viewportX = e.clientX - element.getBoundingClientRect().left
+        // Visible width of the scroll view
+        const viewportWidth = element.getBoundingClientRect().width
+
+        const edgeLeft = scrollEdgeSize
+        const edgeRight = viewportWidth - scrollEdgeSize
+
+        const isInLeftEdge = viewportX < edgeLeft
+        const isInRightEdge = viewportX > edgeRight
+
+        if (!(isInLeftEdge || isInRightEdge)) {
+            clearTimeout(timerRef.current);
+            return;
+        }
+
+        // Entire width of the scroll view, including overflowed part
+        const elementWidth = element.scrollWidth
+        // Available space for scrolling
+        const maxScrollX = elementWidth - viewportWidth
+
+        const adjustWindowScroll = () => {
+            if (!element) return;
+            const currentScrollX = element.scrollLeft;
+            let canScrollLeft = currentScrollX > 0
+            let canScrollRight = currentScrollX < maxScrollX
+
+            // Disable scrolling right when shortlist is open
+            if (shortlistOpen) canScrollRight = false
+
+            let nextScrollX: number = currentScrollX
+
+            // Calculate the position to scroll to.
+            // Scroll speed is proportionate to how close
+            // the mouse is towards the edges
+            if (isInLeftEdge && canScrollLeft) {
+                const intensity = (edgeLeft - viewportX) / scrollEdgeSize
+                nextScrollX = nextScrollX - (maxScrollStep * intensity)
+            } else if (isInRightEdge && canScrollRight) {
+                const intensity = (viewportX - edgeRight) / scrollEdgeSize
+                nextScrollX = nextScrollX + (maxScrollStep * intensity)
+            }
+
+            // Bounds
+            nextScrollX = Math.max(0, Math.min(maxScrollX, nextScrollX))
+
+            if (nextScrollX !== currentScrollX) {
+                element.scrollTo(nextScrollX, element.scrollTop);
+                return true
+            } else {
+                return false
+            }
+        }
+
+        const checkForWindowScroll = () => {
+            clearTimeout(timerRef.current)
+
+            // If possible, keep scrolling when the mouse has
+            // stopped moving but is still within the edge,
+            // updates every 10ms
+            if (adjustWindowScroll()) {
+                timerRef.current = setTimeout(checkForWindowScroll, 10)
+            }
+        };
+
+        // Kick off
+        checkForWindowScroll()
+    }
+
+    const handleMouseUp = () => {
+        clearTimeout(timerRef.current)
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+    };
     const allConditionsMet = (() => {
         if (!course) return true
         const prerequisites = RequisiteHelper.getPreRequisite(course)
@@ -119,6 +217,7 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
                         tabIndex={0}
                         active={active ? 1 : 0}
                         hovered={hovered ? 1 : 0}
+                        onMouseDown={handleMouseDown}
                         onClick={handleSelectCourse}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -171,4 +270,11 @@ const ScheduleCourse = ({course}: ScheduleCourseProps) => {
     )
 }
 
-export default ScheduleCourse
+
+const mapState = (state: RootState) => ({
+    shortlistOpen: state.ui.shortlistOpen,
+})
+
+const connector = connect(mapState)
+
+export default connector(ScheduleCourse)
