@@ -10,11 +10,12 @@ import {CourseDisplayData, Order} from "./CourseTableUtils";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
 import {TablePagination} from "@material-ui/core";
 import '@rmwc/circular-progress/styles';
-import {RootState} from "../../duck/types";
 import {connect, ConnectedProps} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
-import {doSearchAction} from "../../duck/actions/search";
 import CourseTableRowPlaceholder from "./CourseTableRowPlaceholder";
+import {RootState} from "../../redux/store";
+import {doSearch} from "../../redux/slices/search";
+import studentProfile from "../../redux/slices/studentProfile";
 
 const Root = styled.div`
   width: 100%;
@@ -32,7 +33,7 @@ const StyledTableContainer = styled(TableContainer)`
 // `filled` needs to be a number instead of boolean
 // see https://github.com/styled-components/styled-components/issues/1198#issuecomment-336628848
 export const StyledIconButton =
-    styled(IconButton)<IconButtonHTMLProps & IconButtonProps & {filled?: number}>`
+    styled(IconButton)<IconButtonHTMLProps & IconButtonProps & { filled?: number }>`
   color: #5f6368;
   font-family: ${props => props.filled ? "Material Icons" : "Material Icons Outlined"};
 `
@@ -44,14 +45,14 @@ const PaginationWrapper = styled.div`
 
 type CourseTableProps = ConnectedProps<typeof connector>
 
-const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseTableProps) => {
+const CourseTable = ({doSearchAction, pagination, rows, loading, error, shortList, addShortList, removeShortList}: CourseTableProps) => {
 
     const [order, setOrder] = React.useState<Order>("asc");
     const [orderBy, setOrderBy] = React.useState<keyof CourseDisplayData>("code");
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
 
-    useEffect(()=>{
+    useEffect(() => {
         doSearchAction(SearchCourseRequest.fromJSON({
             pagination: {
                 zeroBasedPage: page,
@@ -80,6 +81,11 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseT
         setPage(0);
     };
 
+    const setShortList = (code: string, shortlist: boolean) => {
+        if (shortlist) addShortList({code, index: null});
+        else removeShortList({code});
+    };
+
     return (
         <Root>
             <StyledTableContainer>
@@ -99,7 +105,11 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseT
                             loading || error
                                 ? Array.from(Array(rowsPerPage).keys())
                                     .map((row) => <CourseTableRowPlaceholder key={row}/>)
-                                : rows.map((row) => <CourseTableRow key={row.code} row={row}/>)
+                                : rows.map((row) =>
+                                    <CourseTableRow key={row.code}
+                                                    row={row}
+                                                    shortListed={shortList?.includes(row.code) ?? false}
+                                                    setShortList={setShortList}/>)
                         }
                     </TableBody>
                 </Table>
@@ -119,14 +129,17 @@ const CourseTable = ({doSearchAction, pagination, rows, loading, error}: CourseT
 }
 
 const mapState = (state: RootState) => ({
-    loading: state.searchResults.loading,
-    error: state.searchResults.error,
-    rows: state.searchResults.content,
-    pagination: state.searchResults.pagination,
+    loading: state.search.loading,
+    error: state.search.error,
+    rows: state.search.content,
+    pagination: state.search.pagination,
+    shortList: state.studentProfile.content?.shortList
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    doSearchAction: doSearchAction,
+    doSearchAction: doSearch,
+    addShortList: studentProfile.actions.addShortlist,
+    removeShortList: studentProfile.actions.removeShortlist
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

@@ -2,14 +2,14 @@ import React from 'react';
 import Popup from "../Popup";
 import {List, ListItem, ListItemMeta, ListItemPrimaryText, ListItemSecondaryText, ListItemText} from "@rmwc/list";
 import '@rmwc/list/styles';
-import {CheckResults} from "../../proto/courses";
+import {CheckResults_Issue} from "../../proto/courses";
 
 export type DegreeRequirementPopupProps = {
-    issues: CheckResults | null
+    issues: CheckResults_Issue[] | null
 }
 
 const DegreeRequirementPopup = ({issues}: DegreeRequirementPopupProps) => {
-    if (!issues || issues.issues.length === 0) return (
+    if (!issues || issues.length === 0) return (
         <Popup
             title={'Degree Requirement Met'}
             message={'Your schedule has all requirements!'}/>)
@@ -18,7 +18,7 @@ const DegreeRequirementPopup = ({issues}: DegreeRequirementPopupProps) => {
             title={'Degree Requirement Not Met'}
             message={'Your schedule does not meet the following requirements:'}>
             <List twoLine>
-                {issues?.issues.map((value, index) => (
+                {issues?.map((value, index) => (
                     <ListItem key={index} onClick={() => {
                     }}>
                         <ListItemText>

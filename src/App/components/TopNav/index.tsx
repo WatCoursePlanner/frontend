@@ -7,8 +7,6 @@ import styled from "styled-components";
 import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
 import AutoCompleteSearchBar, {AutoCompleteCallbackProps, AutoCompleteOption} from "../AutoCompleteSearchBar"
 import DegreeRequirementPopup, {DegreeRequirementPopupProps} from "./DegreeRequirementPopup";
-import {RootState} from "../../duck/types";
-import {connect, ConnectedProps} from "react-redux";
 import {CourseInfo} from "../../proto/courses";
 import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
 import Popup from "../Popup";
@@ -16,7 +14,7 @@ import '@rmwc/top-app-bar/styles';
 import '@rmwc/menu/styles';
 import '@rmwc/badge/styles';
 import '@rmwc/avatar/styles';
-import {CachedCourses} from "../../CachedCourses";
+import {CachedCourses} from "../../utils";
 
 const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
       border-bottom: 1px solid #e0e0e0;
@@ -42,15 +40,14 @@ type TopNavProps = {
 }
 
 const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAutoCompleteSelect, issues}:
-                    TopNavProps & AutoCompleteCallbackProps & SearchBarProps & DegreeRequirementPopupProps &
-                    ConnectedProps<typeof connector>) => {
+                    TopNavProps & AutoCompleteCallbackProps & SearchBarProps & DegreeRequirementPopupProps) => {
     const [degreeMenuOpen, setDegreeMenuOpen] = React.useState(false);
     const [accountMenuOpen, setAccountMenuOpen] = React.useState(false);
 
     return (
         <StyledAppBar fixed theme={['surface']}>
             <TopAppBarRow>
-                <TopAppBarSection alignStart>
+                <TopAppBarSection alignStart className={'unselectable'}>
                     <AppBarButton
                         icon="menu"
                         onMouseDown={(e) => {
@@ -71,7 +68,7 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
                             return {
                                 title: course.code,
                                 subTitle: course.name,
-                                weight: 0 // TODO assign weight
+                                weight: course.ratingsCount
                             }
                         })}
                     />
@@ -88,9 +85,9 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
                             <InfoButton
                                 className={"material-icons-outlined"}
                                 icon="info"
-                                onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>\
-                            {issues && issues.issues.length > 0 ?
-                                <Badge style={{marginRight: 40}} inset="0.75rem" label={issues.issues.length}/> : null}
+                                onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>
+                            {issues && issues.length > 0 ?
+                                <Badge className={'unselectable'} style={{marginRight: 40}} inset="0.75rem" label={issues.length}/> : null}
                         </BadgeAnchor>
                     </MenuSurfaceAnchor>
                     <MenuSurfaceAnchor>
@@ -113,8 +110,4 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
     )
 }
 
-const mapState = (state: RootState) => ({})
-
-const connector = connect(mapState)
-
-export default connector(TopNav)
+export default TopNav

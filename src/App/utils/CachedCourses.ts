@@ -1,5 +1,5 @@
-import {CourseInfo, SearchCourseResponse} from "./proto/courses";
-import {COURSES_INFO_REFRESH_TIME, URL_BASE} from "./constants/api";
+import {CourseInfo, SearchCourseResponse} from "../proto/courses";
+import {COURSES_INFO_REFRESH_TIME, URL_BASE} from "../constants/api";
 
 type CachedCoursesStorage = {
     lastUpdatedAt: number,

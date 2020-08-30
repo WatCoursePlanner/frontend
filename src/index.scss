@@ -10,6 +10,10 @@ body {
   font-family: 'Montserrat', sans-serif;
 }
 
+.material-icons-filled {
+  font-family: 'Material Icons', sans-serif !important;
+}
+
 .material-icons {
   font-family: 'Material Icons Outlined', sans-serif;
 }
@@ -26,8 +30,7 @@ html {
   display: none !important
 }
 
-.mdc-button, .mdc-button__ripple {
-  border-radius: 20px !important;
+.mdc-button, .mdc-button__ripple, .mdc-chip, .mdc-chip__ripple {
   -webkit-mask-image: radial-gradient(white, black);
 }
 
@@ -35,7 +38,7 @@ html {
   margin-left: 276px;
 }
 
-.drop-placeholder{
+.drop-placeholder {
   max-width: 263px !important;
   margin: 8px 0 8px 16px;
   border: #c7c7c7 dashed 1px;
@@ -44,6 +47,7 @@ html {
 }
 
 .card-ghost {
+  margin-top: -5px;
   transition: 0.18s cubic-bezier(.25, .8, .25, 1);
   transform: rotateZ(5deg);
   cursor: move;
@@ -70,4 +74,9 @@ html {
   -khtml-user-select: none;
   -webkit-user-select: none;
   -o-user-select: none;
+}
+
+.unmet-requisites {
+  border-color: #FF0000;
+  background-color: #FEEDED !important;
 }

@@ -20,8 +20,12 @@ export type AutoCompleteProps = {
     options: AutoCompleteOption[],
 }
 
+const AutoCompleteMaxResults = 10
+const AutoCompleteThreshold = -5000
+
 const sortByWeight = (options: Fuzzysort.KeysResult<AutoCompleteOption>[]) => {
-    return options.sort((a, b) => ((a?.obj?.weight ?? 0) < (b?.obj?.weight ?? 0)) ? -1 : 1)
+    const getWeight = (a: Fuzzysort.KeysResult<AutoCompleteOption>) => (a?.obj?.weight + a?.score)
+    return options.sort((a, b) => (getWeight(b) - getWeight(a)))
 }
 
 const AutoCompleteSearchBar =
@@ -33,9 +37,9 @@ const AutoCompleteSearchBar =
         const fetchOptions = (input: string) => {
             return Fuzzysort.go(input, options, {
                 keys: ['title', 'subTitle'],
-                limit: 10, // TODO put into a constant file
+                limit: AutoCompleteMaxResults,
                 allowTypo: true,
-                threshold: -5000
+                threshold: AutoCompleteThreshold
             })
         }
 
@@ -86,7 +90,7 @@ const AutoCompleteSearchBar =
                         setSearchText={setSearchText}/>
                 }
             />
-    )
-}
+        )
+    }
 
 export default AutoCompleteSearchBar
