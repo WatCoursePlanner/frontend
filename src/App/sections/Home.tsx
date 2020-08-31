@@ -13,6 +13,7 @@ import {CachedCourses} from "../utils";
 import {fetchStudentProfile} from "../redux/slices/studentProfile";
 import {RootState} from "../redux/store";
 import {Else, If, Then} from "react-if";
+import search from "../redux/slices/search";
 
 const Container = styled.div`
       height: 100%;
@@ -28,7 +29,7 @@ const AppContainer = styled(DrawerAppContent)`
 
 type HomeProps = ConnectedProps<typeof connector>
 
-const Home = ({profileIssues, fetchStudentProfile, drawerShadow}: HomeProps) => {
+const Home = ({profileIssues, fetchStudentProfile, drawerShadow, setSearchQuery}: HomeProps) => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
@@ -49,7 +50,7 @@ const Home = ({profileIssues, fetchStudentProfile, drawerShadow}: HomeProps) => 
     }, [])
 
     const searchKeyword = () => {
-        console.log(`[Home] TODO Implement search ${searchText}`)
+        setSearchQuery(searchText)
     }
 
     const onAutoCompleteSelect = async (code: string) => {
@@ -74,7 +75,7 @@ const Home = ({profileIssues, fetchStudentProfile, drawerShadow}: HomeProps) => 
                     <AppContainer>
                         <Switch>
                             <Route path="/home/schedule" exact>
-                                <Schedule />
+                                <Schedule/>
                             </Route>
                             <Route path="/home/discover" exact>
                                 <Discover/>
@@ -96,7 +97,8 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    fetchStudentProfile: fetchStudentProfile
+    fetchStudentProfile: fetchStudentProfile,
+    setSearchQuery: search.actions.setSearchQuery
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)

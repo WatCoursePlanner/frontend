@@ -7,6 +7,7 @@ export type SearchState = {
     readonly pagination: PaginationInfoResponse | null,
     readonly error: string | null,
     readonly loading: boolean,
+    readonly query: string
 };
 
 export const doSearch = createAsyncThunk(
@@ -33,21 +34,23 @@ const search = createSlice({
         pagination: null,
         error: null,
         loading: false,
+        query: ""
     } as SearchState,
-    reducers: {},
+    reducers: {
+        setSearchQuery: (state, action) => {
+            state.query = action.payload
+        }
+    },
     extraReducers: builder => {
         builder.addCase(doSearch.pending, (state: SearchState, action) => ({...state, loading: true}))
         builder.addCase(doSearch.fulfilled, (state: SearchState, action: PayloadAction<SearchCourseResponse>) => {
             const courses: CourseInfo[] = action.payload.results ?? [];
-            if (courses.length > 0) {
-                return {
-                    ...state,
-                    loading: false,
-                    content: courses,
-                    pagination: action.payload.pagination,
-                } as SearchState
-            }
-            return state;
+            return {
+                ...state,
+                loading: false,
+                content: courses,
+                pagination: action.payload.pagination,
+            } as SearchState
         })
         builder.addCase(doSearch.rejected, (state: SearchState, action) => ({
             ...state,
