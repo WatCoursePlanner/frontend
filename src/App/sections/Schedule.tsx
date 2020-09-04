@@ -3,7 +3,7 @@ import {Button, ButtonHTMLProps, ButtonProps} from "@rmwc/button";
 import {Fab, FabProps} from "@rmwc/fab";
 import styled from "styled-components";
 import '@rmwc/button/styles';
-import {connect, ConnectedProps} from "react-redux";
+import {connect, ConnectedProps, useDispatch, useSelector} from "react-redux";
 import {RootState, store} from "../redux/store";
 import {bindActionCreators, Dispatch} from "redux";
 import {ScheduleShortList, TermList} from "../components/ScheduleList";
@@ -102,12 +102,14 @@ const Schedule = (
     }: ScheduleProps) => {
     const [issues, setIssues] = useState<{ [termName: string]: CheckResults }>({})
     const [firstDrop, setFirstDrop] = useState(false)
+    const dispatch = useDispatch()
+    const drawerShadow = useSelector((state: RootState) => state.ui.drawerShadow)
 
     const handleScroll = (e: React.UIEvent<HTMLElement>) => {
         if (e.currentTarget.scrollLeft > 0) {
-            if (!store.getState().ui.drawerShadow) store.dispatch(ui.actions.setDrawerShadow(true))
+            if (!drawerShadow) dispatch(ui.actions.setDrawerShadow(true))
         } else {
-            if (store.getState().ui.drawerShadow) store.dispatch(ui.actions.setDrawerShadow(false))
+            if (drawerShadow) dispatch(ui.actions.setDrawerShadow(false))
         }
     }
 
@@ -140,7 +142,7 @@ const Schedule = (
         element.addEventListener("wheel", handleWheel)
         return () => {
             element.removeEventListener("wheel", handleWheel)
-            store.dispatch(ui.actions.setDrawerShadow(false))
+            dispatch(ui.actions.setDrawerShadow(false))
         }
     }, [])
 

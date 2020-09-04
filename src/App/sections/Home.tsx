@@ -14,6 +14,7 @@ import {fetchStudentProfile} from "../redux/slices/studentProfile";
 import {RootState} from "../redux/store";
 import {Else, If, Then} from "react-if";
 import search from "../redux/slices/search";
+import profileCourses, {fetchProfileCourseAction} from "../redux/slices/profileCourses";
 
 const Container = styled.div`
       height: 100%;
@@ -29,24 +30,28 @@ const AppContainer = styled(DrawerAppContent)`
 
 type HomeProps = ConnectedProps<typeof connector>
 
-const Home = ({profileIssues, fetchStudentProfile, drawerShadow, setSearchQuery}: HomeProps) => {
+const Home = ({studentProfile, fetchProfileCourseAction, profileCourses, fetchStudentProfile, drawerShadow, setSearchQuery}: HomeProps) => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
     const [loading, setLoading] = useState(true);
     const location = useLocation();
 
-    CachedCourses.initialize().then((res) => {
-        if (!res) return
-        setLoading(false);
-    })
-
     useEffect(() => {
-        fetchStudentProfile(CreateStudentProfileRequest.fromJSON({
-            degrees: ["Software Engineering"],
-            startingYear: 2019,
-            coopStream: CoopStream.STREAM_8
-        }))
+        CachedCourses.initialize().then((res) => {
+            if (!res) return
+            setLoading(false);
+        })
+
+        if (studentProfile === null) {
+            fetchStudentProfile(CreateStudentProfileRequest.fromJSON({
+                degrees: ["Software Engineering"],
+                startingYear: 2019,
+                coopStream: CoopStream.STREAM_8
+            }))
+        } else if (Object.keys(profileCourses.courses).length === 0) {
+            fetchProfileCourseAction(studentProfile)
+        }
     }, [])
 
     const searchKeyword = () => {
@@ -70,7 +75,7 @@ const Home = ({profileIssues, fetchStudentProfile, drawerShadow, setSearchQuery}
                         toggleDrawer={() => setDrawerOpen(!drawerOpen)}
                         searchText={searchText}
                         setSearchText={setSearchText}
-                        issues={profileIssues}/>
+                        issues={profileCourses.issues}/>
                     <Drawer shadow={drawerShadow} open={drawerOpen} location={location}/>
                     <AppContainer>
                         <Switch>
@@ -92,13 +97,15 @@ const Home = ({profileIssues, fetchStudentProfile, drawerShadow, setSearchQuery}
 }
 
 const mapState = (state: RootState) => ({
-    profileIssues: state.profileCourses.issues,
-    drawerShadow: state.ui.drawerShadow
+    drawerShadow: state.ui.drawerShadow,
+    studentProfile: state.studentProfile.content,
+    profileCourses: state.profileCourses
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
     fetchStudentProfile: fetchStudentProfile,
-    setSearchQuery: search.actions.setSearchQuery
+    setSearchQuery: search.actions.setSearchQuery,
+    fetchProfileCourseAction: fetchProfileCourseAction
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)
