@@ -24,7 +24,7 @@ The app will be running at [http://localhost:3000](http://localhost:3000)
 
 - [React](https://reactjs.org/)
 - [Redux](https://redux.js.org/)
-- [styled-components](https://https://www.styled-components.com/)
+- [styled-components](https://www.styled-components.com/)
 - [Material-UI](https://material-ui.com/)
 - [RMWC](https://rmwc.io/)
 - [TypeScript](https://www.typescriptlang.org/)
