@@ -31,4 +31,4 @@ The app will be running at [http://localhost:3000](http://localhost:3000)
 
 ### License
 
-This program is licensed under [AGPLv3](https://github.com/WatCoursePlanner/WatCourseBackend/blob/master/LICENSE).
+This program is licensed under [AGPLv3](https://github.com/WatCoursePlanner/frontend/blob/master/LICENSE).
