@@ -35,8 +35,6 @@ const studentProfile = createSlice({
         loading: false,
     } as StudentProfileState,
     reducers: {
-        init: (state: StudentProfileState) => ({...state, loading: true}),
-
         removeCourse: (state: StudentProfileState, action: PayloadAction<{
             termName: string,
             index: number

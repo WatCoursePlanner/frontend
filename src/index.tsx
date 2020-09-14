@@ -5,9 +5,9 @@ import App from './App/App';
 import './index.scss';
 import {store} from "./App/redux/store";
 
-ReactDOM.render(
+store.then((store) => (ReactDOM.render(
     <Provider store={store}>
-      <App/>
+        <App/>
     </Provider>,
-  document.getElementById('root')
-);
+    document.getElementById('root')
+)))

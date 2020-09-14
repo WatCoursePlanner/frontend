@@ -61,3 +61,4 @@ const search = createSlice({
 })
 
 export default search
+
