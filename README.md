@@ -1,6 +1,6 @@
 # WatCourses
 
-The frontend for WatCourses, a website to help University of Waterloo undergraduate students plan their degrees. The website is located at [watcourses.com](https://watcourses.com/).
+The frontend for **WatCourses**, a website to help undergraduate students at the University of Waterloo plan their degrees. The website is located at [watcourses.com](https://watcourses.com/).
 
 ### Running locally
 
