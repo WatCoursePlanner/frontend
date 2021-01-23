@@ -1,12 +1,11 @@
+import Spacer from "@watcourses/components/Spacer";
+import { cleanScrollBar } from "@watcourses/constants/styles";
+import { CheckResults, CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
+import { CachedCourses } from "@watcourses/utils";
 import React, { useState } from "react";
 import { Container } from "react-smooth-dnd";
 import { ContainerOptions, DropResult } from "smooth-dnd/dist/src/exportTypes";
 import styled from "styled-components";
-
-import { cleanScrollBar } from "../../constants/styles";
-import { CheckResults, CourseInfo, Schedule_TermSchedule } from "../../proto/courses";
-import { CachedCourses } from "../../utils";
-import Spacer from "../Spacer";
 
 import ScheduleCourse from "./ScheduleCourse";
 

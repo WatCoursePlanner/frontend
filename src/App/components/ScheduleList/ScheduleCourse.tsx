@@ -4,14 +4,13 @@ import { PopperProps } from "@material-ui/core/Popper/Popper";
 import { Card, CardProps } from "@rmwc/card";
 import '@rmwc/card/styles';
 import '@rmwc/ripple/styles';
+import { CourseInfo } from "@watcourses/proto/courses";
+import { RootState } from "@watcourses/redux/store";
+import { RequisiteHelper } from "@watcourses/utils";
 import React, { useRef, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { Draggable } from 'react-smooth-dnd';
 import styled from "styled-components";
-
-import { CourseInfo } from "../../proto/courses";
-import { RootState } from "../../redux/store";
-import { RequisiteHelper } from "../../utils";
 
 import CourseDetail from "./CourseDetail";
 

@@ -1,7 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-import { URL_BASE } from "../../constants/api";
-import { CourseInfo, PaginationInfoResponse, SearchCourseRequest, SearchCourseResponse } from "../../proto/courses";
+import { URL_BASE } from "@watcourses/constants/api";
+import {
+    CourseInfo,
+    PaginationInfoResponse,
+    SearchCourseRequest,
+    SearchCourseResponse
+} from "@watcourses/proto/courses";
 
 export type SearchState = {
     readonly content: CourseInfo[],
@@ -22,7 +26,9 @@ export const doSearch = createAsyncThunk(
 
         const res = await resp.json()
 
-        if (res.error) { throw res.error }
+        if (res.error) {
+            throw res.error
+        }
 
         return res
     }

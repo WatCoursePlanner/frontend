@@ -9,10 +9,10 @@ import { connect, ConnectedProps } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import styled from "styled-components";
 
-import { SearchCourseRequest } from "../../proto/courses";
-import { doSearch } from "../../redux/slices/search";
-import studentProfileSlice from "../../redux/slices/studentProfileSlice";
-import { RootState } from "../../redux/store";
+import { SearchCourseRequest } from "@watcourses/proto/courses";
+import { doSearch } from "@watcourses/redux/slices/search";
+import studentProfileSlice from "@watcourses/redux/slices/studentProfileSlice";
+import { RootState } from "@watcourses/redux/store";
 
 import CourseTableRow from "./CourseTableRow";
 import CourseTableRowPlaceholder from "./CourseTableRowPlaceholder";

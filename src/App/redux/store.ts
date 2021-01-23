@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-
-import { loadState } from "../utils/LocalStorage";
+import { loadState } from "@watcourses/utils/LocalStorage";
 
 import profileCourses from "./slices/profileCourses";
 import search from "./slices/search";
