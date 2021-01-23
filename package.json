@@ -66,10 +66,10 @@
   "scripts": {
     "webpack": "webpack --config config/webpack.prod.conf.js",
     "clean": "rm -rf node_modules",
-    "reinstall": "npm run clean && npm install",
-    "rebuild": "npm run clean && npm install && rmdir /s /q dist && npm run build --prod",
+    "reinstall": "yarn run clean && yarn install",
+    "rebuild": "yarn run clean && yarn install && rmdir /s /q dist && yarn run build --prod",
     "start": "webpack-dev-server --open --config config/webpack.dev.conf.js",
-    "build": "npm run webpack",
+    "build": "yarn run webpack",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
