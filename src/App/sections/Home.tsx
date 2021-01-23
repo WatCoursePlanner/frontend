@@ -59,7 +59,7 @@ const HomeBase = ({
                 coopStream: CoopStream.STREAM_8
             }))
         } else if (Object.keys(profileCourses.courses).length === 0) {
-            fetchProfileCourseAction(studentProfile)
+            fetchProfileCourse(studentProfile)
         }
     }, [])
 

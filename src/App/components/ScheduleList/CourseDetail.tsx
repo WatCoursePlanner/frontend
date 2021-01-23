@@ -11,7 +11,7 @@ import { cleanScrollBarWithWhiteBorder } from "../../constants/styles";
 import { useDetectClickOutside } from "../../hooks";
 import { CourseInfo } from "../../proto/courses";
 import { RequisiteHelper } from "../../utils";
-import { IRequisite, RequisiteChecklist, IRequisiteGroup, RequisiteGroupChecklist } from "../Requisite";
+import { IRequisite, IRequisiteGroup, RequisiteChecklist, RequisiteGroupChecklist } from "../Requisite";
 
 type CourseDetailProps = {
     course: CourseInfo | null,
