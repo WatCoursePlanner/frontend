@@ -4,13 +4,12 @@ import { Drawer, DrawerContent, DrawerProps } from "@rmwc/drawer";
 import '@rmwc/drawer/styles';
 import { List, ListDivider, ListItem, ListItemGraphic, ListItemProps, ListItemText } from "@rmwc/list";
 import '@rmwc/list/styles';
+import { RootState } from "@watcourses/redux/store";
+import { getStatePayloadForUrl } from "@watcourses/utils/LocalStorage";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, RouteProps } from "react-router-dom";
 import styled from "styled-components";
-
-import { RootState } from "../../redux/store";
-import { getStatePayloadForUrl } from "../../utils/LocalStorage";
 
 const StyledDrawer = styled(Drawer)<DrawerProps & React.HTMLProps<HTMLDivElement> & { shadow: number }>`
   width: 276px;

@@ -1,7 +1,6 @@
+import { Schedule_TermSchedule } from "@watcourses/proto/courses";
 import React from "react";
 import styled from "styled-components";
-
-import { Schedule_TermSchedule } from "../../proto/courses";
 
 import CourseList, { CourseListProps } from "./CourseList";
 

@@ -1,5 +1,5 @@
-import {CourseInfo, SearchCourseResponse} from "../proto/courses";
-import {COURSES_INFO_REFRESH_TIME, URL_BASE} from "../constants/api";
+import { COURSES_INFO_REFRESH_TIME, URL_BASE } from "@watcourses/constants/api";
+import { CourseInfo, SearchCourseResponse } from "@watcourses/proto/courses";
 
 type CachedCoursesStorage = {
     lastUpdatedAt: number,
@@ -16,7 +16,9 @@ export class CachedCourses {
     }
 
     static async initialize(): Promise<boolean> {
-        if (!this.notInitialized) return false
+        if (!this.notInitialized) {
+            return false
+        }
         this.notInitialized = false
 
         const courseJson = await localStorage.getItem("courses")
@@ -34,7 +36,7 @@ export class CachedCourses {
     }
 
     private static async fetchFromServer() {
-        let result = await fetch(URL_BASE + "/course/search/", {
+        const result = await fetch(`${URL_BASE}/course/search/`, {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -45,7 +47,7 @@ export class CachedCourses {
                 basicInfoOnly: true
             })
         })
-        let res = await result.json()
+        const res = await result.json()
 
         if (res.error) {
             throw res.error
@@ -67,7 +69,7 @@ export class CachedCourses {
     }
 
     private static initializeCoursesMap() {
-        for (let course of this.courses!.courses) {
+        for (const course of this.courses!.courses) {
             this.coursesMap[course.code] = course
         }
     }

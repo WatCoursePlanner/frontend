@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { URL_BASE } from "@watcourses/constants/api";
+import { CheckResults, CheckResults_Issue, CourseInfo, StudentProfile } from "@watcourses/proto/courses";
 
-import { URL_BASE } from "../../constants/api";
-import { CheckResults, CheckResults_Issue, CourseInfo, StudentProfile } from "../../proto/courses";
 import { RootState } from "../store";
 
 export type ProfileCoursesState = {
@@ -22,7 +22,9 @@ export const fetchProfileCourseAction = createAsyncThunk(
 
         const res = await resp.json()
 
-        if (res.error) { throw res.error }
+        if (res.error) {
+            throw res.error
+        }
 
         dispatch(profileCourses.actions.setCheckResults(res))
     }

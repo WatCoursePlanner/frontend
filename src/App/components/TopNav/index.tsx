@@ -7,14 +7,16 @@ import { MenuSurface, MenuSurfaceAnchor } from "@rmwc/menu";
 import '@rmwc/menu/styles';
 import { TopAppBar, TopAppBarProps, TopAppBarRow, TopAppBarSection, TopAppBarTitle } from "@rmwc/top-app-bar";
 import '@rmwc/top-app-bar/styles';
+import AutoCompleteSearchBar, {
+    AutoCompleteCallbackProps,
+    AutoCompleteOption
+} from "@watcourses/components/AutoCompleteSearchBar"
+import { SearchBarProps } from "@watcourses/components/AutoCompleteSearchBar/SearchBar";
+import Popup from "@watcourses/components/Popup";
+import { CourseInfo } from "@watcourses/proto/courses";
+import { CachedCourses } from "@watcourses/utils";
 import React from "react";
 import styled from "styled-components";
-
-import { CourseInfo } from "../../proto/courses";
-import { CachedCourses } from "../../utils";
-import AutoCompleteSearchBar, { AutoCompleteCallbackProps, AutoCompleteOption } from "../AutoCompleteSearchBar"
-import { SearchBarProps } from "../AutoCompleteSearchBar/SearchBar";
-import Popup from "../Popup";
 
 import DegreeRequirementPopup, { DegreeRequirementPopupProps } from "./DegreeRequirementPopup";
 

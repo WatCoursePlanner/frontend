@@ -14,11 +14,16 @@ $ cd frontend
 Install dependencies and get it running
 
 ```shell
-$ npm install
-$ npm start
+$ yarn
+$ yarn start
 ```
 
 The app will be running at [http://localhost:3000](http://localhost:3000)
+
+To build, run
+```shell
+$ yarn build
+```
 
 ### Tech stack
 

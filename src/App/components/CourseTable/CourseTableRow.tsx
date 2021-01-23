@@ -1,10 +1,9 @@
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
+import { CourseInfo } from "@watcourses/proto/courses";
 import React, { useState } from "react";
 import { If, Then } from "react-if";
 import styled from "styled-components";
-
-import { CourseInfo } from "../../proto/courses";
 
 import { StyledIconButton } from ".";
 

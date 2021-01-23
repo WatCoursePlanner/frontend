@@ -1,10 +1,11 @@
-import {RootState} from "../redux/store";
+import { RootState } from "@watcourses/redux/store";
+// @ts-ignore
 import jsonurl from 'json-url/dist/browser/json-url';
 import 'json-url/dist/browser/json-url-lzstring';
 import 'json-url/dist/browser/json-url-msgpack';
 import 'json-url/dist/browser/json-url-safe64';
-import 'json-url/dist/browser/json-url-vendors~msgpack';
 import 'json-url/dist/browser/json-url-vendors~lzma';
+import 'json-url/dist/browser/json-url-vendors~msgpack';
 
 const codec = jsonurl('lzma')
 
@@ -19,12 +20,14 @@ export function saveState(state: RootState) {
 export async function loadState(): Promise<any> {
     try {
         const params = new URLSearchParams(window.location.search)
-        let urlState = params.get("schedule")
+        const urlState = params.get("schedule")
         if (urlState !== null) {
             return {studentProfile: await codec.decompress(urlState)} as RootState
         }
-        let serializedState = await localStorage.getItem('state');
-        if (serializedState === null) return undefined;
+        const serializedState = await localStorage.getItem('state');
+        if (serializedState === null) {
+            return undefined;
+        }
         return {studentProfile: JSON.parse(serializedState)} as RootState;
     } catch (err) {
         return undefined;

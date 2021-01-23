@@ -3,21 +3,20 @@ import '@rmwc/button/styles';
 import { Fab, FabProps } from "@rmwc/fab";
 import '@rmwc/fab/styles';
 import '@rmwc/tooltip/styles';
+import { ScheduleShortList, TermList } from "@watcourses/components/ScheduleList";
+import Spacer from "@watcourses/components/Spacer";
+import { URL_BASE } from "@watcourses/constants/api";
+import { CheckResults, FindSlotRequest } from "@watcourses/proto/courses";
+import { fetchProfileCourseAction } from "@watcourses/redux/slices/profileCourses";
+import studentProfileSlice from "@watcourses/redux/slices/studentProfileSlice";
+import ui from "@watcourses/redux/slices/ui";
+import { RootState, store } from "@watcourses/redux/store";
 import React, { useEffect, useState } from 'react'
 import { connect, ConnectedProps, useDispatch, useSelector } from "react-redux";
 import { DropResult } from "react-smooth-dnd";
 import { bindActionCreators, Dispatch } from "redux";
 import { DragEndParams, DragStartParams } from "smooth-dnd/dist/src/exportTypes";
 import styled from "styled-components";
-
-import { ScheduleShortList, TermList } from "../components/ScheduleList";
-import Spacer from "../components/Spacer";
-import { URL_BASE } from "../constants/api";
-import { CheckResults, FindSlotRequest } from "../proto/courses";
-import { fetchProfileCourseAction } from "../redux/slices/profileCourses";
-import studentProfileSlice from "../redux/slices/studentProfileSlice";
-import ui from "../redux/slices/ui";
-import { RootState, store } from "../redux/store";
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
   position: absolute;

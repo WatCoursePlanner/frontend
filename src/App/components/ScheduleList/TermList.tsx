@@ -1,7 +1,6 @@
+import { CheckResults, CourseInfo, StudentProfile } from "@watcourses/proto/courses";
 import React from "react";
 import { ContainerOptions, DropResult } from "smooth-dnd/dist/src/exportTypes";
-
-import { CheckResults, CourseInfo, StudentProfile } from "../../proto/courses";
 
 import { ScheduleTerm } from "./index";
 
