@@ -1,9 +1,8 @@
 import { List, ListItem, ListItemMeta, ListItemPrimaryText, ListItemSecondaryText, ListItemText } from "@rmwc/list";
 import '@rmwc/list/styles';
+import Popup from "@watcourses/components/Popup";
+import { CheckResults_Issue } from "@watcourses/proto/courses";
 import React from 'react';
-
-import { CheckResults_Issue } from "../../proto/courses";
-import Popup from "../Popup";
 
 export type DegreeRequirementPopupProps = {
     issues: CheckResults_Issue[] | null

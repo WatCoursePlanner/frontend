@@ -1,12 +1,11 @@
 import { Icon } from "@material-ui/core";
+import { CoopStream, CreateStudentProfileRequest } from "@watcourses/proto/courses";
 import pdfjs, { PDFDocumentProxy, TextContent, TextContentItem } from "pdfjs-dist";
 // @ts-ignore
 import PDFJSWorker from 'pdfjs-dist/build/pdf.worker.min';
 import React, { useCallback } from "react";
 import Dropzone from "react-dropzone";
 import styled from "styled-components";
-
-import { CoopStream, CreateStudentProfileRequest } from "../../proto/courses";
 
 /**
  * Retrieves the text of a specif page within a PDF Document obtained through pdf.js

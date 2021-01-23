@@ -3,15 +3,19 @@ import '@rmwc/card/styles';
 import { List, ListItem, ListItemGraphic, ListItemGraphicProps, SimpleListItemProps } from "@rmwc/list";
 import { Tooltip } from "@rmwc/tooltip";
 import '@rmwc/tooltip/styles';
+import {
+    IRequisite,
+    IRequisiteGroup,
+    RequisiteChecklist,
+    RequisiteGroupChecklist
+} from "@watcourses/components/Requisite";
+import { cleanScrollBarWithWhiteBorder } from "@watcourses/constants/styles";
+import { useDetectClickOutside } from "@watcourses/hooks";
+import { CourseInfo } from "@watcourses/proto/courses";
+import { RequisiteHelper } from "@watcourses/utils";
 import React, { useRef, useState } from "react";
 import { If, Then } from 'react-if'
 import styled from "styled-components";
-
-import { cleanScrollBarWithWhiteBorder } from "../../constants/styles";
-import { useDetectClickOutside } from "../../hooks";
-import { CourseInfo } from "../../proto/courses";
-import { RequisiteHelper } from "../../utils";
-import { IRequisite, IRequisiteGroup, RequisiteChecklist, RequisiteGroupChecklist } from "../Requisite";
 
 type CourseDetailProps = {
     course: CourseInfo | null,

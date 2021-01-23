@@ -1,19 +1,18 @@
 import { DrawerAppContent } from '@rmwc/drawer';
+import Drawer from "@watcourses/components/Drawer";
+import TopNav from "@watcourses/components/TopNav";
+import { CoopStream, CreateStudentProfileRequest } from "@watcourses/proto/courses";
+import { fetchProfileCourseAction } from "@watcourses/redux/slices/profileCourses";
+import search from "@watcourses/redux/slices/search";
+import { fetchStudentProfileAction } from "@watcourses/redux/slices/studentProfileSlice";
+import { RootState } from "@watcourses/redux/store";
+import { CachedCourses } from "@watcourses/utils";
 import React, { useEffect, useState } from "react";
 import { Else, If, Then } from "react-if";
 import { connect, ConnectedProps } from "react-redux";
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
 import { bindActionCreators, Dispatch } from "redux";
 import styled from "styled-components";
-
-import Drawer from "../components/Drawer";
-import TopNav from "../components/TopNav";
-import { CoopStream, CreateStudentProfileRequest } from "../proto/courses";
-import { fetchProfileCourseAction } from "../redux/slices/profileCourses";
-import search from "../redux/slices/search";
-import { fetchStudentProfileAction } from "../redux/slices/studentProfileSlice";
-import { RootState } from "../redux/store";
-import { CachedCourses } from "../utils";
 
 import Discover from "./Discover";
 import Schedule from "./Schedule";

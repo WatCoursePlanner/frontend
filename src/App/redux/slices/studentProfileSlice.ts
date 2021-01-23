@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-import { URL_BASE } from "../../constants/api";
-import { CreateStudentProfileRequest, StudentProfile } from "../../proto/courses";
+import { URL_BASE } from "@watcourses/constants/api";
+import { CreateStudentProfileRequest, StudentProfile } from "@watcourses/proto/courses";
 
 import { fetchProfileCourseAction } from "./profileCourses";
 
