@@ -1,21 +1,23 @@
-import React, {useEffect} from "react";
+import { TablePagination } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
-import {SearchCourseRequest} from "../../proto/courses";
-import EnhancedTableHead from "./EnhancedTableHead";
-import CourseTableRow from "./CourseTableRow";
-import styled from "styled-components";
-import {CourseDisplayData, Order} from "./CourseTableUtils";
-import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import {TablePagination} from "@material-ui/core";
 import '@rmwc/circular-progress/styles';
-import {connect, ConnectedProps} from "react-redux";
-import {bindActionCreators, Dispatch} from "redux";
+import { IconButton, IconButtonHTMLProps, IconButtonProps } from "@rmwc/icon-button";
+import React, { useEffect } from "react";
+import { connect, ConnectedProps } from "react-redux";
+import { bindActionCreators, Dispatch } from "redux";
+import styled from "styled-components";
+
+import { SearchCourseRequest } from "../../proto/courses";
+import { doSearch } from "../../redux/slices/search";
+import studentProfileSlice from "../../redux/slices/studentProfileSlice";
+import { RootState } from "../../redux/store";
+
+import CourseTableRow from "./CourseTableRow";
 import CourseTableRowPlaceholder from "./CourseTableRowPlaceholder";
-import {RootState} from "../../redux/store";
-import {doSearch} from "../../redux/slices/search";
-import studentProfile from "../../redux/slices/studentProfile";
+import { ICourseDisplayData, Order } from "./CourseTableUtils";
+import EnhancedTableHead from "./EnhancedTableHead";
 
 const Root = styled.div`
   width: 100%;
@@ -34,9 +36,9 @@ const StyledTableContainer = styled(TableContainer)`
 // see https://github.com/styled-components/styled-components/issues/1198#issuecomment-336628848
 export const StyledIconButton =
     styled(IconButton)<IconButtonHTMLProps & IconButtonProps & { filled?: number }>`
-  color: #5f6368;
-  font-family: ${props => props.filled ? "Material Icons" : "Material Icons Outlined"};
-`
+      color: #5f6368;
+      font-family: ${props => props.filled ? "Material Icons" : "Material Icons Outlined"};
+    `
 
 const PaginationWrapper = styled.div`
   min-height: 52px;
@@ -48,7 +50,7 @@ type CourseTableProps = ConnectedProps<typeof connector>
 const CourseTable = ({doSearchAction, search, shortList, addShortList, removeShortList}: CourseTableProps) => {
 
     const [order, setOrder] = React.useState<Order>("asc");
-    const [orderBy, setOrderBy] = React.useState<keyof CourseDisplayData>("code");
+    const [orderBy, setOrderBy] = React.useState<keyof ICourseDisplayData>("code");
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
 
@@ -64,7 +66,7 @@ const CourseTable = ({doSearchAction, search, shortList, addShortList, removeSho
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
-        property: keyof CourseDisplayData
+        property: keyof ICourseDisplayData
     ) => {
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
@@ -83,8 +85,11 @@ const CourseTable = ({doSearchAction, search, shortList, addShortList, removeSho
     };
 
     const setShortList = (code: string, shortlist: boolean) => {
-        if (shortlist) addShortList({code, index: null});
-        else removeShortList({code});
+        if (shortlist) {
+            addShortList({code, index: null});
+        } else {
+            removeShortList({code});
+        }
     };
 
     return (
@@ -107,10 +112,12 @@ const CourseTable = ({doSearchAction, search, shortList, addShortList, removeSho
                                 ? Array.from(Array(rowsPerPage).keys())
                                     .map((row) => <CourseTableRowPlaceholder key={row}/>)
                                 : search.content.map((row) =>
-                                    <CourseTableRow key={row.code}
-                                                    row={row}
-                                                    shortListed={shortList?.includes(row.code) ?? false}
-                                                    setShortList={setShortList}/>)
+                                    <CourseTableRow
+                                        key={row.code}
+                                        row={row}
+                                        shortListed={shortList?.includes(row.code) ?? false}
+                                        setShortList={setShortList}
+                                    />)
                         }
                     </TableBody>
                 </Table>
@@ -136,11 +143,10 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
     doSearchAction: doSearch,
-    addShortList: studentProfile.actions.addShortlist,
-    removeShortList: studentProfile.actions.removeShortlist
+    addShortList: studentProfileSlice.actions.addShortlist,
+    removeShortList: studentProfileSlice.actions.removeShortlist
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)
 
 export default connector(CourseTable)
-

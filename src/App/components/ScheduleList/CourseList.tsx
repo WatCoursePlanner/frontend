@@ -1,12 +1,14 @@
-import React, {useState} from "react";
-import {CheckResults, CourseInfo, Schedule_TermSchedule} from "../../proto/courses";
-import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
-import {Container} from "react-smooth-dnd";
-import ScheduleCourse from "./ScheduleCourse";
-import {CachedCourses} from "../../utils";
-import Spacer from "../Spacer";
+import React, { useState } from "react";
+import { Container } from "react-smooth-dnd";
+import { ContainerOptions, DropResult } from "smooth-dnd/dist/src/exportTypes";
 import styled from "styled-components";
-import {cleanScrollBar} from "../../constants/styles";
+
+import { cleanScrollBar } from "../../constants/styles";
+import { CheckResults, CourseInfo, Schedule_TermSchedule } from "../../proto/courses";
+import { CachedCourses } from "../../utils";
+import Spacer from "../Spacer";
+
+import ScheduleCourse from "./ScheduleCourse";
 
 export type CourseListProps = {
     term?: Schedule_TermSchedule,
@@ -18,83 +20,87 @@ export type CourseListProps = {
 }
 
 const StyledContainer = styled.div<{ scrolled: number }>`
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 5px 0 32px 0;
+  margin-bottom: -32px;
+  ${cleanScrollBar};
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 8px;
+    right: 12px;
+    height: 8px;
+    background-color: transparent;
+    box-shadow: inset 0 4px 4px 0 rgba(0, 0, 0, .14), inset 0 4px 2px -2px rgba(0, 0, 0, .12);
+    transition: opacity .2s;
+    opacity: ${props => props.scrolled ? 1 : 0};
+    z-index: 2;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    background-image: linear-gradient(to left, white, rgba(255, 255, 255, 0));
+    z-index: 2;
+  }
+
+  :hover {
     overflow-y: auto;
-    padding: 5px 0 32px 0;
-    margin-bottom: -32px;
-    ${cleanScrollBar};
-    
-    &:before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 8px;
-        right: 12px;
-        height: 8px;
-        background-color: transparent;
-        box-shadow: inset 0 4px 4px 0 rgba(0,0,0,.14), inset 0 4px 2px -2px rgba(0,0,0,.12);
-        transition: opacity .2s;
-        opacity: ${props => props.scrolled ? 1 : 0};
-        z-index: 2;
-    }
-    
-    &:after {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 12px;
-        width: 8px;
-        height: 8px;
-        background-image: linear-gradient(to left,white,rgba(255,255,255,0));
-        z-index: 2;
-    }
-    
-    :hover {
-      overflow-y: auto;
-    }
-    
-    .smooth-dnd-container {
-        position: relative;
-        min-height: unset;
-        flex-grow: 1;
-    }
-    
-    .smooth-dnd-draggable-wrapper {
-      overflow: visible !important;
-      background-color: transparent;
-    }
+  }
+
+  .smooth-dnd-container {
+    position: relative;
+    min-height: unset;
+    flex-grow: 1;
+  }
+
+  .smooth-dnd-draggable-wrapper {
+    overflow: visible !important;
+    background-color: transparent;
+  }
 `
 
 const CourseListWrapper = styled.div`
-    display: flex;
-    position: relative;
-    overflow: hidden;
-    min-width: 300px;
-    margin-top: -4px;
-    margin-left: -16px;
-    flex-grow: 1;
-    
-    &:before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 8px;
-        width: 8px;
-        height: 8px;
-        background-image: linear-gradient(to right,white,rgba(255,255,255,0));
-        z-index: 3;
-    }
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  min-width: 300px;
+  margin-top: -4px;
+  margin-left: -16px;
+  flex-grow: 1;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 8px;
+    width: 8px;
+    height: 8px;
+    background-image: linear-gradient(to right, white, rgba(255, 255, 255, 0));
+    z-index: 3;
+  }
 `
 
 const CourseList = ({term, onDropWithTerm, options, courses, shortlist, issues}: CourseListProps) => {
     const [scrolled, setScrolled] = useState(false)
     const handleScroll = (e: React.UIEvent<HTMLElement>) => {
         if (e.currentTarget.scrollTop > 0) {
-            if (!scrolled) setScrolled(true)
+            if (!scrolled) {
+                setScrolled(true)
+            }
         } else {
-            if (scrolled) setScrolled(false)
+            if (scrolled) {
+                setScrolled(false)
+            }
         }
     }
 

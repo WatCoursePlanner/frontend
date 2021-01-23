@@ -1,87 +1,90 @@
-import React, {useRef, useState} from "react";
-import {Draggable} from 'react-smooth-dnd';
-import {Card, CardProps} from "@rmwc/card";
-
+import { Fade } from "@material-ui/core";
+import Popper from "@material-ui/core/Popper";
+import { PopperProps } from "@material-ui/core/Popper/Popper";
+import { Card, CardProps } from "@rmwc/card";
 import '@rmwc/card/styles';
 import '@rmwc/ripple/styles';
+import React, { useRef, useState } from "react";
+import { connect, ConnectedProps } from "react-redux";
+import { Draggable } from 'react-smooth-dnd';
 import styled from "styled-components";
-import Popper from "@material-ui/core/Popper";
+
+import { CourseInfo } from "../../proto/courses";
+import { RootState } from "../../redux/store";
+import { RequisiteHelper } from "../../utils";
+
 import CourseDetail from "./CourseDetail";
-import {Fade} from "@material-ui/core";
-import {PopperProps} from "@material-ui/core/Popper/Popper";
-import {CourseInfo} from "../../proto/courses";
-import {RootState} from "../../redux/store";
-import {connect, ConnectedProps} from "react-redux";
-import {RequisiteHelper} from "../../utils";
 
 type ScheduleCourseProps = ConnectedProps<typeof connector> & {
     course: CourseInfo | null
 }
 
 const RootContainer = styled.div`
-    width: 265px; 
-    padding: 8px 0;
-    background-color: transparent;
+  width: 265px;
+  padding: 8px 0;
+  background-color: transparent;
 `
 
 const CardWrapper = styled.div`
-    width: 100%;
-    cursor: pointer;
-    margin-left: 16px;
+  width: 100%;
+  cursor: pointer;
+  margin-left: 16px;
 `
 
 const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & { hovered: number, active: number, ref: any }>`
-    width: 100%;
-    background-color: ${props => props.hovered ? '#fafafa' : 'white'};
-    transition:  background-color 0.2s ease,
-                opacity 0.2s ease,
-                box-shadow 0.2s ease;
-    transition-delay: 0s;    
-    :hover {
-      transition-delay: 150ms
-    }        
-    :focus {
-        box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14), 
-                    0 1px 18px 0 rgba(0,0,0,0.12), 
-                    0 3px 5px -1px rgba(0,0,0,0.2);
-        border-color: transparent;
-    }
-    
-    box-shadow: ${props => props.active ? `0 6px 10px 0 rgba(0,0,0,0.14), 
+  width: 100%;
+  background-color: ${props => props.hovered ? '#fafafa' : 'white'};
+  transition: background-color 0.2s ease,
+  opacity 0.2s ease,
+  box-shadow 0.2s ease;
+  transition-delay: 0s;
+
+  :hover {
+    transition-delay: 150ms
+  }
+
+  :focus {
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+    0 1px 18px 0 rgba(0, 0, 0, 0.12),
+    0 3px 5px -1px rgba(0, 0, 0, 0.2);
+    border-color: transparent;
+  }
+
+  box-shadow: ${props => props.active ? `0 6px 10px 0 rgba(0,0,0,0.14), 
                       0 1px 18px 0 rgba(0,0,0,0.12), 
                       0 3px 5px -1px rgba(0,0,0,0.2)` : ''};
-    border-color: ${props => props.active ? `transparent` : 'inherited'};
-    outline: none;
+  border-color: ${props => props.active ? `transparent` : 'inherited'};
+  outline: none;
 }
 `
 
 const CardContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 18px;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
 `
 
 const CourseCode = styled.span`
-    font-size: 18px;
-    font-weight: 500
+  font-size: 18px;
+  font-weight: 500
 `
 
 const Error = styled.span`
-    float: right;
-    color: #FF0000;
-    font-family: "Material Icons";
-    font-size: 22px;
+  float: right;
+  color: #FF0000;
+  font-family: "Material Icons";
+  font-size: 22px;
 `
 
 const CourseName = styled.span`
-    font-size: 14px;
-    margin-top: 6px;
+  font-size: 14px;
+  margin-top: 6px;
 `
 
 const StyledPopper = styled(Popper)<PopperProps>`
-    z-index: 9999;
-    margin-bottom: 50px;
-    max-height: 80vh;
+  z-index: 9999;
+  margin-bottom: 50px;
+  max-height: 80vh;
 `
 
 const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
@@ -122,7 +125,9 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
     // Scroll the element based on mouse movement
     const handleMouseMove = (e: any) => {
         const element: HTMLElement | null = document.getElementById('schedule-list')
-        if (!element) return
+        if (!element) {
+            return
+        }
 
         // X coordinate of the mouse within the scroll view
         const viewportX = e.clientX - element.getBoundingClientRect().left
@@ -146,13 +151,17 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
         const maxScrollX = elementWidth - viewportWidth
 
         const adjustWindowScroll = () => {
-            if (!element) return;
+            if (!element) {
+                return;
+            }
             const currentScrollX = element.scrollLeft;
-            let canScrollLeft = currentScrollX > 0
+            const canScrollLeft = currentScrollX > 0
             let canScrollRight = currentScrollX < maxScrollX
 
             // Disable scrolling right when shortlist is open
-            if (shortlistOpen) canScrollRight = false
+            if (shortlistOpen) {
+                canScrollRight = false
+            }
 
             let nextScrollX: number = currentScrollX
 
@@ -199,7 +208,9 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
         document.removeEventListener("mouseup", handleMouseUp);
     };
     const allConditionsMet = (() => {
-        if (!course) return true
+        if (!course) {
+            return true
+        }
         const prerequisites = RequisiteHelper.getPreRequisite(course)
         const antirequisites = RequisiteHelper.getAntiRequisite(course)
         return prerequisites.every((r) => r.met) && antirequisites.every((r) => r.met)
@@ -225,7 +236,9 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
                             }
                         }}
                         onMouseOver={() => {
-                            if (!hovered) setHovered(true)
+                            if (!hovered) {
+                                setHovered(true)
+                            }
                         }}
                         onMouseEnter={toggleHover}
                         onMouseLeave={toggleHover}>
@@ -269,7 +282,6 @@ const ScheduleCourse = ({course, shortlistOpen}: ScheduleCourseProps) => {
         </Draggable>
     )
 }
-
 
 const mapState = (state: RootState) => ({
     shortlistOpen: state.ui.shortlistOpen,

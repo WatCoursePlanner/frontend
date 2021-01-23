@@ -1,14 +1,15 @@
-import React, {useEffect} from 'react';
-import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
-import {ThemeProvider as RMWCThemeProvider} from "@rmwc/theme"
-import Home from "./sections/Home";
-import Welcome from "./sections/Welcome";
+import { ThemeProvider as MUIThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider as RMWCThemeProvider } from "@rmwc/theme"
 import '@rmwc/theme/styles';
-import {ThemeProvider as MUIThemeProvider} from "@material-ui/core/styles"
-import {RMWCTheme, Theme} from "./constants/theme";
-import {useSelector} from "react-redux";
-import {saveState} from "./utils/LocalStorage";
-import {RootState} from "./redux/store";
+import React, { useEffect } from 'react';
+import { useSelector } from "react-redux";
+import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
+
+import { RMWCTheme, Theme } from "./constants/theme";
+import { RootState } from "./redux/store";
+import { Home } from "./sections/Home";
+import Welcome from "./sections/Welcome";
+import { saveState } from "./utils/LocalStorage";
 
 const App = () => {
     const rootState = useSelector((state: RootState) => state)

@@ -1,10 +1,11 @@
+import { ListItemGraphic, ListItemGraphicProps } from "@rmwc/list";
 import React from "react";
-import {RequisiteChecklist, RequisiteGroup} from "./index";
 import styled from "styled-components";
-import {ListItemGraphic, ListItemGraphicProps} from "@rmwc/list";
+
+import { IRequisiteGroup, RequisiteChecklist } from "./index";
 
 type RequisiteGroupChecklistProps = {
-    requisiteGroups: RequisiteGroup[];
+    requisiteGroups: IRequisiteGroup[];
 }
 
 const RootContainer = styled.div`
@@ -31,10 +32,11 @@ const RequisiteCount = styled.span`
   opacity: .8;
 `
 
-const StyledListItemGraphic = styled(ListItemGraphic)<ListItemGraphicProps & React.HTMLProps<HTMLDivElement> & {met: number}>`
-    color: ${props => props.met ? '#2196f3' : '#ff0000'};
-    margin-right: 16px;
-    margin-top: 8px;
+const StyledListItemGraphic = styled(ListItemGraphic)<ListItemGraphicProps & React.HTMLProps<HTMLDivElement> &
+    { met: number }>`
+  color: ${props => props.met ? '#2196f3' : '#ff0000'};
+  margin-right: 16px;
+  margin-top: 8px;
 `
 
 const RequisiteGroupChecklist = ({requisiteGroups}: RequisiteGroupChecklistProps) => {

@@ -1,32 +1,33 @@
-import React from "react";
+import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
+import React from "react";
 import styled from "styled-components";
-import {CourseDisplayData, Order} from "./CourseTableUtils";
-import {StyledIconButton} from "./index";
+
+import { ICourseDisplayData, Order } from "./CourseTableUtils";
+import { StyledIconButton } from "./index";
 
 const VisuallyHidden = styled.span`
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    top: 20px;
-    width: 1px;
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  top: 20px;
+  width: 1px;
 `
 
-interface HeadCell {
-    id: keyof CourseDisplayData;
+interface IHeadCell {
+    id: keyof ICourseDisplayData;
     label: string;
     numeric: boolean;
 }
 
-const headCells: HeadCell[] = [
+const headCells: IHeadCell[] = [
     {id: "code", numeric: false, label: "Code"},
     {id: "name", numeric: false, label: "Name"},
     {id: "like", numeric: true, label: "Like"},
@@ -34,19 +35,19 @@ const headCells: HeadCell[] = [
     {id: "easy", numeric: true, label: "Easy"},
 ];
 
-interface EnhancedTableProps {
+interface IEnhancedTableProps {
     onRequestSort: (
         event: React.MouseEvent<unknown>,
-        property: keyof CourseDisplayData
+        property: keyof ICourseDisplayData
     ) => void;
     order: Order;
     orderBy: string;
     rowCount: number;
 }
 
-function EnhancedTableHead(props: EnhancedTableProps) {
+function EnhancedTableHead(props: IEnhancedTableProps) {
     const {order, orderBy, onRequestSort} = props;
-    const createSortHandler = (property: keyof CourseDisplayData) => (
+    const createSortHandler = (property: keyof ICourseDisplayData) => (
         event: React.MouseEvent<unknown>
     ) => {
         onRequestSort(event, property);

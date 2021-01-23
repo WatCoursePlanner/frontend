@@ -14,7 +14,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": "./src",
+    "paths": {
+      "@watcourses": ["App"],
+      "@watcourses/*": ["App/*"]
+    }
   },
   "include": [
     "src/typings/"

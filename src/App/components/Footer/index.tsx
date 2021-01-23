@@ -1,9 +1,9 @@
-import React from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Link from '@material-ui/core/Link';
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import React from 'react';
 
 function Copyright() {
     return (
@@ -41,11 +41,11 @@ export default function StickyFooter() {
 
     return (
         <div className={classes.root}>
-            <CssBaseline />
+            <CssBaseline/>
             <footer className={classes.footer}>
                 <Container maxWidth="sm">
                     <Typography variant="body1">Support us on Github.</Typography>
-                    <Copyright />
+                    <Copyright/>
                 </Container>
             </footer>
         </div>

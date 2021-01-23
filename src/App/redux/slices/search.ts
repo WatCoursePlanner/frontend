@@ -1,6 +1,7 @@
-import {CourseInfo, PaginationInfoResponse, SearchCourseRequest, SearchCourseResponse} from "../../proto/courses";
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {URL_BASE} from "../../constants/api";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+import { URL_BASE } from "../../constants/api";
+import { CourseInfo, PaginationInfoResponse, SearchCourseRequest, SearchCourseResponse } from "../../proto/courses";
 
 export type SearchState = {
     readonly content: CourseInfo[],
@@ -13,7 +14,7 @@ export type SearchState = {
 export const doSearch = createAsyncThunk(
     'search/doSearch',
     async (request: SearchCourseRequest, thunkAPI) => {
-        const resp = await fetch(URL_BASE + "/course/search/", {
+        const resp = await fetch(`${URL_BASE}/course/search/`, {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(SearchCourseRequest.toJSON(request))
@@ -21,7 +22,7 @@ export const doSearch = createAsyncThunk(
 
         const res = await resp.json()
 
-        if (res.error) throw res.error
+        if (res.error) { throw res.error }
 
         return res
     }
@@ -61,4 +62,3 @@ const search = createSlice({
 })
 
 export default search
-
