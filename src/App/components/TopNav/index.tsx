@@ -20,6 +20,7 @@ import DegreeRequirementPopup, { DegreeRequirementPopupProps } from "./DegreeReq
 
 const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
   border-bottom: 1px solid #e0e0e0;
+  background-color: white;
 `
 
 const StyledAppBarTitle = styled(TopAppBarTitle)`
