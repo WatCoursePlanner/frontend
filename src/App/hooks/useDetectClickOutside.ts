@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 
 const useDetectClickOutside = (ref: React.MutableRefObject<any>, callback: () => any) => {
     useEffect(() => {

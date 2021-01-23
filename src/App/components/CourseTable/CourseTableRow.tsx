@@ -1,10 +1,12 @@
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
-import React, {useState} from "react";
-import {CourseInfo} from "../../proto/courses";
+import React, { useState } from "react";
+import { If, Then } from "react-if";
 import styled from "styled-components";
-import {StyledIconButton} from ".";
-import {If, Then} from "react-if";
+
+import { CourseInfo } from "../../proto/courses";
+
+import { StyledIconButton } from ".";
 
 export type CourseTableRowProps = {
     row: CourseInfo,
@@ -13,7 +15,7 @@ export type CourseTableRowProps = {
 }
 
 const CodeCell = styled(TableCell)`
-    width: 138px
+  width: 138px
 `
 
 const CourseTableRow = ({row, shortListed, setShortList}: CourseTableRowProps) => {
@@ -25,7 +27,9 @@ const CourseTableRow = ({row, shortListed, setShortList}: CourseTableRowProps) =
             hover
             tabIndex={-1}
             onMouseOver={() => {
-                if (!hovered) setHovered(true)
+                if (!hovered) {
+                    setHovered(true)
+                }
             }}
             onMouseEnter={toggleHover}
             onMouseLeave={toggleHover}

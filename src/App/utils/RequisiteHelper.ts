@@ -1,4 +1,4 @@
-import {Requisite, RequisiteGroup} from "../components/Requisite";
+import {IRequisite, IRequisiteGroup} from "../components/Requisite";
 import {CourseInfo} from "../proto/courses";
 
 type Condition = { type: string; data: string; operands: Condition[]; met: boolean | null; }
@@ -6,7 +6,7 @@ type Condition = { type: string; data: string; operands: Condition[]; met: boole
 export class RequisiteHelper {
     private static simpleTypes = ["HAS_COURSE", "HAS_LABEL", "SATISFIES_LIST"]
 
-    private static getRequisiteGroupFromSimpleOrOrs(rule: Condition): RequisiteGroup | null {
+    private static getRequisiteGroupFromSimpleOrOrs(rule: Condition): IRequisiteGroup | null {
         if (rule.type === "HAS_COURSE" || rule.type === "HAS_LABEL") {
             return this.getRequisiteGroupFromSimpleOrOrs({type: "OR", data: "", operands: [rule], met: rule.met})
         }
@@ -20,7 +20,7 @@ export class RequisiteHelper {
         return null
     }
 
-    static parseAntiRequisite(rule: Condition): RequisiteGroup | null {
+    static parseAntiRequisite(rule: Condition): IRequisiteGroup | null {
         if (rule.type === "HAS_COURSE" || rule.type === "HAS_LABEL") {
             return this.parseAntiRequisite({type: "AND", data: "", operands: [rule], met: rule.met})
         }
@@ -34,12 +34,12 @@ export class RequisiteHelper {
         return null
     }
 
-    static parseRequisite(rule: Condition): RequisiteGroup[] {
+    static parseRequisite(rule: Condition): IRequisiteGroup[] {
         const simpleOrOrs = this.getRequisiteGroupFromSimpleOrOrs(rule);
         if (simpleOrOrs) return [simpleOrOrs];
 
         if (rule.type === "AND") {
-            let results: RequisiteGroup[] = []
+            let results: IRequisiteGroup[] = []
             // each operand must be simple or a OR
             for (const operand of rule.operands) {
                 const r = this.getRequisiteGroupFromSimpleOrOrs(operand)
@@ -52,7 +52,7 @@ export class RequisiteHelper {
         return []
     }
 
-    static getPreRequisite(course: CourseInfo | null): RequisiteGroup[] {
+    static getPreRequisite(course: CourseInfo | null): IRequisiteGroup[] {
         const json = course?.preRequisite?.json;
         if (!json) return [];
         const requisite = JSON.parse(json) as Condition;
@@ -60,7 +60,7 @@ export class RequisiteHelper {
         return this.parseRequisite(requisite);
     }
 
-    static getAntiRequisite(course: CourseInfo | null): Requisite[] {
+    static getAntiRequisite(course: CourseInfo | null): IRequisite[] {
         const json = course?.antiRequisite?.json;
         if (!json) return [];
         const requisite = JSON.parse(json) as Condition;

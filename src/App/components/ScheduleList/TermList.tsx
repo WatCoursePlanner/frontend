@@ -1,7 +1,9 @@
 import React from "react";
-import {CheckResults, CourseInfo, StudentProfile} from "../../proto/courses";
-import {ScheduleTerm} from "./index";
-import {ContainerOptions, DropResult} from "smooth-dnd/dist/src/exportTypes";
+import { ContainerOptions, DropResult } from "smooth-dnd/dist/src/exportTypes";
+
+import { CheckResults, CourseInfo, StudentProfile } from "../../proto/courses";
+
+import { ScheduleTerm } from "./index";
 
 type TermListProps = {
     issues: { [termName: string]: CheckResults },
@@ -12,17 +14,20 @@ type TermListProps = {
 }
 
 const TermList = ({issues, studentProfile, profileCourses, options, onDropWithTerm}: TermListProps) => {
-    let shownYears: number[] = []
-    if (!studentProfile || !studentProfile.schedule) return <div/>
+    const shownYears: number[] = []
+    if (!studentProfile || !studentProfile.schedule) {
+        return <div/>
+    }
 
     return <>{studentProfile.schedule.terms
         .map((term, index) => {
             const showYear = !shownYears.includes(term.year)
-            if (showYear)
+            if (showYear) {
                 shownYears.push(term.year)
+            }
             return (<ScheduleTerm
                 key={term.termName}
-                issues={issues?issues[term.termName]:null}
+                issues={issues ? issues[term.termName] : null}
                 term={term}
                 courses={profileCourses}
                 showYear={showYear}

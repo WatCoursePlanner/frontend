@@ -1,5 +1,5 @@
 declare module 'json-url/dist/browser/json-url' {
-    interface Codec {
+    interface ICodec {
         compress: (obj: object) => Promise<string>;
         decompress: (str: string) => Promise<object>;
         stats: (
@@ -7,7 +7,7 @@ declare module 'json-url/dist/browser/json-url' {
         ) => Promise<{ rawencoded: any; compressedencoded: any; compression: any }>;
     }
 
-    const jsonurl: (codecName: string) => Codec;
+    const jsonurl: (codecName: string) => ICodec;
 
     export default jsonurl;
 }

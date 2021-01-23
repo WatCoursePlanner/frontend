@@ -1,14 +1,16 @@
-import {configureStore} from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
+
+import { loadState } from "../utils/LocalStorage";
+
 import profileCourses from "./slices/profileCourses";
-import studentProfile from "./slices/studentProfile";
 import search from "./slices/search";
+import studentProfileSlice from "./slices/studentProfileSlice";
 import ui from "./slices/ui";
-import {loadState} from "../utils/LocalStorage";
 
 export const store = (async () => configureStore({
     reducer: {
         profileCourses: profileCourses.reducer,
-        studentProfile: studentProfile.reducer,
+        studentProfile: studentProfileSlice.reducer,
         search: search.reducer,
         ui: ui.reducer,
     },

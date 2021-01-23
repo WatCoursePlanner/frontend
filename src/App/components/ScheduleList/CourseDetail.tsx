@@ -1,19 +1,17 @@
-import React, {useRef, useState} from "react";
-import styled from "styled-components";
-import {Card, CardActionIcon, CardActionIcons, CardActions, CardProps} from "@rmwc/card";
-
+import { Card, CardActionIcon, CardActionIcons, CardActions, CardProps } from "@rmwc/card";
 import '@rmwc/card/styles';
-import {CourseInfo} from "../../proto/courses";
-import {List, ListItem, ListItemGraphic, ListItemGraphicProps, SimpleListItemProps} from "@rmwc/list";
-import {Tooltip} from "@rmwc/tooltip";
-
-import {If, Then} from 'react-if'
-
+import { List, ListItem, ListItemGraphic, ListItemGraphicProps, SimpleListItemProps } from "@rmwc/list";
+import { Tooltip } from "@rmwc/tooltip";
 import '@rmwc/tooltip/styles';
-import {Requisite, RequisiteChecklist, RequisiteGroup, RequisiteGroupChecklist} from "../Requisite";
-import {RequisiteHelper} from "../../utils";
-import {useDetectClickOutside} from "../../hooks";
-import {cleanScrollBarWithWhiteBorder} from "../../constants/styles";
+import React, { useRef, useState } from "react";
+import { If, Then } from 'react-if'
+import styled from "styled-components";
+
+import { cleanScrollBarWithWhiteBorder } from "../../constants/styles";
+import { useDetectClickOutside } from "../../hooks";
+import { CourseInfo } from "../../proto/courses";
+import { RequisiteHelper } from "../../utils";
+import { IRequisite, IRequisiteGroup, RequisiteChecklist, RequisiteGroupChecklist } from "../Requisite";
 
 type CourseDetailProps = {
     course: CourseInfo | null,
@@ -21,85 +19,85 @@ type CourseDetailProps = {
 }
 
 const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement>>`
-    position: relative;
-    max-height: 80vh;
-    min-width: 300px;
-    background-color: white;
-    outline: none;
-    border-radius: 8px;
-    max-width: 448px;
-    width: 448px;
-    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14),
-                0 9px 46px 8px rgba(0,0,0,0.12), 
-                0 11px 15px -7px rgba(0,0,0,0.2);
+  position: relative;
+  max-height: 80vh;
+  min-width: 300px;
+  background-color: white;
+  outline: none;
+  border-radius: 8px;
+  max-width: 448px;
+  width: 448px;
+  box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14),
+  0 9px 46px 8px rgba(0, 0, 0, 0.12),
+  0 11px 15px -7px rgba(0, 0, 0, 0.2);
 `
 
 const CourseCode = styled.span`
-    font-size: 22px;
-    font-weight: 500
+  font-size: 22px;
+  font-weight: 500
 `
 const CourseName = styled.span`
-    font-size: 14px;
-    line-height: 20px;
-    margin-top: 6px;
+  font-size: 14px;
+  line-height: 20px;
+  margin-top: 6px;
 `
 
 const CardContainer = styled.div<{ scrolled: number }>`
-    display: flex;
-    flex-direction: column;
-    padding: 18px 12px;
-    overflow-y: auto;
-    ${cleanScrollBarWithWhiteBorder};
-    
-    &:before {
-        content: "";
-        position: absolute;
-        top: 52px;
-        left: 0;
-        right: 0;
-        height: 8px;
-        z-index: 5;
-        background-color: transparent;
-        box-shadow: inset 0 2px 2px 0 rgba(0,0,0,.12);
-        transition: opacity .2s;
-        opacity: ${props => props.scrolled ? 1 : 0};
-    }
+  display: flex;
+  flex-direction: column;
+  padding: 18px 12px;
+  overflow-y: auto;
+  ${cleanScrollBarWithWhiteBorder};
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 52px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    z-index: 5;
+    background-color: transparent;
+    box-shadow: inset 0 2px 2px 0 rgba(0, 0, 0, .12);
+    transition: opacity .2s;
+    opacity: ${props => props.scrolled ? 1 : 0};
+  }
 `
 
 const TitleContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-left: 56px;
-    margin-bottom: -8px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 56px;
+  margin-bottom: -8px;
 `
 
 const StyledListItemGraphic = styled(ListItemGraphic)<ListItemGraphicProps & React.HTMLProps<HTMLDivElement>>`
-    color: rgba(0, 0, 0, .54);
-    margin-right: 16px;
+  color: rgba(0, 0, 0, .54);
+  margin-right: 16px;
 `
 
 const ListContent = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
 `
 
 const ListContentTitle = styled.span`
-    font-size: 14px;
-    white-space: pre-wrap;
-    line-height: 18px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  line-height: 18px;
 `
 
 const ListContentSubtitle = styled(ListContentTitle)`
-    margin: 4px 0;
-    font-size: 12px;
-    opacity: .8;
+  margin: 4px 0;
+  font-size: 12px;
+  opacity: .8;
 `
 
 const StyledListItem = styled(ListItem)<SimpleListItemProps>`
-    height: auto;
-    align-items: start;
-    margin-top: 32px;
+  height: auto;
+  align-items: start;
+  margin-top: 32px;
 `
 
 const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
@@ -109,9 +107,13 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
     const [scrolled, setScrolled] = useState(false)
     const handleScroll = (e: React.UIEvent<HTMLElement>) => {
         if (e.currentTarget.scrollTop > 0) {
-            if (!scrolled) setScrolled(true)
+            if (!scrolled) {
+                setScrolled(true)
+            }
         } else {
-            if (scrolled) setScrolled(false)
+            if (scrolled) {
+                setScrolled(false)
+            }
         }
     }
 
@@ -139,7 +141,7 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
                 </CardActionIcons>
             </CardActions>
             <CardContainer scrolled={scrolled ? 1 : 0} onScroll={handleScroll}>
-                <List nonInteractive={true}>
+                <List nonInteractive>
                     <TitleContainer>
                         <CourseCode>
                             {course?.code ?? ''}
@@ -164,7 +166,7 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
                                     {prerequisites.length} Prerequisites
                                 </ListContentTitle>
                                 <ListContentSubtitle>
-                                    {`${prerequisites.filter((t: RequisiteGroup) => t.met).length} met, ${prerequisites.length - prerequisites.filter((t: RequisiteGroup) => t.met).length} not met`}
+                                    {`${prerequisites.filter((t: IRequisiteGroup) => t.met).length} met, ${prerequisites.length - prerequisites.filter((t: IRequisiteGroup) => t.met).length} not met`}
                                 </ListContentSubtitle>
                                 <RequisiteGroupChecklist requisiteGroups={prerequisites}/>
                             </ListContent>
@@ -180,9 +182,9 @@ const CourseDetail = ({course, onDismiss}: CourseDetailProps) => {
                                 </ListContentTitle>
                                 <ListContentSubtitle>
                                     {`has ${
-                                        antirequisites.filter((t: Requisite) => !t.met).length === 0
+                                        antirequisites.filter((t: IRequisite) => !t.met).length === 0
                                             ? 'none'
-                                            : antirequisites.filter((t: Requisite) => !t.met).length
+                                            : antirequisites.filter((t: IRequisite) => !t.met).length
                                     }`}
                                 </ListContentSubtitle>
                                 <RequisiteChecklist requisites={antirequisites}/>

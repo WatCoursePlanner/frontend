@@ -1,9 +1,10 @@
+import { Typography } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import {Typography} from "@material-ui/core";
-import ReactHtmlParser from "react-html-parser";
-import React from "react";
-import {AutoCompleteOption} from "./index";
 import * as Fuzzysort from "fuzzysort";
+import React from "react";
+import ReactHtmlParser from "react-html-parser";
+
+import { AutoCompleteOption } from "./index";
 
 const Option = ({option}: { option: Fuzzysort.KeysResult<AutoCompleteOption> }) => (
     <Grid container alignItems="center">

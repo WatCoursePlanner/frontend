@@ -4,12 +4,12 @@ import {Container} from "@material-ui/core";
 import TranscriptReader from "../components/TranscriptReader";
 import {CreateStudentProfileRequest} from "../proto/courses";
 import {useDispatch} from "react-redux";
-import {fetchStudentProfile} from "../redux/slices/studentProfile";
+import {fetchStudentProfileAction} from "../redux/slices/studentProfileSlice";
 
 const Welcome = () => {
     const dispatch = useDispatch()
     const importCallback = (request: CreateStudentProfileRequest) => {
-        dispatch(fetchStudentProfile(request))
+        dispatch(fetchStudentProfileAction(request))
     }
     return (
         <Container>

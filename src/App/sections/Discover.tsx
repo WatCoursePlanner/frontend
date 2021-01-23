@@ -1,6 +1,7 @@
 import React from 'react'
-import CourseTable from "../components/CourseTable";
 import styled from "styled-components";
+
+import CourseTable from "../components/CourseTable";
 
 const Root = styled.div`
   height: 100%;

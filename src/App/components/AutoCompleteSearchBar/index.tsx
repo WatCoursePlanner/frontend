@@ -1,10 +1,11 @@
-import React from "react";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import '@rmwc/icon-button/styles';
 import '@rmwc/textfield/styles';
-import SearchBar, {SearchBarProps} from "./SearchBar";
-import Option from "./Option";
 import * as Fuzzysort from "fuzzysort";
+import React from "react";
+
+import Option from "./Option";
+import SearchBar, { SearchBarProps } from "./SearchBar";
 
 export type AutoCompleteOption = {
     title: string,
@@ -74,7 +75,9 @@ const AutoCompleteSearchBar =
                 options={displayOptions}
                 getOptionLabel={(option) => (`${option?.obj?.title ?? option}`)}
                 onChange={(event, newValue: Fuzzysort.KeysResult<AutoCompleteOption> | string | null) => {
-                    if (!newValue || typeof newValue == "string") return
+                    if (!newValue || typeof newValue === "string") {
+                        return
+                    }
                     onAutoCompleteSelect(newValue?.obj?.title ?? '')
                 }}
                 inputValue={searchText}

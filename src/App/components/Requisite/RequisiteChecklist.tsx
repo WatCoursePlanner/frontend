@@ -1,12 +1,12 @@
+import { Chip, ChipHTMLProps, ChipProps, ChipSet } from "@rmwc/chip"
+import '@rmwc/chip/styles';
 import React from "react";
 import styled from "styled-components";
-import {Chip, ChipHTMLProps, ChipProps, ChipSet} from "@rmwc/chip"
 
-import '@rmwc/chip/styles';
-import { Requisite } from ".";
+import { IRequisite } from ".";
 
 type RequisiteChecklistProps = {
-    requisites: Requisite[];
+    requisites: IRequisite[];
 }
 
 const RootContainer = styled.div`
@@ -20,6 +20,7 @@ const StyledChipSet = styled(ChipSet)`
 
 const StyledChip = styled(Chip)<ChipProps & ChipHTMLProps & { met?: number }>`
   background-color: ${props => props.met ? '#edf7fe' : '#feeded'};
+
   i {
     color: ${props => props.met ? '#2196f3' : '#ff0000'};
   }
@@ -33,7 +34,7 @@ const RequisiteChecklist = ({requisites}: RequisiteChecklistProps) => {
                     requisites.map((requisite, index) =>
                         <StyledChip
                             className={'unselectable'}
-                            onInteraction={() => console.log(`[Chip] TODO selected ${requisite.code}`)}
+                            onInteraction={() => console.error(`[Chip] TODO selected ${requisite.code}`)}
                             icon={requisite.met ? "done" : "close"}
                             met={requisite.met ? 1 : 0}
                             label={requisite.code}

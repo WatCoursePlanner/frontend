@@ -1,39 +1,42 @@
-import {TopAppBar, TopAppBarProps, TopAppBarRow, TopAppBarSection, TopAppBarTitle} from "@rmwc/top-app-bar";
-import {MenuSurface, MenuSurfaceAnchor} from "@rmwc/menu";
-import {Badge, BadgeAnchor} from "@rmwc/badge";
-import {Avatar} from "@rmwc/avatar";
+import { Avatar } from "@rmwc/avatar";
+import '@rmwc/avatar/styles';
+import { Badge, BadgeAnchor } from "@rmwc/badge";
+import '@rmwc/badge/styles';
+import { IconButton, IconButtonHTMLProps, IconButtonProps } from "@rmwc/icon-button";
+import { MenuSurface, MenuSurfaceAnchor } from "@rmwc/menu";
+import '@rmwc/menu/styles';
+import { TopAppBar, TopAppBarProps, TopAppBarRow, TopAppBarSection, TopAppBarTitle } from "@rmwc/top-app-bar";
+import '@rmwc/top-app-bar/styles';
 import React from "react";
 import styled from "styled-components";
-import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
-import AutoCompleteSearchBar, {AutoCompleteCallbackProps, AutoCompleteOption} from "../AutoCompleteSearchBar"
-import DegreeRequirementPopup, {DegreeRequirementPopupProps} from "./DegreeRequirementPopup";
-import {CourseInfo} from "../../proto/courses";
-import {SearchBarProps} from "../AutoCompleteSearchBar/SearchBar";
+
+import { CourseInfo } from "../../proto/courses";
+import { CachedCourses } from "../../utils";
+import AutoCompleteSearchBar, { AutoCompleteCallbackProps, AutoCompleteOption } from "../AutoCompleteSearchBar"
+import { SearchBarProps } from "../AutoCompleteSearchBar/SearchBar";
 import Popup from "../Popup";
-import '@rmwc/top-app-bar/styles';
-import '@rmwc/menu/styles';
-import '@rmwc/badge/styles';
-import '@rmwc/avatar/styles';
-import {CachedCourses} from "../../utils";
+
+import DegreeRequirementPopup, { DegreeRequirementPopupProps } from "./DegreeRequirementPopup";
 
 const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
-      border-bottom: 1px solid #e0e0e0;
-    `
+  border-bottom: 1px solid #e0e0e0;
+  background-color: white;
+`
 
 const StyledAppBarTitle = styled(TopAppBarTitle)`
-      font-weight: 600;
-      padding-left: 10px;
-      margin-right: 30px;
-      color: #5f6368;
-    `
+  font-weight: 600;
+  padding-left: 10px;
+  margin-right: 30px;
+  color: #5f6368;
+`
 
 const AppBarButton = styled(IconButton)<IconButtonHTMLProps & IconButtonProps>`
-        color: #5f6368;
-    `
+  color: #5f6368;
+`
 
 const InfoButton = styled(AppBarButton)`
-        margin-right: 30px;
-    `
+  margin-right: 30px;
+`
 
 type TopNavProps = {
     toggleDrawer: () => void,
@@ -87,7 +90,8 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
                                 icon="info"
                                 onClick={() => setDegreeMenuOpen(!degreeMenuOpen)}/>
                             {issues && issues.length > 0 ?
-                                <Badge className={'unselectable'} style={{marginRight: 40}} inset="0.75rem" label={issues.length}/> : null}
+                                <Badge className={'unselectable'} style={{marginRight: 40}} inset="0.75rem"
+                                       label={issues.length}/> : null}
                         </BadgeAnchor>
                     </MenuSurfaceAnchor>
                     <MenuSurfaceAnchor>

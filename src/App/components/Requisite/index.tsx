@@ -1,13 +1,13 @@
-export {default as RequisiteGroupChecklist} from "./RequisiteGroupChecklist";
-export {default as RequisiteChecklist} from "./RequisiteChecklist";
+export { default as RequisiteGroupChecklist } from "./RequisiteGroupChecklist";
+export { default as RequisiteChecklist } from "./RequisiteChecklist";
 
-export interface Requisite {
+export interface IRequisite {
     code: string,
     met: boolean
 }
 
-export interface RequisiteGroup {
-    requisites: Requisite[],
+export interface IRequisiteGroup {
+    requisites: IRequisite[],
     requires: number,
     met: boolean
 }

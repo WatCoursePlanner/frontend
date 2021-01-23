@@ -1,18 +1,21 @@
-import React from 'react';
-import Popup from "../Popup";
-import {List, ListItem, ListItemMeta, ListItemPrimaryText, ListItemSecondaryText, ListItemText} from "@rmwc/list";
+import { List, ListItem, ListItemMeta, ListItemPrimaryText, ListItemSecondaryText, ListItemText } from "@rmwc/list";
 import '@rmwc/list/styles';
-import {CheckResults_Issue} from "../../proto/courses";
+import React from 'react';
+
+import { CheckResults_Issue } from "../../proto/courses";
+import Popup from "../Popup";
 
 export type DegreeRequirementPopupProps = {
     issues: CheckResults_Issue[] | null
 }
 
 const DegreeRequirementPopup = ({issues}: DegreeRequirementPopupProps) => {
-    if (!issues || issues.length === 0) return (
-        <Popup
-            title={'Degree Requirement Met'}
-            message={'Your schedule has all requirements!'}/>)
+    if (!issues || issues.length === 0) {
+        return (
+            <Popup
+                title={'Degree Requirement Met'}
+                message={'Your schedule has all requirements!'}/>)
+    }
     return (
         <Popup
             title={'Degree Requirement Not Met'}

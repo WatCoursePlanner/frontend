@@ -1,36 +1,45 @@
-import React, {useEffect, useState} from "react";
-import {Redirect, Route, Switch, useLocation} from "react-router-dom";
-import {DrawerAppContent} from '@rmwc/drawer';
-import Schedule from "./Schedule";
-import Discover from "./Discover";
+import { DrawerAppContent } from '@rmwc/drawer';
+import React, { useEffect, useState } from "react";
+import { Else, If, Then } from "react-if";
+import { connect, ConnectedProps } from "react-redux";
+import { Redirect, Route, Switch, useLocation } from "react-router-dom";
+import { bindActionCreators, Dispatch } from "redux";
 import styled from "styled-components";
+
 import Drawer from "../components/Drawer";
 import TopNav from "../components/TopNav";
-import {connect, ConnectedProps} from "react-redux";
-import {bindActionCreators, Dispatch} from "redux";
-import {CoopStream, CreateStudentProfileRequest} from "../proto/courses";
-import {CachedCourses} from "../utils";
-import {fetchStudentProfile} from "../redux/slices/studentProfile";
-import {RootState} from "../redux/store";
-import {Else, If, Then} from "react-if";
+import { CoopStream, CreateStudentProfileRequest } from "../proto/courses";
+import { fetchProfileCourseAction } from "../redux/slices/profileCourses";
 import search from "../redux/slices/search";
-import profileCourses, {fetchProfileCourseAction} from "../redux/slices/profileCourses";
+import { fetchStudentProfileAction } from "../redux/slices/studentProfileSlice";
+import { RootState } from "../redux/store";
+import { CachedCourses } from "../utils";
+
+import Discover from "./Discover";
+import Schedule from "./Schedule";
 
 const Container = styled.div`
-      height: 100%;
-      position: relative;
-      display: flex;
-    `
+  height: 100%;
+  position: relative;
+  display: flex;
+`
 
 const AppContainer = styled(DrawerAppContent)`
-    margin-top: 64px;
-    width: 100%;
-    overflow-y: hidden;
+  margin-top: 64px;
+  width: 100%;
+  overflow-y: hidden;
 `
 
 type HomeProps = ConnectedProps<typeof connector>
 
-const Home = ({studentProfile, fetchProfileCourseAction, profileCourses, fetchStudentProfile, drawerShadow, setSearchQuery}: HomeProps) => {
+const HomeBase = ({
+                  studentProfile,
+                  fetchProfileCourse,
+                  profileCourses,
+                  fetchStudentProfile,
+                  drawerShadow,
+                  setSearchQuery
+              }: HomeProps) => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [searchText, setSearchText] = useState('');
@@ -39,7 +48,7 @@ const Home = ({studentProfile, fetchProfileCourseAction, profileCourses, fetchSt
 
     useEffect(() => {
         CachedCourses.initialize().then((res) => {
-            if (!res) return
+            if (!res) { return }
             setLoading(false);
         })
 
@@ -50,7 +59,7 @@ const Home = ({studentProfile, fetchProfileCourseAction, profileCourses, fetchSt
                 coopStream: CoopStream.STREAM_8
             }))
         } else if (Object.keys(profileCourses.courses).length === 0) {
-            fetchProfileCourseAction(studentProfile)
+            fetchProfileCourse(studentProfile)
         }
     }, [])
 
@@ -58,8 +67,8 @@ const Home = ({studentProfile, fetchProfileCourseAction, profileCourses, fetchSt
         setSearchQuery(searchText)
     }
 
-    const onAutoCompleteSelect = async (code: string) => {
-        console.log(`[Home] TODO Select ${code}`)
+    const onAutoCompleteSelect = (code: string) => {
+        console.error(`[Home] TODO Select ${code}`)
     }
 
     return (
@@ -103,11 +112,11 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    fetchStudentProfile: fetchStudentProfile,
+    fetchStudentProfile: fetchStudentProfileAction,
     setSearchQuery: search.actions.setSearchQuery,
-    fetchProfileCourseAction: fetchProfileCourseAction
+    fetchProfileCourse: fetchProfileCourseAction
 }, dispatch)
 
 const connector = connect(mapState, mapDispatch)
 
-export default connector(Home)
+export const Home = connector(HomeBase)

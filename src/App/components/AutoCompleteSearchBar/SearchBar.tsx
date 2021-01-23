@@ -1,19 +1,19 @@
-import React from "react";
-import styled from "styled-components";
+import { Tooltip } from "@material-ui/core";
 import InputBase from "@material-ui/core/InputBase";
-import {IconButton, IconButtonHTMLProps, IconButtonProps} from "@rmwc/icon-button";
 import Paper from "@material-ui/core/Paper";
-import {AutocompleteRenderInputParams} from "@material-ui/lab";
-import {Tooltip} from "@material-ui/core";
-import {If, Then} from "react-if";
+import { AutocompleteRenderInputParams } from "@material-ui/lab";
+import { IconButton, IconButtonHTMLProps, IconButtonProps } from "@rmwc/icon-button";
+import React from "react";
+import { If, Then } from "react-if";
+import styled from "styled-components";
 
 const StyledInputBase = styled(InputBase)`
-      margin-left: 16px;
-      flex: 1;
+  margin-left: 16px;
+  flex: 1;
 `
 
 const AppBarButton = styled(IconButton)<IconButtonHTMLProps & IconButtonProps>`
-      color: #5f6368;
+  color: #5f6368;
 `
 
 const StyledSearchBar = styled(Paper)`
@@ -24,6 +24,7 @@ const StyledSearchBar = styled(Paper)`
   width: 500px;
   box-shadow: none;
   background-color: rgb(241, 243, 244) !important;
+
   &:focus-within {
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14),

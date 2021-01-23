@@ -1,18 +1,19 @@
-import React, {useCallback} from "react";
-import styled from "styled-components";
-import Dropzone from "react-dropzone";
-import {Icon} from "@material-ui/core";
-import pdfjs, {PDFDocumentProxy, TextContent, TextContentItem} from "pdfjs-dist";
-import {CoopStream, CreateStudentProfileRequest} from "../../proto/courses";
+import { Icon } from "@material-ui/core";
+import pdfjs, { PDFDocumentProxy, TextContent, TextContentItem } from "pdfjs-dist";
 // @ts-ignore
 import PDFJSWorker from 'pdfjs-dist/build/pdf.worker.min';
+import React, { useCallback } from "react";
+import Dropzone from "react-dropzone";
+import styled from "styled-components";
+
+import { CoopStream, CreateStudentProfileRequest } from "../../proto/courses";
 
 /**
  * Retrieves the text of a specif page within a PDF Document obtained through pdf.js
  *
  * @param {number} pageNum Specifies the number of the page
  * @param {PDFDocumentProxy} PDFDocumentInstance The PDF document obtained
- **/
+ */
 const getPageText = (pageNum: number, PDFDocumentInstance: PDFDocumentProxy) => new Promise<string>(resolve => {
     PDFDocumentInstance.getPage(pageNum).then(pdfPage => {
         pdfPage.getTextContent().then((textContent: TextContent) => {
@@ -22,7 +23,7 @@ const getPageText = (pageNum: number, PDFDocumentInstance: PDFDocumentProxy) => 
 });
 
 const StyledDropzoneContainer = styled.div`
-   section {
+  section {
     border: #777;
     border-width: 2px;
     border-style: dashed;
@@ -30,11 +31,11 @@ const StyledDropzoneContainer = styled.div`
     width: 500px;
     height: 200px;
     padding-top: 100px;
-  }  
+  }
 `
 
 type TranscriptReaderProps = {
-    onSuccessCallback: (request: CreateStudentProfileRequest)=>void,
+    onSuccessCallback: (request: CreateStudentProfileRequest) => void,
 }
 
 const TranscriptReader = ({onSuccessCallback}: TranscriptReaderProps) => {
@@ -54,11 +55,11 @@ const TranscriptReader = ({onSuccessCallback}: TranscriptReaderProps) => {
                         const info = Array.from(text.matchAll(regexBasicInfo))[0]
                         const startingYear = +info[1].toString().split(" ")[1]
                         const program = info[2]
-                        let courses: { [key: number]: string } = {} // index: courseCode / index: Level (e.g. 1A)
-                        let idxs: number[] = [] // the indices of level info
+                        const courses: { [key: number]: string } = {} // index: courseCode / index: Level (e.g. 1A)
+                        const idxs: number[] = [] // the indices of level info
 
                         for (const match of text.matchAll(regexCourses)) {
-                            if (match[0].includes("GPA")) continue
+                            if (match[0].includes("GPA")) { continue }
                             courses[match.index as number] = match[0].replace("   ", " ")
                         }
 
@@ -69,28 +70,30 @@ const TranscriptReader = ({onSuccessCallback}: TranscriptReaderProps) => {
                         }
 
                         let j = 0;
-                        let coursesByTerm: { [key: string]: string[] } = {}
+                        const coursesByTerm: { [key: string]: string[] } = {}
                         const keys = Object.keys(courses).map(i => +i)
-                        for (const i in idxs) {
+                        for (const i of idxs) {
                             const index = idxs[+i]
                             const nextIndex = idxs[+i + 1] ?? keys.slice(-1).pop()
                             const term = courses[index]
                             // process the current term
                             while (keys[j] < nextIndex) {
-                                if (!coursesByTerm[term]) coursesByTerm[term] = []
+                                if (!coursesByTerm[term]) { coursesByTerm[term] = [] }
                                 j++
                                 // reach a new term
-                                if (keys[j] === nextIndex) break
+                                if (keys[j] === nextIndex) { break }
                                 coursesByTerm[term].push(courses[keys[j]])
                             }
                         }
-                        let schedule = []
+                        const schedule = []
                         for (const term in coursesByTerm) {
-                            schedule.push({termName: term, courseCodes: coursesByTerm[term]});
+                            if (coursesByTerm.hasOwnProperty(term)) {
+                                schedule.push({termName: term, courseCodes: coursesByTerm[term]});
+                            }
                         }
                         const result = CreateStudentProfileRequest.fromJSON({
                             degrees: [program],
-                            startingYear: startingYear,
+                            startingYear,
                             coopStream: CoopStream.STREAM_8,
                             schedule: {
                                 terms: schedule
@@ -99,7 +102,7 @@ const TranscriptReader = ({onSuccessCallback}: TranscriptReaderProps) => {
                         onSuccessCallback(result)
                     });
 
-                }, function (reason) {
+                }, function (reason: string) {
                     console.error(reason);
                 })
             };
