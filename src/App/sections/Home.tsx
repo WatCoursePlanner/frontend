@@ -68,8 +68,7 @@ const HomeBase = ({
     }
 
     const onAutoCompleteSelect = (code: string) => {
-        // tslint:disable-next-line:no-console
-        console.log(`[Home] TODO Select ${code}`)
+        console.error(`[Home] TODO Select ${code}`)
     }
 
     return (
