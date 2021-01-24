@@ -20,7 +20,9 @@
       "@watcourses/*": [
         "App/*"
       ]
-    }
+    },
+    "useDefineForClassFields": true,
+    "experimentalDecorators": true
   },
   "include": [
     "src/typings/"

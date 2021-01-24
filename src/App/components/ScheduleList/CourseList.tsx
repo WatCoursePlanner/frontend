@@ -1,7 +1,7 @@
 import Spacer from "@watcourses/components/Spacer";
 import { cleanScrollBar } from "@watcourses/constants/styles";
 import { CheckResults, CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
-import { CachedCourses } from "@watcourses/utils";
+import { CachedCoursesStore } from "@watcourses/utils";
 import React, { useState } from "react";
 import { Container } from "react-smooth-dnd";
 import { ContainerOptions, DropResult } from "smooth-dnd/dist/src/exportTypes";
@@ -118,7 +118,7 @@ const CourseList = ({term, onDropWithTerm, options, courses, shortlist, issues}:
                     dropClass="card-ghost-drop"
                     {...options}>
                     {(term?.courseCodes ?? shortlist ?? []).map((code, index) => (
-                        <ScheduleCourse key={index} course={courses[code] ?? CachedCourses.getByCode(code)}/>
+                        <ScheduleCourse key={index} course={courses[code] ?? CachedCoursesStore.get().getByCode(code)}/>
                     ))}
                 </Container>
                 <Spacer minWidth={'1px'} minHeight={'32px'}/>

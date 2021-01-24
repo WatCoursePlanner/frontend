@@ -6,6 +6,7 @@ import { List, ListDivider, ListItem, ListItemGraphic, ListItemProps, ListItemTe
 import '@rmwc/list/styles';
 import { RootState } from "@watcourses/redux/store";
 import { getStatePayloadForUrl } from "@watcourses/utils/LocalStorage";
+import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, RouteProps } from "react-router-dom";

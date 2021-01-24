@@ -14,7 +14,7 @@ import AutoCompleteSearchBar, {
 import { SearchBarProps } from "@watcourses/components/AutoCompleteSearchBar/SearchBar";
 import Popup from "@watcourses/components/Popup";
 import { CourseInfo } from "@watcourses/proto/courses";
-import { CachedCourses } from "@watcourses/utils";
+import { CachedCoursesStore } from "@watcourses/utils";
 import React from "react";
 import styled from "styled-components";
 
@@ -69,7 +69,8 @@ const TopNav = ({toggleDrawer, searchText, setSearchText, searchCallback, onAuto
                         searchCallback={searchCallback}
                         searchText={searchText}
                         setSearchText={setSearchText}
-                        options={CachedCourses.get().map((course: CourseInfo): AutoCompleteOption => {
+                        options={
+                            CachedCoursesStore.get().courses.map((course: CourseInfo): AutoCompleteOption => {
                             return {
                                 title: course.code,
                                 subTitle: course.name,
