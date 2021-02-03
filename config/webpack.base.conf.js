@@ -33,17 +33,31 @@ module.exports = {
             },
             {
                 test: /\.(js|jsx)$/,
-                use: ['babel-loader'],
-                exclude: /node_modules/,
-
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env'],
+                        plugins: [
+                            ["@babel/plugin-proposal-decorators", { "legacy": true }],
+                            ["@babel/plugin-proposal-class-properties", { "loose": false }],
+                        ]
+                    }
+                }
             },
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
+            },
             {
                 test: /\.scss$/,
-                loader: [
-                    require.resolve('style-loader'),
-                    require.resolve('css-loader'),
-                    require.resolve('sass-loader')
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'sass-loader'
                 ]
             }
         ]

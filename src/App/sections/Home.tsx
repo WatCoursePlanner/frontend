@@ -7,7 +7,7 @@ import search from "@watcourses/redux/slices/search";
 import { fetchStudentProfileAction } from "@watcourses/redux/slices/studentProfileSlice";
 import { RootState } from "@watcourses/redux/store";
 import { CachedCoursesStore } from "@watcourses/utils";
-import { action, computed, observable } from "mobx";
+import { action, computed, extendObservable, makeAutoObservable, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { Else, If, Then } from "react-if";
@@ -72,10 +72,12 @@ class HomeBase extends React.Component<HomeProps> {
         degrees: ["Software Engineering"],
         startingYear: 2019,
         coopStream: CoopStream.STREAM_8
-      }))
+      }));
     } else if (Object.keys(profileCourses.courses).length === 0) {
-      fetchProfileCourse(studentProfile)
+      fetchProfileCourse(studentProfile);
     }
+
+    makeObservable(this);
   }
 
   render() {
