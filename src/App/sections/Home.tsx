@@ -7,7 +7,7 @@ import search from "@watcourses/redux/slices/search";
 import { fetchStudentProfileAction } from "@watcourses/redux/slices/studentProfileSlice";
 import { RootState } from "@watcourses/redux/store";
 import { CachedCoursesStore } from "@watcourses/utils";
-import { action, computed, observable } from "mobx";
+import { action, computed, extendObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { Else, If, Then } from "react-if";
@@ -76,6 +76,10 @@ class HomeBase extends React.Component<HomeProps> {
     } else if (Object.keys(profileCourses.courses).length === 0) {
       fetchProfileCourse(studentProfile)
     }
+
+    extendObservable(this, {
+      drawerOpen: false
+    })
   }
 
   render() {
