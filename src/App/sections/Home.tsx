@@ -1,5 +1,5 @@
 import { DrawerAppContent } from '@rmwc/drawer';
-import Drawer from "@watcourses/components/Drawer";
+import { Drawer } from "@watcourses/components/Drawer";
 import TopNav from "@watcourses/components/TopNav";
 import { CoopStream, CreateStudentProfileRequest } from "@watcourses/proto/courses";
 import { fetchProfileCourseAction } from "@watcourses/redux/slices/profileCourses";

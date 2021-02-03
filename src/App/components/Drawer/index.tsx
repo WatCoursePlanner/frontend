@@ -8,9 +8,9 @@ import { RootState } from "@watcourses/redux/store";
 import { getStatePayloadForUrl } from "@watcourses/utils/LocalStorage";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
-import React  from "react";
-import { useSelector } from "react-redux";
-import { Link, RouteProps } from "react-router-dom";
+import React from "react";
+import { connect, ConnectedProps, useSelector } from "react-redux";
+import { Link, RouteProps, withRouter } from "react-router-dom";
 import styled from "styled-components";
 
 const StyledDrawer = observer(styled(MaterialDrawer)<DrawerProps & React.HTMLProps<HTMLDivElement> & { shadow: number }>`
@@ -47,7 +47,7 @@ interface IDrawerProps {
 }
 
 @observer
-class Drawer extends React.Component<IDrawerProps> {
+class DrawerBase extends React.Component<IDrawerProps & ConnectedProps<typeof connector>> {
   @observable
   shareLink = '';
 
@@ -57,26 +57,25 @@ class Drawer extends React.Component<IDrawerProps> {
   @action
   setShareLink = (link: string) => {
     this.shareLink = link;
-  }
+  };
 
   @action
   setShareOpen = (open: boolean) => {
     this.shareOpen = open;
-  }
+  };
 
   @action
   share = () => {
-    const state = useSelector((_state: RootState) => _state)
     const loc = window.location;
-    getStatePayloadForUrl(state).then(s => {
+    getStatePayloadForUrl(this.props.state).then(s => {
         this.setShareLink(`${loc.protocol}//${loc.host}${loc.pathname}?schedule=${s}`);
-      this.setShareOpen(true);
+        this.setShareOpen(true);
       }
     );
   };
 
   componentDidMount() {
-    makeObservable(this)
+    makeObservable(this);
   }
 
   render() {
@@ -157,4 +156,8 @@ class Drawer extends React.Component<IDrawerProps> {
   }
 }
 
-export default Drawer;
+const mapState = (state: RootState) => ({state});
+
+const connector = connect(mapState);
+
+export const Drawer = connector(DrawerBase);

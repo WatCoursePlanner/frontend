@@ -24,7 +24,7 @@ export async function loadState(): Promise<any> {
         if (urlState !== null) {
             return {studentProfile: await codec.decompress(urlState)} as RootState
         }
-        const serializedState = await localStorage.getItem('state');
+        const serializedState = localStorage.getItem('state');
         if (serializedState === null) {
             return undefined;
         }
