@@ -6,7 +6,8 @@
       "es2019",
       "es2020.bigint",
       "es2020.string",
-      "es2020.symbol.wellknown"
+      "es2020.symbol.wellknown",
+      "dom"
     ],
     "sourceMap": true,
     "downlevelIteration": true,
