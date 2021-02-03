@@ -15,7 +15,7 @@ import { SearchBarProps } from "@watcourses/components/AutoCompleteSearchBar/Sea
 import Popup from "@watcourses/components/Popup";
 import { CourseInfo } from "@watcourses/proto/courses";
 import { CachedCoursesStore } from "@watcourses/utils";
-import { action, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
@@ -64,6 +64,10 @@ class TopNav extends React.Component<ITopNavProps> {
   @action
   setAccountMenuOpen = (open: boolean) => {
     this.accountMenuOpen = open;
+  }
+
+  componentDidMount() {
+    makeObservable(this)
   }
 
   render() {

@@ -6,7 +6,7 @@ import { List, ListDivider, ListItem, ListItemGraphic, ListItemProps, ListItemTe
 import '@rmwc/list/styles';
 import { RootState } from "@watcourses/redux/store";
 import { getStatePayloadForUrl } from "@watcourses/utils/LocalStorage";
-import { action, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React  from "react";
 import { useSelector } from "react-redux";
@@ -75,6 +75,10 @@ class Drawer extends React.Component<IDrawerProps> {
     );
   };
 
+  componentDidMount() {
+    makeObservable(this)
+  }
+
   render() {
 
     const {
@@ -88,7 +92,6 @@ class Drawer extends React.Component<IDrawerProps> {
       shadow={shadow ? 1 : 0}
       dismissible
       open={open}>
-      <h1>{open ? "optn" : 'f'}</h1>
       <DrawerContent>
         <List>
           {['schedule', 'discover'].map((route, index) => (
