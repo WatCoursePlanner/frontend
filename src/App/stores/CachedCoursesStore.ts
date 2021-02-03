@@ -22,6 +22,13 @@ export class CachedCoursesStore {
   }
 
   @computed
+  get error(): string | undefined {
+    return this.coursesStorageResponse?.case({
+      rejected: e => e.toString()
+    })
+  }
+
+  @computed
   get courses(): CourseInfo[] {
     return this.coursesStorageResponse?.case({
       fulfilled: t => t.courses,

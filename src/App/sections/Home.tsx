@@ -48,12 +48,12 @@ class HomeBase extends React.Component<HomeProps> {
   }
 
   @action
-  setSearchText(text?: string) {
+  setSearchText = (text?: string) => {
     this.searchText = text ?? '';
   }
 
   @action
-  setDrawerOpen(open: boolean) {
+  setDrawerOpen = (open: boolean) => {
     this.drawerOpen = open;
   }
 
