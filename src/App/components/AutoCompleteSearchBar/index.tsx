@@ -102,7 +102,7 @@ export class AutoCompleteSearchBar extends React.Component<IAutoCompleteProps> {
           if (!newValue || typeof newValue === "string") {
             return;
           }
-          onAutoCompleteSelect(newValue.title ?? '');
+          onAutoCompleteSelect(newValue.title);
         }}
         inputValue={searchText}
         onInputChange={(event, newInputValue) => {

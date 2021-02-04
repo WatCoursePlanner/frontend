@@ -1,9 +1,11 @@
 import { action, computed, observable } from "mobx";
-import { fromPromise, IPromiseBasedObservable } from "mobx-utils";
+import { fromPromise, IPromiseBasedObservable, PENDING } from "mobx-utils";
 
 import { COURSES_INFO_REFRESH_TIME, URL_BASE } from "../constants/api";
 import { CourseInfo, SearchCourseResponse } from "../proto/courses";
 import { singletonGetter } from "../utils/SingletonGetter";
+
+const LOCAL_STORAGE_COURSES_KEY = "LOCAL_STORAGE_COURSES_KEY"
 
 interface ICachedCoursesStorage {
   lastUpdatedAt: number,
@@ -18,7 +20,7 @@ export class CachedCoursesStore {
 
   @computed
   get isLoading() {
-    return this.coursesStorageResponse?.state === "pending";
+    return this.coursesStorageResponse?.state === PENDING;
   }
 
   @computed
@@ -56,7 +58,7 @@ export class CachedCoursesStore {
   }
 
   private initialize(): Promise<ICachedCoursesStorage> {
-    const courseJson = localStorage.getItem("courses");
+    const courseJson = localStorage.getItem(LOCAL_STORAGE_COURSES_KEY);
     const parsedCachedCoursesStorage =
       courseJson === null
         ? null
@@ -98,7 +100,10 @@ export class CachedCoursesStore {
             lastUpdatedAt: CachedCoursesStore.getCurrentTimestamp(),
             courses: SearchCourseResponse.fromJSON(res).results
           };
-          localStorage.setItem("courses", JSON.stringify(courseStorage));
+          localStorage.setItem(
+            LOCAL_STORAGE_COURSES_KEY,
+            JSON.stringify(courseStorage)
+          );
           return resolve(courseStorage);
         })
         .catch(error => {

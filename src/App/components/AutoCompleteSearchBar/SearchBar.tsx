@@ -9,10 +9,10 @@ import { If, Then } from "react-if";
 import styled from "styled-components";
 
 export interface ISearchBarProps {
-    autoCompleteRenderProps?: AutocompleteRenderInputParams,
-    searchText: string,
-    setSearchText: ((text: string) => void),
-    onSearch: (() => void),
+  autoCompleteRenderProps?: AutocompleteRenderInputParams,
+  searchText: string,
+  setSearchText: ((text: string) => void),
+  onSearch: (() => void),
 }
 
 @observer
@@ -31,11 +31,11 @@ export class SearchBar extends React.Component<ISearchBarProps> {
           <AppBarButton icon={'search'} onClick={onSearch}/>
         </Tooltip>
         <StyledInputBase
-          inputProps={Object.assign({}, autoCompleteRenderProps?.inputProps)}
+          inputProps={autoCompleteRenderProps?.inputProps ?? {}}
           placeholder="Search for Courses"
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              onSearch()
+              onSearch();
             }
           }}
         />
@@ -46,24 +46,24 @@ export class SearchBar extends React.Component<ISearchBarProps> {
               <AppBarButton
                 icon={'close'}
                 onClick={() => {
-                  setSearchText('')
+                  setSearchText('');
                 }}/>
             </Tooltip>
           </Then>
         </If>
       </StyledSearchBar>
-    )
+    );
   }
 }
 
 const StyledInputBase = styled(InputBase)`
   margin-left: 16px;
   flex: 1;
-`
+`;
 
 const AppBarButton = styled(IconButton)<IconButtonHTMLProps & IconButtonProps>`
   color: #5f6368;
-`
+`;
 
 const StyledSearchBar = styled(Paper)`
   margin: 0 30px 0 25px;
@@ -80,5 +80,4 @@ const StyledSearchBar = styled(Paper)`
     0px 1px 5px 0px rgba(0, 0, 0, 0.12);
     background-color: white !important;
   }
-`
-
+`;

@@ -150,4 +150,3 @@ const AppContainer = styled(DrawerAppContent)`
   width: 100%;
   overflow-y: hidden;
 `;
-
