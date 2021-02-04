@@ -7,11 +7,12 @@ import { MenuSurface, MenuSurfaceAnchor } from "@rmwc/menu";
 import '@rmwc/menu/styles';
 import { TopAppBar, TopAppBarProps, TopAppBarRow, TopAppBarSection, TopAppBarTitle } from "@rmwc/top-app-bar";
 import '@rmwc/top-app-bar/styles';
-import AutoCompleteSearchBar, {
-  AutoCompleteCallbackProps,
-  AutoCompleteOption
+import {
+  AutoCompleteOption,
+  AutoCompleteSearchBar,
+  IAutoCompleteCallbackProps
 } from "@watcourses/components/AutoCompleteSearchBar";
-import { SearchBarProps } from "@watcourses/components/AutoCompleteSearchBar/SearchBar";
+import { ISearchBarProps } from "@watcourses/components/AutoCompleteSearchBar/SearchBar";
 import Popup from "@watcourses/components/Popup";
 import { CourseInfo } from "@watcourses/proto/courses";
 import { CachedCoursesStore } from "@watcourses/utils";
@@ -20,35 +21,17 @@ import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
 
-import DegreeRequirementPopup, { DegreeRequirementPopupProps } from "./DegreeRequirementPopup";
+import DegreeRequirementPopup, { IDegreeRequirementPopupProps } from "./DegreeRequirementPopup";
 
-const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
-  border-bottom: 1px solid #e0e0e0;
-  background-color: white;
-`;
-
-const StyledAppBarTitle = styled(TopAppBarTitle)`
-  font-weight: 600;
-  padding-left: 10px;
-  margin-right: 30px;
-  color: #5f6368;
-`;
-
-const AppBarButton = styled(IconButton)<IconButtonHTMLProps & IconButtonProps>`
-  color: #5f6368;
-`;
-
-const InfoButton = styled(AppBarButton)`
-  margin-right: 30px;
-`;
-
-interface ITopNavProps extends AutoCompleteCallbackProps,
-  SearchBarProps, DegreeRequirementPopupProps {
+interface ITopNavProps extends
+  IAutoCompleteCallbackProps,
+  ISearchBarProps,
+  IDegreeRequirementPopupProps {
   toggleDrawer: () => void,
 }
 
 @observer
-class TopNav extends React.Component<ITopNavProps> {
+export class TopNav extends React.Component<ITopNavProps> {
 
   @observable
   degreeMenuOpen = false;
@@ -75,7 +58,7 @@ class TopNav extends React.Component<ITopNavProps> {
       toggleDrawer,
       searchText,
       setSearchText,
-      searchCallback,
+      onSearch,
       onAutoCompleteSelect,
       issues
     } = this.props;
@@ -97,7 +80,7 @@ class TopNav extends React.Component<ITopNavProps> {
             <StyledAppBarTitle>WatCourses</StyledAppBarTitle>
             <AutoCompleteSearchBar
               onAutoCompleteSelect={onAutoCompleteSelect}
-              searchCallback={searchCallback}
+              onSearch={onSearch}
               searchText={searchText}
               setSearchText={setSearchText}
               options={
@@ -151,4 +134,22 @@ class TopNav extends React.Component<ITopNavProps> {
   }
 }
 
-export default TopNav;
+const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
+  border-bottom: 1px solid #e0e0e0;
+  background-color: white;
+`;
+
+const StyledAppBarTitle = styled(TopAppBarTitle)`
+  font-weight: 600;
+  padding-left: 10px;
+  margin-right: 30px;
+  color: #5f6368;
+`;
+
+const AppBarButton = styled(IconButton)<IconButtonHTMLProps & IconButtonProps>`
+  color: #5f6368;
+`;
+
+const InfoButton = styled(AppBarButton)`
+  margin-right: 30px;
+`;

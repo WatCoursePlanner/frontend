@@ -2,98 +2,122 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import '@rmwc/icon-button/styles';
 import '@rmwc/textfield/styles';
 import * as Fuzzysort from "fuzzysort";
+import { makeObservable, observable, reaction, toJS } from "mobx";
+import { disposeOnUnmount, observer } from "mobx-react";
 import React from "react";
 
 import Option from "./Option";
-import SearchBar, { SearchBarProps } from "./SearchBar";
+import { ISearchBarProps, SearchBar } from "./SearchBar";
+import Result = Fuzzysort.Result;
 
 export type AutoCompleteOption = {
-    title: string,
-    subTitle: string,
-    weight: number
+  title: string,
+  subTitle: string,
+  titleResult?: Result | null,
+  subTitleResult?: Result | null,
+  score?: number,
+  weight?: number
 }
 
-export type AutoCompleteCallbackProps = {
-    onAutoCompleteSelect: ((text: string) => void)
+export interface IAutoCompleteCallbackProps {
+  onAutoCompleteSelect: ((text: string) => void)
 }
 
-export type AutoCompleteProps = {
-    options: AutoCompleteOption[],
+export interface IAutoCompleteProps extends
+  IAutoCompleteCallbackProps,
+  ISearchBarProps {
+  options: AutoCompleteOption[],
 }
 
-const AutoCompleteMaxResults = 10
-const AutoCompleteThreshold = -5000
+const AutoCompleteMaxResults = 10;
+const AutoCompleteThreshold = -5000;
 
-const sortByWeight = (options: Fuzzysort.KeysResult<AutoCompleteOption>[]) => {
-    const getWeight = (a: Fuzzysort.KeysResult<AutoCompleteOption>) => (a?.obj?.weight + a?.score)
-    return options.sort((a, b) => (getWeight(b) - getWeight(a)))
-}
+const sortByWeight = (options: AutoCompleteOption[]) => {
+  const getWeight = (a: AutoCompleteOption) => (
+    (a.weight ?? 0) + (a.score ?? 0)
+  );
+  return options.sort((a, b) =>
+    (getWeight(b) - getWeight(a))
+  );
+};
 
-const AutoCompleteSearchBar =
-    ({options, searchText, setSearchText, searchCallback, onAutoCompleteSelect}:
-         AutoCompleteProps & AutoCompleteCallbackProps & SearchBarProps) => {
+@observer
+export class AutoCompleteSearchBar extends React.Component<IAutoCompleteProps> {
 
-        const [displayOptions, setDisplayOptions] = React.useState<Fuzzysort.KeysResult<AutoCompleteOption>[]>([]);
+  @observable
+  displayOptions: AutoCompleteOption[] = [];
 
-        const fetchOptions = (input: string) => {
-            return Fuzzysort.go(input, options, {
-                keys: ['title', 'subTitle'],
-                limit: AutoCompleteMaxResults,
-                allowTypo: true,
-                threshold: AutoCompleteThreshold
-            })
-        }
+  fetchOptions = (input: string) => {
+    return Fuzzysort.go(input, this.props.options, {
+      keys: ['title', 'subTitle'],
+      limit: AutoCompleteMaxResults,
+      allowTypo: true,
+      threshold: AutoCompleteThreshold
+    });
+  };
 
-        React.useEffect(() => {
-            let active = true;
-            if (searchText === '') {
-                setDisplayOptions([])
-                return undefined
-            }
-            const results = fetchOptions(searchText)
-            // console.log(results)
-            if (active) {
-                let newOptions = [] as Fuzzysort.KeysResult<AutoCompleteOption>[]
-                if (results) {
-                    newOptions = [...newOptions, ...results]
-                }
-                setDisplayOptions(newOptions)
-            }
-            return () => {
-                active = false
-            };
-        }, [searchText])
-
-        return (
-            <Autocomplete
-                freeSolo
-                disableListWrap
-                autoComplete
-                includeInputInList
-                filterSelectedOptions
-                filterOptions={sortByWeight}
-                options={displayOptions}
-                getOptionLabel={(option) => (`${option?.obj?.title ?? option}`)}
-                onChange={(event, newValue: Fuzzysort.KeysResult<AutoCompleteOption> | string | null) => {
-                    if (!newValue || typeof newValue === "string") {
-                        return
-                    }
-                    onAutoCompleteSelect(newValue?.obj?.title ?? '')
-                }}
-                inputValue={searchText}
-                onInputChange={(event, newInputValue) => {
-                    setSearchText(newInputValue)
-                }}
-                renderOption={(option) => <Option option={option}/>}
-                renderInput={(props) =>
-                    <SearchBar
-                        searchCallback={searchCallback}
-                        autoCompleteRenderProps={props}
-                        searchText={searchText}
-                        setSearchText={setSearchText}/>
-                }
-            />
-        )
+  @disposeOnUnmount
+  searchTextReaction = reaction(
+    () => this.props.searchText,
+    (searchText) => {
+      this.displayOptions = this.fetchOptions(searchText)
+        .map(keysResult => {
+          return {
+            title: keysResult.obj.title,
+            subTitle: keysResult.obj.subTitle,
+            titleResult: keysResult[0],
+            subTitleResult: keysResult[1],
+            score: keysResult.score,
+            weight: keysResult.obj.weight,
+          } as AutoCompleteOption;
+        });
     }
+  );
 
-export default AutoCompleteSearchBar
+  componentDidMount() {
+    makeObservable(this);
+  }
+
+  render() {
+    const {
+      searchText,
+      setSearchText,
+      onSearch,
+      onAutoCompleteSelect
+    } = this.props;
+    return (
+      <Autocomplete
+        freeSolo
+        disableListWrap
+        autoComplete
+        includeInputInList
+        filterSelectedOptions
+        filterOptions={sortByWeight}
+        options={toJS(this.displayOptions)}
+        getOptionLabel={(option) => (option.title)}
+        onChange={(
+          event,
+          newValue: AutoCompleteOption | string | null
+        ) => {
+          if (!newValue || typeof newValue === "string") {
+            return;
+          }
+          onAutoCompleteSelect(newValue.title ?? '');
+        }}
+        inputValue={searchText}
+        onInputChange={(event, newInputValue) => {
+          setSearchText(newInputValue);
+        }}
+        renderOption={(option) => <Option option={option}/>}
+        renderInput={(props) =>
+          <SearchBar
+            onSearch={onSearch}
+            autoCompleteRenderProps={props}
+            searchText={searchText}
+            setSearchText={setSearchText}
+          />
+        }
+      />
+    );
+  }
+}

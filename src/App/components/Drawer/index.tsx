@@ -9,31 +9,9 @@ import { getStatePayloadForUrl } from "@watcourses/utils/LocalStorage";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { connect, ConnectedProps, useSelector } from "react-redux";
-import { Link, RouteProps, withRouter } from "react-router-dom";
+import { connect, ConnectedProps } from "react-redux";
+import { Link, RouteProps } from "react-router-dom";
 import styled from "styled-components";
-
-const StyledDrawer = observer(styled(MaterialDrawer)<DrawerProps & React.HTMLProps<HTMLDivElement> & { shadow: number }>`
-  width: 276px;
-  border-color: transparent;
-  padding-top: 72px;
-  z-index: 3;
-  padding-right: 20px;
-  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 16px ${props => props.shadow ? `rgba(0, 0, 0, .28)` : `rgba(0, 0, 0, 0)`};
-`);
-
-const CustomListItem = styled(ListItem)<ListItemProps & React.HTMLProps<HTMLDivElement>>`
-  margin: 4px 0 4px 0 !important;
-  -webkit-mask-image: radial-gradient(white, black);
-  border-radius: 0 100px 100px 0 !important;
-  padding-left: 24px !important;
-  text-transform: capitalize !important;
-`;
-
-const StyledListItemText = styled(ListItemText)`
-  font-weight: 600 !important;
-`;
 
 const tabIcons = [
   'schedule',
@@ -161,3 +139,26 @@ const mapState = (state: RootState) => ({state});
 const connector = connect(mapState);
 
 export const Drawer = connector(DrawerBase);
+
+const StyledDrawer = observer(styled(MaterialDrawer)<DrawerProps & React.HTMLProps<HTMLDivElement> & { shadow: number }>`
+  width: 276px;
+  border-color: transparent;
+  padding-top: 72px;
+  z-index: 3;
+  padding-right: 20px;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 16px ${props => props.shadow ? `rgba(0, 0, 0, .28)` : `rgba(0, 0, 0, 0)`};
+`);
+
+const CustomListItem = styled(ListItem)<ListItemProps & React.HTMLProps<HTMLDivElement>>`
+  margin: 4px 0 4px 0 !important;
+  -webkit-mask-image: radial-gradient(white, black);
+  border-radius: 0 100px 100px 0 !important;
+  padding-left: 24px !important;
+  text-transform: capitalize !important;
+`;
+
+const StyledListItemText = styled(ListItemText)`
+  font-weight: 600 !important;
+`;
+

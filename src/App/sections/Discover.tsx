@@ -2,12 +2,7 @@ import CourseTable from "@watcourses/components/CourseTable";
 import React from 'react'
 import styled from "styled-components";
 
-const Root = styled.div`
-  height: 100%;
-  margin-left: 16px;
-`
-
-const Discover = () => {
+export const Discover = () => {
     return (
         <Root>
             <CourseTable/>
@@ -15,4 +10,7 @@ const Discover = () => {
     )
 }
 
-export default Discover
+const Root = styled.div`
+  height: 100%;
+  margin-left: 16px;
+`
