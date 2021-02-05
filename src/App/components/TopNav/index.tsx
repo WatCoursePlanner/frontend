@@ -15,7 +15,7 @@ import {
 import { ISearchBarProps } from "@watcourses/components/AutoCompleteSearchBar/SearchBar";
 import Popup from "@watcourses/components/Popup";
 import { CourseInfo } from "@watcourses/proto/courses";
-import { CachedCoursesStore } from "@watcourses/utils";
+import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";

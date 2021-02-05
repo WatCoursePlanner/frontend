@@ -6,7 +6,7 @@ import '@rmwc/card/styles';
 import '@rmwc/ripple/styles';
 import { CourseInfo } from "@watcourses/proto/courses";
 import { RootState } from "@watcourses/redux/store";
-import { RequisiteHelper } from "@watcourses/utils";
+import { RequisiteHelper } from "@watcourses/utils/RequisiteHelper";
 import React, { useRef, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { Draggable } from 'react-smooth-dnd';

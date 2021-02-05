@@ -12,7 +12,7 @@ import {
 import { cleanScrollBarWithWhiteBorder } from "@watcourses/constants/styles";
 import { useDetectClickOutside } from "@watcourses/hooks";
 import { CourseInfo } from "@watcourses/proto/courses";
-import { RequisiteHelper } from "@watcourses/utils";
+import { RequisiteHelper } from "@watcourses/utils/RequisiteHelper";
 import React, { useRef, useState } from "react";
 import { If, Then } from 'react-if'
 import styled from "styled-components";
