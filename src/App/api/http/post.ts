@@ -3,11 +3,11 @@ interface IRequest<T> {
 }
 
 export default function post<T>(
-  address: string,
+  url: string,
   request: IRequest<T>,
   data: T,
 ) {
-  return fetch(address, {
+  return fetch(url, {
     method: 'post',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(request.toJSON(data)),
