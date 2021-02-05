@@ -7,8 +7,10 @@ import { fromPromise, FULFILLED, IPromiseBasedObservable, PENDING } from "mobx-u
 
 import { StudentProfileStore } from "./StudentProfileStore";
 
+type IProfileCoursesMapping = { [courseCode: string]: CourseInfo }
+
 interface IProfileCourses {
-  courses?: { [courseCode: string]: CourseInfo },
+  courses?: IProfileCoursesMapping,
   issues?: CheckResults_Issue[]
 }
 
@@ -27,19 +29,20 @@ export class ProfileCoursesStore {
   get profileCourses(): IProfileCourses {
     return this.profileCoursesPromise?.case({
       fulfilled: (response) => {
-        const courses: { [courseCode: string]: CourseInfo } = {}
-        for (const c of response.checkedCourses) {
-          courses[c.code] = c
+        const courses: IProfileCoursesMapping = {};
+        for (const course of response.checkedCourses) {
+          courses[course.code] = course;
         }
         return buildProto<IProfileCourses>({
           courses,
-          issues: response.issues
+          issues: response.issues,
         });
-      }
+      },
+      rejected: () => buildProto<IProfileCourses>({}),
     }) ?? this.cachedProfileCourses;
   }
 
-  private cachedProfileCourses: IProfileCourses = buildProto<IProfileCourses>({})
+  private cachedProfileCourses: IProfileCourses = buildProto<IProfileCourses>({});
 
   constructor() {
     makeAutoObservable(this);
@@ -60,9 +63,9 @@ export class ProfileCoursesStore {
     this.profileCoursesPromise = fromPromise(
       checkStudentProfile(
         buildProto<StudentProfile>(
-          StudentProfileStore.get().studentProfile
-        )
-      )
+          StudentProfileStore.get().studentProfile,
+        ),
+      ),
     );
   };
 }

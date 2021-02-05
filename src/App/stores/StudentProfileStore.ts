@@ -61,6 +61,7 @@ export class StudentProfileStore {
   get studentProfile(): StudentProfile {
     return this.studentProfilePromise?.case({
       fulfilled: (response: StudentProfile) => response,
+      rejected: () => buildProto<StudentProfile>({}),
     }) ?? this.cachedStudentProfile;
   }
 
