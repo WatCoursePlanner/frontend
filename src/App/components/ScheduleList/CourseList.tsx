@@ -2,6 +2,7 @@ import Spacer from "@watcourses/components/Spacer";
 import { cleanScrollBar } from "@watcourses/constants/styles";
 import { CheckResults, CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
+import { SHORTLIST_TERM_NAME } from "@watcourses/stores/StudentProfileStore";
 import React, { useState } from "react";
 import { Container } from "react-smooth-dnd";
 import { ContainerOptions, DropResult } from "smooth-dnd/dist/src/exportTypes";
@@ -10,12 +11,12 @@ import styled from "styled-components";
 import ScheduleCourse from "./ScheduleCourse";
 
 export type CourseListProps = {
-    term?: Schedule_TermSchedule,
-    shortlist?: string[],
-    courses: { [courseCode: string]: CourseInfo }
-    options: ContainerOptions,
-    onDropWithTerm: (result: DropResult, termName: string) => void,
-    issues?: CheckResults | null
+  term?: Schedule_TermSchedule,
+  shortlist?: string[],
+  courses: { [courseCode: string]: CourseInfo }
+  options: ContainerOptions,
+  onDropWithTerm: (result: DropResult, termName: string) => void,
+  issues?: CheckResults | null
 }
 
 const StyledContainer = styled.div<{ scrolled: number }>`
@@ -66,7 +67,7 @@ const StyledContainer = styled.div<{ scrolled: number }>`
     overflow: visible !important;
     background-color: transparent;
   }
-`
+`;
 
 const CourseListWrapper = styled.div`
   display: flex;
@@ -87,44 +88,57 @@ const CourseListWrapper = styled.div`
     background-image: linear-gradient(to right, white, rgba(255, 255, 255, 0));
     z-index: 3;
   }
-`
+`;
 
 const CourseList = ({term, onDropWithTerm, options, courses, shortlist, issues}: CourseListProps) => {
-    const [scrolled, setScrolled] = useState(false)
-    const handleScroll = (e: React.UIEvent<HTMLElement>) => {
-        if (e.currentTarget.scrollTop > 0) {
-            if (!scrolled) {
-                setScrolled(true)
-            }
-        } else {
-            if (scrolled) {
-                setScrolled(false)
-            }
-        }
+  const [scrolled, setScrolled] = useState(false);
+  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    if (e.currentTarget.scrollTop > 0) {
+      if (!scrolled) {
+        setScrolled(true);
+      }
+    } else {
+      if (scrolled) {
+        setScrolled(false);
+      }
     }
+  };
 
-    return (
-        <CourseListWrapper>
-            <StyledContainer
-                className={'course-list'}
-                scrolled={scrolled ? 1 : 0}
-                onScroll={handleScroll}>
-                <Container
-                    groupName={'terms'}
-                    dropPlaceholder={{className: 'drop-placeholder'}}
-                    getChildPayload={idx => term?.courseCodes[idx] ?? (shortlist ? shortlist[idx] : null)}
-                    onDrop={(e) => onDropWithTerm(e, term?.termName ?? (shortlist ? 'shortlist' : 'null'))}
-                    dragClass="card-ghost"
-                    dropClass="card-ghost-drop"
-                    {...options}>
-                    {(term?.courseCodes ?? shortlist ?? []).map((code, index) => (
-                        <ScheduleCourse key={index} course={courses[code] ?? CachedCoursesStore.get().getByCode(code)}/>
-                    ))}
-                </Container>
-                <Spacer minWidth={'1px'} minHeight={'32px'}/>
-            </StyledContainer>
-        </CourseListWrapper>
-    )
-}
+  return (
+    <CourseListWrapper>
+      <StyledContainer
+        className={'course-list'}
+        scrolled={scrolled ? 1 : 0}
+        onScroll={handleScroll}>
+        <Container
+          groupName={'terms'}
+          dropPlaceholder={{className: 'drop-placeholder'}}
+          getChildPayload={idx =>
+            term?.courseCodes[idx] ??
+            (shortlist ? shortlist[idx] : null)
+          }
+          onDrop={(e) => onDropWithTerm(
+            e,
+            term?.termName ??
+            (shortlist ? SHORTLIST_TERM_NAME : 'null'),
+          )}
+          dragClass="card-ghost"
+          dropClass="card-ghost-drop"
+          {...options}>
+          {(term?.courseCodes ?? shortlist ?? [])
+            .map((code, index) => (
+              <ScheduleCourse
+                key={index}
+                course={
+                  courses[code] ??
+                  CachedCoursesStore.get().getByCode(code)
+                }/>
+            ))}
+        </Container>
+        <Spacer minWidth={'1px'} minHeight={'32px'}/>
+      </StyledContainer>
+    </CourseListWrapper>
+  );
+};
 
-export default CourseList
+export default CourseList;

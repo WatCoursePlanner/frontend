@@ -8,7 +8,12 @@ import { buildProto } from "@watcourses/utils/buildProto";
 import { insertAt, removeAt } from "@watcourses/utils/helpers";
 import { singletonGetter } from "@watcourses/utils/SingletonGetter";
 import { action, computed, makeAutoObservable, observable, when } from "mobx";
-import { fromPromise, FULFILLED, IPromiseBasedObservable, PENDING } from "mobx-utils";
+import {
+  fromPromise,
+  FULFILLED,
+  IPromiseBasedObservable,
+  PENDING,
+} from "mobx-utils";
 
 interface IAddOrRemoveCourseProps {
   isAdd: boolean,
@@ -27,12 +32,11 @@ export interface IRemoveCourseProps {
 }
 
 export interface IAddCourseToTermProps extends IAddCourseProps {
-  termName: string
+  termName: string,
 }
 
 export interface IRemoveCourseFromTermProps extends IRemoveCourseProps {
   termName: string,
-  index: number,
 }
 
 export const SHORTLIST_TERM_NAME = "shortlist";
@@ -41,11 +45,12 @@ export class StudentProfileStore {
   static get = singletonGetter(StudentProfileStore);
 
   // TODO implement student profile
-  private readonly SampleProfileRequest = buildProto<CreateStudentProfileRequest>({
-    degrees: ["Software Engineering"],
-    startingYear: 2019,
-    coopStream: CoopStream.STREAM_8,
-  });
+  private readonly SampleProfileRequest =
+    buildProto<CreateStudentProfileRequest>({
+      degrees: ["Software Engineering"],
+      startingYear: 2019,
+      coopStream: CoopStream.STREAM_8,
+    });
 
   @observable
   private studentProfilePromise?: IPromiseBasedObservable<StudentProfile>;
@@ -55,13 +60,22 @@ export class StudentProfileStore {
     return this.studentProfilePromise?.state === PENDING;
   }
 
-  private cachedStudentProfile: StudentProfile = buildProto<StudentProfile>({});
+  private cachedStudentProfile: StudentProfile =
+    buildProto<StudentProfile>({
+      schedule: {
+        terms: []
+      }
+    });
 
   @computed
   get studentProfile(): StudentProfile {
     return this.studentProfilePromise?.case({
       fulfilled: (response: StudentProfile) => response,
-      rejected: () => buildProto<StudentProfile>({}),
+      rejected: () => buildProto<StudentProfile>({
+        schedule: {
+          terms: []
+        }
+      }),
     }) ?? this.cachedStudentProfile;
   }
 
@@ -114,9 +128,11 @@ export class StudentProfileStore {
           ),
       },
       shortList: isShortList
-        ? (isAdd
-          ? insertAt(this.studentProfile.shortList, index, code)
-          : removeAt(this.studentProfile.shortList, index))
+        ? (
+          isAdd
+            ? insertAt(this.studentProfile.shortList, index, code)
+            : removeAt(this.studentProfile.shortList, index)
+        )
         : this.studentProfile.shortList,
     });
     this.cachedStudentProfile = newProfile;
