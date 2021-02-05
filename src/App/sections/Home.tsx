@@ -1,11 +1,9 @@
 import { DrawerAppContent } from '@rmwc/drawer';
 import { Drawer } from "@watcourses/components/Drawer";
 import { TopNav } from "@watcourses/components/TopNav";
-import { CoopStream, CreateStudentProfileRequest } from "@watcourses/proto/courses";
-import { fetchProfileCourseAction } from "@watcourses/redux/slices/profileCourses";
 import search from "@watcourses/redux/slices/search";
-import { fetchStudentProfileAction } from "@watcourses/redux/slices/studentProfileSlice";
 import { RootState } from "@watcourses/redux/store";
+import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
 import { CachedCoursesStore } from "@watcourses/utils";
 import { action, computed, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
@@ -19,7 +17,8 @@ import styled from "styled-components";
 import { Discover } from "./Discover";
 import { Schedule } from "./Schedule";
 
-interface IHomeProps extends ConnectedProps<typeof connector>, RouteComponentProps {}
+interface IHomeProps extends ConnectedProps<typeof connector>, RouteComponentProps {
+}
 
 @observer
 class HomeBase extends React.Component<IHomeProps> {
@@ -38,39 +37,19 @@ class HomeBase extends React.Component<IHomeProps> {
   @action
   setSearchText = (text?: string) => {
     this.searchText = text ?? '';
-  }
+  };
 
   @action
   setDrawerOpen = (open: boolean) => {
     this.drawerOpen = open;
-  }
+  };
 
-  constructor(props: IHomeProps) {
-    super(props);
-
-    const {
-      studentProfile,
-      profileCourses,
-      fetchProfileCourse,
-      fetchStudentProfile,
-    } = props;
-
-    if (studentProfile === null) {
-      fetchStudentProfile(CreateStudentProfileRequest.fromJSON({
-        degrees: ["Software Engineering"],
-        startingYear: 2019,
-        coopStream: CoopStream.STREAM_8
-      }));
-    } else if (Object.keys(profileCourses.courses).length === 0) {
-      fetchProfileCourse(studentProfile);
-    }
-
+  componentDidMount() {
     makeObservable(this);
   }
 
   render() {
     const {
-      profileCourses,
       drawerShadow,
       setSearchQuery,
       location
@@ -97,7 +76,7 @@ class HomeBase extends React.Component<IHomeProps> {
               toggleDrawer={() => this.setDrawerOpen(!this.drawerOpen)}
               searchText={this.searchText}
               setSearchText={this.setSearchText}
-              issues={profileCourses.issues}/>
+              issues={ProfileCoursesStore.get().profileCourses.issues ?? []}/>
             <Drawer
               shadow={drawerShadow}
               open={this.drawerOpen}
@@ -125,14 +104,10 @@ class HomeBase extends React.Component<IHomeProps> {
 
 const mapState = (state: RootState) => ({
   drawerShadow: state.ui.drawerShadow,
-  studentProfile: state.studentProfile.content,
-  profileCourses: state.profileCourses
 });
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-  fetchStudentProfile: fetchStudentProfileAction,
   setSearchQuery: search.actions.setSearchQuery,
-  fetchProfileCourse: fetchProfileCourseAction
 }, dispatch);
 
 const connector = connect(mapState, mapDispatch);

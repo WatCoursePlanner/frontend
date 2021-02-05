@@ -11,8 +11,12 @@ import { fetchProfileCourseAction } from "@watcourses/redux/slices/profileCourse
 import studentProfileSlice from "@watcourses/redux/slices/studentProfileSlice";
 import ui from "@watcourses/redux/slices/ui";
 import { RootState } from "@watcourses/redux/store";
+import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
+import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { makeObservable, observable } from "mobx";
+import { observer } from "mobx-react";
 import React from 'react';
+import { If, Then } from "react-if";
 import { connect, ConnectedProps } from "react-redux";
 import { DropResult } from "react-smooth-dnd";
 import { bindActionCreators, Dispatch } from "redux";
@@ -22,6 +26,7 @@ import styled from "styled-components";
 interface IScheduleProps extends ConnectedProps<typeof connector> {
 }
 
+@observer
 export class ScheduleBase extends React.Component<IScheduleProps> {
 
   @observable
@@ -144,7 +149,7 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(FindSlotRequest.toJSON({
-        profile: this.props.studentProfile!!,
+        profile: StudentProfileStore.get().studentProfile,
         courseCode: dragStart.payload!!
       }))
     })
@@ -159,12 +164,12 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
 
   render() {
     const {
-      studentProfile,
       loading,
-      profileCourses,
       shortlistOpen,
       setShortlistOpen
     } = this.props;
+    const profileCourses = ProfileCoursesStore.get().profileCourses.courses;
+    const studentProfile = StudentProfileStore.get().studentProfile;
     return (
       <OuterContainer>
         <ScheduleContainer>
@@ -172,16 +177,20 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
             ref={this.scheduleListRef}
             onScroll={this.handleScroll}>
             <Spacer minWidth={'16px'} minHeight={'100%'}/>
-            <TermList
-              profileCourses={profileCourses}
-              studentProfile={studentProfile}
-              issues={this.issues}
-              options={{
-                onDragEnd: this.onDragEnd,
-                onDragStart: this.onDragStart
-              }}
-              onDropWithTerm={this.onDropWithTerm}
-            />
+            <If condition={!!profileCourses && !!studentProfile}>
+              <Then>
+                <TermList
+                  profileCourses={profileCourses!}
+                  studentProfile={studentProfile}
+                  issues={this.issues}
+                  options={{
+                    onDragEnd: this.onDragEnd,
+                    onDragStart: this.onDragStart
+                  }}
+                  onDropWithTerm={this.onDropWithTerm}
+                />
+              </Then>
+            </If>
             <Spacer minWidth={'240px'} minHeight={'100%'}/>
             <StyledFab icon="add" label="Add Term"/>
           </ScheduleListContainer>
@@ -195,15 +204,19 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
           />
         </ScheduleContainer>
         <ShortListContainer open={shortlistOpen}>
-          <ScheduleShortList
-            shortlist={studentProfile?.shortList ?? []}
-            courses={profileCourses}
-            options={{
-              onDragEnd: this.onDragEnd,
-              onDragStart: this.onDragStart
-            }}
-            onDropWithTerm={this.onDropWithTerm}
-          />
+          <If condition={!!profileCourses && !!studentProfile}>
+            <Then>
+              <ScheduleShortList
+                shortlist={studentProfile?.shortList ?? []}
+                courses={profileCourses!}
+                options={{
+                  onDragEnd: this.onDragEnd,
+                  onDragStart: this.onDragStart
+                }}
+                onDropWithTerm={this.onDropWithTerm}
+              />
+            </Then>
+          </If>
         </ShortListContainer>
       </OuterContainer>
     );
@@ -212,8 +225,6 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
 }
 
 const mapState = (state: RootState) => ({
-  studentProfile: state.studentProfile.content,
-  profileCourses: state.profileCourses.courses,
   loading: state.studentProfile.loading,
   shortlistOpen: state.ui.shortlistOpen,
   drawerShadow: state.ui.drawerShadow,

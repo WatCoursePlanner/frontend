@@ -11,7 +11,7 @@ $ git clone https://github.com/WatCoursePlanner/frontend.git
 $ cd frontend
 ```
 
-Install dependencies and get it running
+Install dependencies and create it running
 
 ```shell
 $ yarn

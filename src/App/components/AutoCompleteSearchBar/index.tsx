@@ -1,6 +1,7 @@
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import '@rmwc/icon-button/styles';
 import '@rmwc/textfield/styles';
+import { buildProto } from "@watcourses/utils/buildProto";
 import * as Fuzzysort from "fuzzysort";
 import { makeObservable, observable, reaction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
@@ -23,8 +24,7 @@ export interface IAutoCompleteCallbackProps {
   onAutoCompleteSelect: ((text: string) => void)
 }
 
-export interface IAutoCompleteProps extends
-  IAutoCompleteCallbackProps,
+export interface IAutoCompleteProps extends IAutoCompleteCallbackProps,
   ISearchBarProps {
   options: AutoCompleteOption[],
 }
@@ -61,16 +61,14 @@ export class AutoCompleteSearchBar extends React.Component<IAutoCompleteProps> {
     () => this.props.searchText,
     (searchText) => {
       this.displayOptions = this.fetchOptions(searchText)
-        .map(keysResult => {
-          return {
-            title: keysResult.obj.title,
-            subTitle: keysResult.obj.subTitle,
-            titleResult: keysResult[0],
-            subTitleResult: keysResult[1],
-            score: keysResult.score,
-            weight: keysResult.obj.weight,
-          } as AutoCompleteOption;
-        });
+        .map(keysResult => buildProto<AutoCompleteOption>({
+          title: keysResult.obj.title,
+          subTitle: keysResult.obj.subTitle,
+          titleResult: keysResult[0],
+          subTitleResult: keysResult[1],
+          score: keysResult.score,
+          weight: keysResult.obj.weight,
+        }));
     }
   );
 

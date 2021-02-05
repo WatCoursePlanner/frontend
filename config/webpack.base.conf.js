@@ -11,6 +11,7 @@ module.exports = {
         publicPath: '/',
     },
     resolve: {
+        alias: require("./alias"),
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
         plugins: [
             new TsconfigPathsPlugin(),
