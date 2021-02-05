@@ -2,8 +2,8 @@ import checkStudentProfile from "@watcourses/api/StudentProfile/check";
 import { CheckResults, CheckResults_Issue, CourseInfo, StudentProfile } from "@watcourses/proto/courses";
 import { buildProto } from "@watcourses/utils/buildProto";
 import { singletonGetter } from "@watcourses/utils/SingletonGetter";
-import { action, computed, makeAutoObservable, observable } from "mobx";
-import { fromPromise, IPromiseBasedObservable, PENDING } from "mobx-utils";
+import { action, computed, makeAutoObservable, observable, toJS, when } from "mobx";
+import { fromPromise, FULFILLED, IPromiseBasedObservable, PENDING } from "mobx-utils";
 
 import { StudentProfileStore } from "./StudentProfileStore";
 
@@ -36,11 +36,19 @@ export class ProfileCoursesStore {
           issues: response.issues
         });
       }
-    }) ?? buildProto<IProfileCourses>({});
+    }) ?? this.cachedProfileCourses;
   }
+
+  private cachedProfileCourses: IProfileCourses = buildProto<IProfileCourses>({})
 
   constructor() {
     makeAutoObservable(this);
+    when(
+      () => this.profileCoursesPromise?.state === FULFILLED,
+      () => {
+        this.cachedProfileCourses = this.profileCourses;
+      },
+    );
   }
 
   init() {
@@ -48,7 +56,7 @@ export class ProfileCoursesStore {
   }
 
   @action
-  private fetchProfileCourses = () => {
+  fetchProfileCourses = () => {
     this.profileCoursesPromise = fromPromise(
       checkStudentProfile(
         buildProto<StudentProfile>(

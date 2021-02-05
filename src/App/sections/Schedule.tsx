@@ -7,8 +7,6 @@ import { ScheduleShortList, TermList } from "@watcourses/components/ScheduleList
 import Spacer from "@watcourses/components/Spacer";
 import { URL_BASE } from "@watcourses/constants/api";
 import { CheckResults, FindSlotRequest } from "@watcourses/proto/courses";
-import { fetchProfileCourseAction } from "@watcourses/redux/slices/profileCourses";
-import studentProfileSlice from "@watcourses/redux/slices/studentProfileSlice";
 import ui from "@watcourses/redux/slices/ui";
 import { RootState } from "@watcourses/redux/store";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
@@ -63,7 +61,7 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
 
     // Ignore if is hovering over a vertically scrollable course-list
     const courseListElements: Element[] = Array.from(
-      document.getElementsByClassName("course-list")
+      document.getElementsByClassName("course-list"),
     );
     if (courseListElements.some((_element) => {
       return _element.contains(e.target) &&
@@ -104,29 +102,23 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
     if (dropResult.removedIndex === dropResult.addedIndex) {
       return;
     }
+    const {
+      addCourseToTerm,
+      removeCourseFromTerm,
+    } = StudentProfileStore.get();
+
     if (dropResult.removedIndex !== null) {
-      if (termName === "shortlist") {
-        this.props.removeShortList(dropResult.payload);
-      } else {
-        this.props.removeCourseFromList({
-          termName,
-          index: dropResult.removedIndex
-        });
-      }
+      removeCourseFromTerm({
+        termName,
+        index: dropResult.removedIndex,
+      });
     }
     if (dropResult.addedIndex !== null) {
-      if (termName === "shortlist") {
-        this.props.addShortList({
-          code: dropResult.payload,
-          index: dropResult.addedIndex
-        });
-      } else {
-        this.props.addCourseToList({
-          termName,
-          index: dropResult.addedIndex,
-          code: dropResult.payload
-        });
-      }
+      addCourseToTerm({
+        termName,
+        index: dropResult.addedIndex,
+        code: dropResult.payload,
+      });
     }
     // Don't update if both are not null, i.e. move to the same column
     if (dropResult.removedIndex === null || dropResult.addedIndex === null) {
@@ -134,7 +126,7 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
       if (!this.firstDrop) {
         this.firstDrop = true;
       } else {
-        this.props.checkCourses(null);
+        ProfileCoursesStore.get().fetchProfileCourses();
         this.firstDrop = false;
       }
     }
@@ -150,8 +142,8 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(FindSlotRequest.toJSON({
         profile: StudentProfileStore.get().studentProfile,
-        courseCode: dragStart.payload!!
-      }))
+        courseCode: dragStart.payload!!,
+      })),
     })
       .then(res => res.json())
       .then(res => {
@@ -166,7 +158,7 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
     const {
       loading,
       shortlistOpen,
-      setShortlistOpen
+      setShortlistOpen,
     } = this.props;
     const profileCourses = ProfileCoursesStore.get().profileCourses.courses;
     const studentProfile = StudentProfileStore.get().studentProfile;
@@ -185,7 +177,7 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
                   issues={this.issues}
                   options={{
                     onDragEnd: this.onDragEnd,
-                    onDragStart: this.onDragStart
+                    onDragStart: this.onDragStart,
                   }}
                   onDropWithTerm={this.onDropWithTerm}
                 />
@@ -211,7 +203,7 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
                 courses={profileCourses!}
                 options={{
                   onDragEnd: this.onDragEnd,
-                  onDragStart: this.onDragStart
+                  onDragStart: this.onDragStart,
                 }}
                 onDropWithTerm={this.onDropWithTerm}
               />
@@ -231,11 +223,6 @@ const mapState = (state: RootState) => ({
 });
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-  addCourseToList: studentProfileSlice.actions.addCourse,
-  removeCourseFromList: studentProfileSlice.actions.removeCourse,
-  addShortList: studentProfileSlice.actions.addShortlist,
-  removeShortList: studentProfileSlice.actions.removeShortlist,
-  checkCourses: fetchProfileCourseAction,
   setShortlistOpen: ui.actions.setShortlistOpen,
   setDrawerShadow: ui.actions.setDrawerShadow,
 }, dispatch);
