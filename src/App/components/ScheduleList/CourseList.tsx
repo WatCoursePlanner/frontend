@@ -3,12 +3,12 @@ import { cleanScrollBar } from "@watcourses/constants/styles";
 import { CheckResults, CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { SHORTLIST_TERM_NAME } from "@watcourses/stores/StudentProfileStore";
-import React, { useState } from "react";
+import React, { Ref, useState } from "react";
 import { Container } from "react-smooth-dnd";
 import { ContainerOptions, DropResult } from "smooth-dnd/dist/src/exportTypes";
 import styled from "styled-components";
 
-import ScheduleCourse from "./ScheduleCourse";
+import { ScheduleCourse } from "./ScheduleCourse";
 
 export type CourseListProps = {
   term?: Schedule_TermSchedule,
@@ -17,6 +17,8 @@ export type CourseListProps = {
   options: ContainerOptions,
   onDropWithTerm: (result: DropResult, termName: string) => void,
   issues?: CheckResults | null
+  shortListOpen: boolean,
+  scheduleListRef: React.RefObject<HTMLDivElement>,
 }
 
 const StyledContainer = styled.div<{ scrolled: number }>`
@@ -90,7 +92,7 @@ const CourseListWrapper = styled.div`
   }
 `;
 
-const CourseList = ({term, onDropWithTerm, options, courses, shortlist, issues}: CourseListProps) => {
+const CourseList = ({term, onDropWithTerm, options, courses, shortlist, issues, shortListOpen, scheduleListRef}: CourseListProps) => {
   const [scrolled, setScrolled] = useState(false);
   const handleScroll = (e: React.UIEvent<HTMLElement>) => {
     if (e.currentTarget.scrollTop > 0) {
@@ -129,6 +131,8 @@ const CourseList = ({term, onDropWithTerm, options, courses, shortlist, issues}:
             .map((code, index) => (
               <ScheduleCourse
                 key={index}
+                shortListOpen={shortListOpen}
+                scheduleListRef={scheduleListRef}
                 course={
                   courses[code] ??
                   CachedCoursesStore.get().getByCode(code)

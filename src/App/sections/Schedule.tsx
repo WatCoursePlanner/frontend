@@ -7,27 +7,26 @@ import { ScheduleShortList, TermList } from "@watcourses/components/ScheduleList
 import Spacer from "@watcourses/components/Spacer";
 import { URL_BASE } from "@watcourses/constants/api";
 import { CheckResults, FindSlotRequest } from "@watcourses/proto/courses";
-import ui from "@watcourses/redux/slices/ui";
-import { RootState } from "@watcourses/redux/store";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
-import { makeObservable, observable } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { observer } from "mobx-react";
 import React from 'react';
 import { If, Then } from "react-if";
-import { connect, ConnectedProps } from "react-redux";
 import { DropResult } from "react-smooth-dnd";
-import { bindActionCreators, Dispatch } from "redux";
 import { DragEndParams, DragStartParams } from "smooth-dnd/dist/src/exportTypes";
 import styled from "styled-components";
 
-interface IScheduleProps extends ConnectedProps<typeof connector> {
+interface IScheduleProps {
   drawerShadow: boolean,
   setDrawerShadow: (shadow: boolean) => void,
 }
 
 @observer
-export class ScheduleBase extends React.Component<IScheduleProps> {
+export class Schedule extends React.Component<IScheduleProps> {
+
+  @observable
+  private shortListOpen: boolean = false;
 
   @observable
   private issues: { [termName: string]: CheckResults } = {};
@@ -36,6 +35,11 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
   private firstDrop = false;
 
   private scheduleListRef = React.createRef<HTMLDivElement>();
+
+  @action
+  private toggleShortList = () => {
+    this.shortListOpen = !this.shortListOpen;
+  };
 
   private handleDrawerShadow = (e: HTMLElement) => {
     if (e.scrollLeft > 0) {
@@ -158,7 +162,9 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
     })
       .then(res => res.json())
       .then(res => {
-        this.issues = res.slot;
+        runInAction(() => {
+          this.issues = res.slot;
+        })
       })
       .catch(error => {
         throw(error);
@@ -166,11 +172,6 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
   };
 
   render() {
-    const {
-      loading,
-      shortlistOpen,
-      setShortlistOpen,
-    } = this.props;
     const profileCourses = ProfileCoursesStore.get().profileCourses.courses;
     const studentProfile = StudentProfileStore.get().studentProfile;
     return (
@@ -191,6 +192,8 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
                     onDragStart: this.onDragStart,
                   }}
                   onDropWithTerm={this.onDropWithTerm}
+                  shortListOpen={this.shortListOpen}
+                  scheduleListRef={this.scheduleListRef}
                 />
               </Then>
             </If>
@@ -202,11 +205,11 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
             onMouseDown={(e) => {
               e.preventDefault();
             }}
-            onClick={() => setShortlistOpen(!shortlistOpen)}
-            icon={shortlistOpen ? "keyboard_arrow_right" : "shopping_cart"}
+            onClick={this.toggleShortList}
+            icon={this.shortListOpen ? "keyboard_arrow_right" : "shopping_cart"}
           />
         </ScheduleContainer>
-        <ShortListContainer open={shortlistOpen}>
+        <ShortListContainer open={this.shortListOpen}>
           <If condition={!!profileCourses && !!studentProfile}>
             <Then>
               <ScheduleShortList
@@ -217,28 +220,16 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
                   onDragStart: this.onDragStart,
                 }}
                 onDropWithTerm={this.onDropWithTerm}
+                shortListOpen={this.shortListOpen}
+                scheduleListRef={this.scheduleListRef}
               />
             </Then>
           </If>
         </ShortListContainer>
       </OuterContainer>
     );
-
   }
 }
-
-const mapState = (state: RootState) => ({
-  loading: state.studentProfile.loading,
-  shortlistOpen: state.ui.shortlistOpen,
-});
-
-const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-  setShortlistOpen: ui.actions.setShortlistOpen,
-}, dispatch);
-
-const connector = connect(mapState, mapDispatch);
-
-export const Schedule = connector(ScheduleBase);
 
 const ShortListButton = styled(Button)<ButtonProps & ButtonHTMLProps>`
   position: absolute;

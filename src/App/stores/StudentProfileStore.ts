@@ -93,12 +93,14 @@ export class StudentProfileStore {
   }
 
   init(): Promise<StudentProfile> {
-    return this.fetchStudentProfile();
+    return this.fetchStudentProfile(this.SampleProfileRequest);
   }
 
   @action
-  private fetchStudentProfile = (): Promise<StudentProfile> => {
-    const promise = createStudentProfile(this.SampleProfileRequest);
+  fetchStudentProfile = (
+    request: CreateStudentProfileRequest
+  ): Promise<StudentProfile> => {
+    const promise = createStudentProfile(request);
     this.studentProfilePromise = fromPromise(promise);
     return promise;
   };

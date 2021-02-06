@@ -1,5 +1,6 @@
 import { Icon } from "@material-ui/core";
 import { CoopStream, CreateStudentProfileRequest } from "@watcourses/proto/courses";
+import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 // @ts-ignore
 import PDFJSWorker from 'pdfjs-dist/build/pdf.worker.min';
@@ -34,11 +35,7 @@ const StyledDropzoneContainer = styled.div`
   }
 `;
 
-type TranscriptReaderProps = {
-  onSuccessCallback: (request: CreateStudentProfileRequest) => void,
-}
-
-const TranscriptReader = ({onSuccessCallback}: TranscriptReaderProps) => {
+const TranscriptReader = () => {
   let onDrop: (acceptedFiles: any) => void;
   onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file: Blob) => {
@@ -47,7 +44,7 @@ const TranscriptReader = ({onSuccessCallback}: TranscriptReaderProps) => {
         GlobalWorkerOptions.workerSrc = PDFJSWorker;
         const binaryStr = new Uint8Array(reader.result as ArrayBuffer);
         getDocument(binaryStr).promise.then(pdfDocument => {
-          getPageText(1, pdfDocument).then((text: string) => {
+          getPageText(1, pdfDocument).then(async (text: string) => {
             const regexBasicInfo = new RegExp(/Record *(.+? [0-9]+?) Program: *(.*?) *Level/g);
             const regexCourses = new RegExp(/[A-Z]+ +[0-9][0-9A-Z]+/g);
             const regexLevels = new RegExp(/Level: *([0-9][A-B])/g);
@@ -105,9 +102,8 @@ const TranscriptReader = ({onSuccessCallback}: TranscriptReaderProps) => {
                 terms: schedule
               }
             });
-            onSuccessCallback(result);
+            await StudentProfileStore.get().fetchStudentProfile(result)
           });
-
         }, function (reason: string) {
           console.error(reason);
         });
