@@ -6,7 +6,7 @@ import { Home } from "@watcourses/sections/Home";
 import Welcome from "@watcourses/sections/Welcome";
 import { observer } from "mobx-react";
 import { fromPromise } from "mobx-utils";
-import React  from 'react';
+import React from 'react';
 import { Route, Switch } from "react-router";
 import { Redirect, Router } from "react-router-dom";
 
@@ -18,11 +18,11 @@ import { AppHistory } from "./services/AppHistory";
 export class App extends React.Component {
   renderLoading = () => (
     <p>TODO Implement Loading</p>
-  )
+  );
 
   renderError = (error: any) => (
     <p>TODO Implement Error: {error.toString()}</p>
-  )
+  );
 
   renderApp = () => (
     <RMWCThemeProvider

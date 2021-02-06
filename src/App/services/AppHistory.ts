@@ -36,7 +36,7 @@ export class AppHistory {
     if (query) {
       if (path.includes("?")) {
         throw new Error(
-          "Query params included in both path and in the query object"
+          "Query params included in both path and in the query object",
         );
       }
 
@@ -62,7 +62,7 @@ export class AppHistory {
   goBack(location: LocationDescriptorObject): void;
   goBack(
     location: History.Path | LocationDescriptorObject,
-    state?: History.LocationState
+    state?: History.LocationState,
   ): void {
     if (this.isPreviousLocationWithinApp()) {
       this.history.goBack();
@@ -75,7 +75,7 @@ export class AppHistory {
   replace(location: LocationDescriptorObject): void;
   replace(
     location: History.Path | LocationDescriptorObject,
-    state?: History.LocationState
+    state?: History.LocationState,
   ) {
     this.history.replace(location as any, state);
   }

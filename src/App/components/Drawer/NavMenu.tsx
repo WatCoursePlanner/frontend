@@ -1,4 +1,9 @@
-import { ListItem, ListItemGraphic, ListItemProps, ListItemText } from "@rmwc/list";
+import {
+  ListItem,
+  ListItemGraphic,
+  ListItemProps,
+  ListItemText,
+} from "@rmwc/list";
 import * as React from "react";
 import { Else, If, Then } from "react-if";
 import { NavLink, RouteComponentProps, withRouter } from "react-router-dom";
@@ -16,7 +21,7 @@ export const TAB_ICONS = {
   SHARE: "share",
 };
 
-interface INavMenuItemPropTypes {
+interface INavMenuItemPropTypes extends RouteComponentProps {
   to?: string;
   newTab?: boolean;
   onClick?: () => void;
@@ -24,7 +29,7 @@ interface INavMenuItemPropTypes {
   exact?: boolean;
 }
 
-class NavMenuItemBase extends React.Component<INavMenuItemPropTypes & RouteComponentProps> {
+class NavMenuItemBase extends React.Component<INavMenuItemPropTypes> {
   handleOnClick = () => {
     if (this.props.onClick) {
       this.props.onClick();
@@ -80,7 +85,8 @@ class NavMenuItemBase extends React.Component<INavMenuItemPropTypes & RouteCompo
 
 export const NavMenuItem = withRouter(NavMenuItemBase);
 
-const StyledListItem = styled(ListItem)<ListItemProps & React.HTMLProps<HTMLDivElement>>`
+const StyledListItem = styled(ListItem)<ListItemProps &
+  React.HTMLProps<HTMLDivElement>>`
   margin: 4px 0 4px 0 !important;
   -webkit-mask-image: radial-gradient(white, black);
   border-radius: 0 100px 100px 0 !important;

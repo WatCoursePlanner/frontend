@@ -49,14 +49,14 @@ export class ProfileCoursesStore {
         });
       },
       rejected: () => buildProto<IProfileCourses>({
-        courses: {}
+        courses: {},
       }),
     }) ?? this.cachedProfileCourses;
   }
 
   private cachedProfileCourses: IProfileCourses =
     buildProto<IProfileCourses>({
-      courses: {}
+      courses: {},
     });
 
   constructor() {

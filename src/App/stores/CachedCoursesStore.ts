@@ -1,6 +1,10 @@
 import searchCourses from "@watcourses/api/Course/search";
 import { COURSES_INFO_REFRESH_TIME } from "@watcourses/constants/api";
-import { CourseInfo, SearchCourseRequest, SearchCourseResponse } from "@watcourses/proto/courses";
+import {
+  CourseInfo,
+  SearchCourseRequest,
+  SearchCourseResponse,
+} from "@watcourses/proto/courses";
 import { buildProto } from "@watcourses/utils/buildProto";
 import { singletonGetter } from "@watcourses/utils/SingletonGetter";
 import { action, computed, makeAutoObservable, observable } from "mobx";
@@ -27,7 +31,7 @@ export class CachedCoursesStore {
   @computed
   get error(): string | undefined {
     return this.coursesStorageResponse?.case({
-      rejected: e => e.toString()
+      rejected: e => e.toString(),
     });
   }
 
@@ -58,7 +62,7 @@ export class CachedCoursesStore {
   @action
   init() {
     this.coursesStorageResponse = fromPromise(
-      this.initialize()
+      this.initialize(),
     );
   }
 
@@ -87,18 +91,18 @@ export class CachedCoursesStore {
       searchCourses(buildProto<SearchCourseRequest>({
         pagination: {
           zeroBasedPage: 0,
-          limit: 5000
+          limit: 5000,
         },
-        basicInfoOnly: true
+        basicInfoOnly: true,
       }))
         .then(res => {
           const courseStorage = buildProto<ICachedCoursesStorage>({
             lastUpdatedAt: CachedCoursesStore.getCurrentTimestamp(),
-            courses: SearchCourseResponse.fromJSON(res).results
+            courses: SearchCourseResponse.fromJSON(res).results,
           });
           localStorage.setItem(
             LOCAL_STORAGE_COURSES_KEY,
-            JSON.stringify(courseStorage)
+            JSON.stringify(courseStorage),
           );
           return resolve(courseStorage);
         })

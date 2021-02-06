@@ -1,10 +1,36 @@
 import React from "react";
 import styled from "styled-components";
 
-import CourseList, { CourseListProps } from "./CourseList";
+import { CourseList } from "./CourseList";
 
-type ShortListProps = {
+interface IShortListProps {
   shortlist: string[],
+}
+
+export class ScheduleShortList extends CourseList<IShortListProps> {
+  render() {
+    const {
+      shortlist,
+      courses,
+      onDropWithTerm,
+      options,
+      shortListOpen,
+      scheduleListRef,
+    } = this.props;
+    return (
+      <RootContainer>
+        <Title>Shortlist</Title>
+        <CourseList
+          shortlist={shortlist}
+          courses={courses}
+          options={options}
+          onDropWithTerm={onDropWithTerm}
+          shortListOpen={shortListOpen}
+          scheduleListRef={scheduleListRef}
+        />
+      </RootContainer>
+    );
+  }
 }
 
 const RootContainer = styled.div`
@@ -20,28 +46,3 @@ const Title = styled.span`
   margin: 5vh 0 16px 0;
   min-height: 24px;
 `;
-
-const ScheduleShortList = ({
-  shortlist,
-  courses,
-  onDropWithTerm,
-  options,
-  shortListOpen,
-  scheduleListRef,
-}: ShortListProps & CourseListProps) => {
-  return (
-    <RootContainer>
-      <Title>Shortlist</Title>
-      <CourseList
-        shortlist={shortlist}
-        courses={courses}
-        options={options}
-        onDropWithTerm={onDropWithTerm}
-        shortListOpen={shortListOpen}
-        scheduleListRef={scheduleListRef}
-      />
-    </RootContainer>
-  );
-};
-
-export default ScheduleShortList;

@@ -2,18 +2,30 @@ import { Avatar } from "@rmwc/avatar";
 import '@rmwc/avatar/styles';
 import { Badge, BadgeAnchor } from "@rmwc/badge";
 import '@rmwc/badge/styles';
-import { IconButton, IconButtonHTMLProps, IconButtonProps } from "@rmwc/icon-button";
+import {
+  IconButton,
+  IconButtonHTMLProps,
+  IconButtonProps,
+} from "@rmwc/icon-button";
 import { MenuSurface, MenuSurfaceAnchor } from "@rmwc/menu";
 import '@rmwc/menu/styles';
-import { TopAppBar, TopAppBarProps, TopAppBarRow, TopAppBarSection, TopAppBarTitle } from "@rmwc/top-app-bar";
+import {
+  TopAppBar,
+  TopAppBarProps,
+  TopAppBarRow,
+  TopAppBarSection,
+  TopAppBarTitle,
+} from "@rmwc/top-app-bar";
 import '@rmwc/top-app-bar/styles';
 import {
   AutoCompleteOption,
   AutoCompleteSearchBar,
-  IAutoCompleteCallbackProps
+  IAutoCompleteCallbackProps,
 } from "@watcourses/components/AutoCompleteSearchBar";
-import { ISearchBarProps } from "@watcourses/components/AutoCompleteSearchBar/SearchBar";
-import Popup from "@watcourses/components/Popup";
+import {
+  ISearchBarProps,
+} from "@watcourses/components/AutoCompleteSearchBar/SearchBar";
+import { Popup } from "@watcourses/components/Popup";
 import { CourseInfo } from "@watcourses/proto/courses";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { action, makeObservable, observable } from "mobx";
@@ -21,10 +33,11 @@ import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
 
-import DegreeRequirementPopup, { IDegreeRequirementPopupProps } from "./DegreeRequirementPopup";
+import DegreeRequirementPopup, {
+  IDegreeRequirementPopupProps,
+} from "./DegreeRequirementPopup";
 
-interface ITopNavProps extends
-  IAutoCompleteCallbackProps,
+interface ITopNavProps extends IAutoCompleteCallbackProps,
   ISearchBarProps,
   IDegreeRequirementPopupProps {
   toggleDrawer: () => void,
@@ -42,15 +55,15 @@ export class TopNav extends React.Component<ITopNavProps> {
   @action
   setDegreeMenuOpen = (open: boolean) => {
     this.degreeMenuOpen = open;
-  }
+  };
 
   @action
   setAccountMenuOpen = (open: boolean) => {
     this.accountMenuOpen = open;
-  }
+  };
 
   componentDidMount() {
-    makeObservable(this)
+    makeObservable(this);
   }
 
   render() {
@@ -60,7 +73,7 @@ export class TopNav extends React.Component<ITopNavProps> {
       setSearchText,
       onSearch,
       onAutoCompleteSelect,
-      issues
+      issues,
     } = this.props;
 
     return (
@@ -89,9 +102,9 @@ export class TopNav extends React.Component<ITopNavProps> {
                     return {
                       title: course.code,
                       subTitle: course.name,
-                      weight: course.ratingsCount
+                      weight: course.ratingsCount,
                     };
-                  }
+                  },
                 )}
             />
           </TopAppBarSection>
@@ -109,7 +122,8 @@ export class TopNav extends React.Component<ITopNavProps> {
                   icon="info"
                   onClick={() => this.setDegreeMenuOpen(!this.degreeMenuOpen)}/>
                 {issues && issues.length > 0 ?
-                  <Badge className={'unselectable'} style={{marginRight: 40}} inset="0.75rem"
+                  <Badge className={'unselectable'} style={{marginRight: 40}}
+                         inset="0.75rem"
                          label={issues.length}/> : null}
               </BadgeAnchor>
             </MenuSurfaceAnchor>
@@ -134,7 +148,8 @@ export class TopNav extends React.Component<ITopNavProps> {
   }
 }
 
-const StyledAppBar = styled(TopAppBar)<TopAppBarProps & React.HTMLProps<HTMLDivElement>>`
+const StyledAppBar = styled(TopAppBar)<TopAppBarProps &
+  React.HTMLProps<HTMLDivElement>>`
   border-bottom: 1px solid #e0e0e0;
   background-color: white;
 `;

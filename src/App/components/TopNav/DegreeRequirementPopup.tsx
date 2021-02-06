@@ -1,6 +1,13 @@
-import { List, ListItem, ListItemMeta, ListItemPrimaryText, ListItemSecondaryText, ListItemText } from "@rmwc/list";
+import {
+  List,
+  ListItem,
+  ListItemMeta,
+  ListItemPrimaryText,
+  ListItemSecondaryText,
+  ListItemText,
+} from "@rmwc/list";
 import '@rmwc/list/styles';
-import Popup from "@watcourses/components/Popup";
+import { Popup } from "@watcourses/components/Popup";
 import { CheckResults_Issue } from "@watcourses/proto/courses";
 import React from 'react';
 

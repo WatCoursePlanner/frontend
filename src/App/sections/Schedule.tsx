@@ -3,7 +3,10 @@ import '@rmwc/button/styles';
 import { Fab, FabProps } from "@rmwc/fab";
 import '@rmwc/fab/styles';
 import '@rmwc/tooltip/styles';
-import { ScheduleShortList, TermList } from "@watcourses/components/ScheduleList";
+import {
+  ScheduleShortList,
+  ScheduleTermList,
+} from "@watcourses/components/ScheduleList";
 import Spacer from "@watcourses/components/Spacer";
 import { URL_BASE } from "@watcourses/constants/api";
 import { CheckResults, FindSlotRequest } from "@watcourses/proto/courses";
@@ -14,7 +17,10 @@ import { observer } from "mobx-react";
 import React from 'react';
 import { If, Then } from "react-if";
 import { DropResult } from "react-smooth-dnd";
-import { DragEndParams, DragStartParams } from "smooth-dnd/dist/src/exportTypes";
+import {
+  DragEndParams,
+  DragStartParams,
+} from "smooth-dnd/dist/src/exportTypes";
 import styled from "styled-components";
 
 interface IScheduleProps {
@@ -164,7 +170,7 @@ export class Schedule extends React.Component<IScheduleProps> {
       .then(res => {
         runInAction(() => {
           this.issues = res.slot;
-        })
+        });
       })
       .catch(error => {
         throw(error);
@@ -183,7 +189,7 @@ export class Schedule extends React.Component<IScheduleProps> {
             <Spacer minWidth={'16px'} minHeight={'100%'}/>
             <If condition={!!profileCourses && !!studentProfile}>
               <Then>
-                <TermList
+                <ScheduleTermList
                   profileCourses={profileCourses!}
                   studentProfile={studentProfile}
                   issues={this.issues}

@@ -2,11 +2,44 @@ import { Schedule_TermSchedule } from "@watcourses/proto/courses";
 import React from "react";
 import styled from "styled-components";
 
-import CourseList, { CourseListProps } from "./CourseList";
+import { CourseList } from "./CourseList";
 
-type ScheduleTermProps = {
+interface IScheduleTermProps {
   term: Schedule_TermSchedule,
   showYear: boolean,
+}
+
+export class ScheduleTerm extends CourseList<IScheduleTermProps> {
+  render() {
+    const {
+      term,
+      courses,
+      showYear,
+      options,
+      onDropWithTerm,
+      issues,
+      shortListOpen,
+      scheduleListRef,
+    } = this.props;
+    return (
+      <RootContainer>
+        <Year> {showYear ? term.year : ''}</Year>
+        <Row>
+          <TermName>{term.term.toString().toLowerCase()}</TermName>
+          <TermCode>{term.termName}</TermCode>
+        </Row>
+        <CourseList
+          term={term}
+          courses={courses}
+          options={options}
+          onDropWithTerm={onDropWithTerm}
+          issues={issues}
+          shortListOpen={shortListOpen}
+          scheduleListRef={scheduleListRef}
+        />
+      </RootContainer>
+    );
+  }
 }
 
 const RootContainer = styled.div`
@@ -43,35 +76,3 @@ const Row = styled.div`
   margin-bottom: 16px;
   min-height: 24px;
 `;
-
-const ScheduleTerm = ({
-  term,
-  courses,
-  showYear,
-  options,
-  onDropWithTerm,
-  issues,
-  shortListOpen,
-  scheduleListRef,
-}: ScheduleTermProps & CourseListProps) => {
-  return (
-    <RootContainer>
-      <Year>{showYear ? term.year : ''}</Year>
-      <Row>
-        <TermName>{term.term.toString().toLowerCase()}</TermName>
-        <TermCode>{term.termName}</TermCode>
-      </Row>
-      <CourseList
-        term={term}
-        courses={courses}
-        options={options}
-        onDropWithTerm={onDropWithTerm}
-        issues={issues}
-        shortListOpen={shortListOpen}
-        scheduleListRef={scheduleListRef}
-      />
-    </RootContainer>
-  );
-};
-
-export default ScheduleTerm;

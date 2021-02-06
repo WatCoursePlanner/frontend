@@ -11,7 +11,7 @@ import { buildProto } from "./buildProto";
 
 const codec = jsonurl('lzma');
 
-const LOCAL_STORAGE_PROFILE_KEY = "STUDENT_PROFILE"
+const LOCAL_STORAGE_PROFILE_KEY = "STUDENT_PROFILE";
 
 export function saveStudentProfile(studentProfile: StudentProfile) {
   try {

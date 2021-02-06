@@ -7,7 +7,7 @@ import { makeObservable, observable, reaction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import React from "react";
 
-import Option from "./Option";
+import { Option } from "./Option";
 import { ISearchBarProps, SearchBar } from "./SearchBar";
 import Result = Fuzzysort.Result;
 
@@ -24,7 +24,7 @@ export interface IAutoCompleteCallbackProps {
   onAutoCompleteSelect: ((text: string) => void)
 }
 
-export interface IAutoCompleteProps extends IAutoCompleteCallbackProps,
+interface IAutoCompleteProps extends IAutoCompleteCallbackProps,
   ISearchBarProps {
   options: AutoCompleteOption[],
 }
@@ -45,9 +45,9 @@ const sortByWeight = (options: AutoCompleteOption[]) => {
 export class AutoCompleteSearchBar extends React.Component<IAutoCompleteProps> {
 
   @observable
-  displayOptions: AutoCompleteOption[] = [];
+  private displayOptions: AutoCompleteOption[] = [];
 
-  fetchOptions = (input: string) => {
+  private fetchOptions = (input: string) => {
     return Fuzzysort.go(input, this.props.options, {
       keys: ['title', 'subTitle'],
       limit: AutoCompleteMaxResults,
@@ -57,7 +57,7 @@ export class AutoCompleteSearchBar extends React.Component<IAutoCompleteProps> {
   };
 
   @disposeOnUnmount
-  searchTextReaction = reaction(
+  private searchTextReaction = reaction(
     () => this.props.searchText,
     (searchText) => {
       this.displayOptions = this.fetchOptions(searchText)

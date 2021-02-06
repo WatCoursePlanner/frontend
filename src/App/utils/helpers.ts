@@ -1,6 +1,10 @@
 import { cloneDeep } from "lodash";
 
-export function insertAt<T>(arr: Array<T>, index: number, element: T): Array<T> {
+export function insertAt<T>(
+  arr: Array<T>,
+  index: number,
+  element: T,
+): Array<T> {
   const ret = cloneDeep(arr);
   if (index < 0) {
     ret.push(element);
@@ -10,7 +14,10 @@ export function insertAt<T>(arr: Array<T>, index: number, element: T): Array<T> 
   return ret;
 }
 
-export function removeAt<T>(arr: Array<T>, index: number): Array<T> {
+export function removeAt<T>(
+  arr: Array<T>,
+  index: number,
+): Array<T> {
   const ret = cloneDeep(arr);
   ret.splice(index, 1);
   return ret;

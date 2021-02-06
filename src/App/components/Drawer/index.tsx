@@ -1,6 +1,16 @@
-import { Dialog, DialogTitle, IconButton, InputAdornment, OutlinedInput } from "@material-ui/core";
+import {
+  Dialog,
+  DialogTitle,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+} from "@material-ui/core";
 import { FileCopy } from "@material-ui/icons";
-import { Drawer as MaterialDrawer, DrawerContent, DrawerProps } from "@rmwc/drawer";
+import {
+  Drawer as MaterialDrawer,
+  DrawerContent,
+  DrawerProps,
+} from "@rmwc/drawer";
 import '@rmwc/drawer/styles';
 import { List, ListDivider } from "@rmwc/list";
 import '@rmwc/list/styles';
@@ -15,13 +25,13 @@ import styled from "styled-components";
 
 import { NavMenuItem, TAB_ICONS } from "./NavMenu";
 
-interface IDrawerProps {
+interface IDrawerProps extends RouteComponentProps {
   shadow: boolean,
   open: boolean,
 }
 
 @observer
-class DrawerBase extends React.Component<IDrawerProps & RouteComponentProps> {
+class DrawerBase extends React.Component<IDrawerProps> {
   @observable
   shareLink = '';
 
@@ -47,7 +57,7 @@ class DrawerBase extends React.Component<IDrawerProps & RouteComponentProps> {
     this.setShareOpen(true);
   };
 
-  constructor(props: IDrawerProps & RouteComponentProps) {
+  constructor(props: IDrawerProps) {
     super(props);
     makeObservable(this);
   }
@@ -104,7 +114,7 @@ class DrawerBase extends React.Component<IDrawerProps & RouteComponentProps> {
       location,
     } = this.props;
 
-    const shouldShowShadow = shadow && location.pathname === schedule.home()
+    const shouldShowShadow = shadow && location.pathname === schedule.home();
 
     return (
       <StyledDrawer
@@ -123,18 +133,23 @@ class DrawerBase extends React.Component<IDrawerProps & RouteComponentProps> {
 
 export const Drawer = withRouter(DrawerBase);
 
-const StyledDrawer = styled(MaterialDrawer)<DrawerProps & React.HTMLProps<HTMLDivElement> & { shadow: number }>`
+const StyledDrawer = styled(MaterialDrawer)<DrawerProps &
+  React.HTMLProps<HTMLDivElement> & {
+  shadow: number
+}>`
   width: 276px;
   border-color: transparent;
   padding-top: 64px;
   z-index: 3;
   transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 16px ${props => props.shadow ? `rgba(0, 0, 0, .28)` : `rgba(0, 0, 0, 0)`};
+  box-shadow: 0 0 16px ${props => props.shadow
+          ? `rgba(0, 0, 0, .28)`
+          : `rgba(0, 0, 0, 0)`};
 `;
 
 const StyledDrawerContent = styled(DrawerContent)`
   padding-right: 20px;
-`
+`;
 
 const StyledListDivider = styled(ListDivider)`
   margin: 8px 0 8px 0;

@@ -65,8 +65,8 @@ export class StudentProfileStore {
   private cachedStudentProfile: StudentProfile =
     buildProto<StudentProfile>({
       schedule: {
-        terms: []
-      }
+        terms: [],
+      },
     });
 
   @computed
@@ -75,8 +75,8 @@ export class StudentProfileStore {
       fulfilled: (response: StudentProfile) => response,
       rejected: () => buildProto<StudentProfile>({
         schedule: {
-          terms: []
-        }
+          terms: [],
+        },
       }),
     }) ?? this.cachedStudentProfile;
   }
@@ -98,7 +98,7 @@ export class StudentProfileStore {
 
   @action
   fetchStudentProfile = (
-    request: CreateStudentProfileRequest
+    request: CreateStudentProfileRequest,
   ): Promise<StudentProfile> => {
     const promise = createStudentProfile(request);
     this.studentProfilePromise = fromPromise(promise);
@@ -178,5 +178,5 @@ export class StudentProfileStore {
 
   isInShortList = (courseCode: string) => {
     return this.studentProfile.shortList.includes(courseCode);
-  }
+  };
 }

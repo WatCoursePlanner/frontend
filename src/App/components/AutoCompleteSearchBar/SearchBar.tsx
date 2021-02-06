@@ -2,7 +2,11 @@ import { Tooltip } from "@material-ui/core";
 import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
 import { AutocompleteRenderInputParams } from "@material-ui/lab";
-import { IconButton, IconButtonHTMLProps, IconButtonProps } from "@rmwc/icon-button";
+import {
+  IconButton,
+  IconButtonHTMLProps,
+  IconButtonProps
+} from "@rmwc/icon-button";
 import { observer } from "mobx-react";
 import React from "react";
 import { If, Then } from "react-if";

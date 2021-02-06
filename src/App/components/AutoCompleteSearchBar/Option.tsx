@@ -6,7 +6,13 @@ import ReactHtmlParser from "react-html-parser";
 
 import { AutoCompleteOption } from "./index";
 
-const Option = ({option}: { option: AutoCompleteOption }) => (
+interface IOptionProps {
+  option: AutoCompleteOption,
+}
+
+export const Option = ({
+  option,
+}: IOptionProps) => (
   <Grid container alignItems="center">
     <Grid item xs>
       <Typography variant="body1" color="textPrimary">
@@ -26,5 +32,3 @@ const Option = ({option}: { option: AutoCompleteOption }) => (
     </Grid>
   </Grid>
 );
-
-export default Option;
