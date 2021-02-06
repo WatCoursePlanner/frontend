@@ -1,4 +1,4 @@
-import searchCourses from "@watcourses/api/Courses/search";
+import searchCourses from "@watcourses/api/Course/search";
 import { COURSES_INFO_REFRESH_TIME } from "@watcourses/constants/api";
 import { CourseInfo, SearchCourseRequest, SearchCourseResponse } from "@watcourses/proto/courses";
 import { buildProto } from "@watcourses/utils/buildProto";

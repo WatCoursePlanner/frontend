@@ -83,8 +83,12 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
     }
   };
 
-  componentDidMount() {
+  constructor(props: IScheduleProps) {
+    super(props);
     makeObservable(this);
+  }
+
+  componentDidMount() {
     const element = this.scheduleListRef.current!;
     element.addEventListener("wheel", this.handleWheel);
     return () => {

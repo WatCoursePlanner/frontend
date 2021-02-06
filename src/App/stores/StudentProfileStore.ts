@@ -6,6 +6,7 @@ import {
 } from "@watcourses/proto/courses";
 import { buildProto } from "@watcourses/utils/buildProto";
 import { insertAt, removeAt } from "@watcourses/utils/helpers";
+import { saveStudentProfile } from "@watcourses/utils/LocalStorage";
 import { singletonGetter } from "@watcourses/utils/SingletonGetter";
 import { action, computed, makeAutoObservable, observable, when } from "mobx";
 import {
@@ -28,15 +29,16 @@ export interface IAddCourseProps {
 }
 
 export interface IRemoveCourseProps {
-  index: number,
+  indexOrCode: number | string,
 }
 
 export interface IAddCourseToTermProps extends IAddCourseProps {
   termName: string,
 }
 
-export interface IRemoveCourseFromTermProps extends IRemoveCourseProps {
+export interface IRemoveCourseFromTermProps {
   termName: string,
+  index: number,
 }
 
 export const SHORTLIST_TERM_NAME = "shortlist";
@@ -85,6 +87,7 @@ export class StudentProfileStore {
       () => this.studentProfilePromise?.state === FULFILLED,
       () => {
         this.cachedStudentProfile = this.studentProfile;
+        saveStudentProfile(this.studentProfile);
       },
     );
   }
@@ -161,9 +164,17 @@ export class StudentProfileStore {
   };
 
   @action
-  removeCourseFromShortlist = ({index}: IRemoveCourseProps) => {
+  removeCourseFromShortlist = ({indexOrCode}: IRemoveCourseProps) => {
     this.addOrRemoveFromTermOrShortlist({
-      isAdd: false, termName: SHORTLIST_TERM_NAME, index,
+      isAdd: false,
+      termName: SHORTLIST_TERM_NAME,
+      index: typeof indexOrCode === "number"
+        ? indexOrCode
+        : this.studentProfile.shortList.findIndex(code => code === indexOrCode),
     });
   };
+
+  isInShortList = (courseCode: string) => {
+    return this.studentProfile.shortList.includes(courseCode);
+  }
 }

@@ -2,7 +2,11 @@ import { cloneDeep } from "lodash";
 
 export function insertAt<T>(arr: Array<T>, index: number, element: T): Array<T> {
   const ret = cloneDeep(arr);
-  ret.splice(index, 0, element);
+  if (index < 0) {
+    ret.push(element);
+  } else {
+    ret.splice(index, 0, element);
+  }
   return ret;
 }
 

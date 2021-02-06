@@ -18,5 +18,8 @@ export default function post<T>(
         throw result.error;
       }
       return result;
+    })
+    .catch(error => {
+      throw error;
     });
 }

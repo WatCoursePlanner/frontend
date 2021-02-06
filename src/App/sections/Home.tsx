@@ -24,10 +24,13 @@ interface IHomeProps extends ConnectedProps<typeof connector>, RouteComponentPro
 class HomeBase extends React.Component<IHomeProps> {
 
   @observable
+  searchQuery: string = "";
+
+  @observable
   drawerOpen: boolean = true;
 
   @observable
-  searchText: string = '';
+  searchText: string = "";
 
   @computed
   private get isLoading() {
@@ -36,7 +39,7 @@ class HomeBase extends React.Component<IHomeProps> {
 
   @action
   setSearchText = (text?: string) => {
-    this.searchText = text ?? '';
+    this.searchText = text ?? "";
   };
 
   @action
@@ -44,7 +47,8 @@ class HomeBase extends React.Component<IHomeProps> {
     this.drawerOpen = open;
   };
 
-  componentDidMount() {
+  constructor(props: IHomeProps) {
+    super(props);
     makeObservable(this);
   }
 
@@ -88,7 +92,7 @@ class HomeBase extends React.Component<IHomeProps> {
                   <Schedule/>
                 </Route>
                 <Route path="/home/discover" exact>
-                  <Discover/>
+                  <Discover searchQuery={this.searchQuery}/>
                 </Route>
                 <Route path="/home" exact>
                   <Redirect to="/home/schedule"/>

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { loadState } from "@watcourses/utils/LocalStorage";
+import { loadStudentProfile } from "@watcourses/utils/LocalStorage";
 
 import profileCourses from "./slices/profileCourses";
 import search from "./slices/search";
@@ -13,7 +13,7 @@ export const store = (async () => configureStore({
         search: search.reducer,
         ui: ui.reducer,
     },
-    preloadedState: await loadState()
+    // preloadedState: await loadStudentProfile()
 }))()
 
 const getState = (async () => (await store).getState())

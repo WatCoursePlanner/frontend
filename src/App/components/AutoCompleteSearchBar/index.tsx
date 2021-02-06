@@ -72,7 +72,8 @@ export class AutoCompleteSearchBar extends React.Component<IAutoCompleteProps> {
     }
   );
 
-  componentDidMount() {
+  constructor(props: IAutoCompleteProps) {
+    super(props);
     makeObservable(this);
   }
 

@@ -1,16 +1,22 @@
-import CourseTable from "@watcourses/components/CourseTable";
-import React from 'react'
+import { CourseTable } from "@watcourses/components/CourseTable";
+import React from 'react';
 import styled from "styled-components";
 
-export const Discover = () => {
+interface IDiscoverProps {
+  searchQuery: string;
+}
+
+export class Discover extends React.Component<IDiscoverProps> {
+  render() {
     return (
-        <Root>
-            <CourseTable/>
-        </Root>
-    )
+      <Root>
+        <CourseTable searchQuery={this.props.searchQuery}/>
+      </Root>
+    );
+  }
 }
 
 const Root = styled.div`
   height: 100%;
   margin-left: 16px;
-`
+`;
