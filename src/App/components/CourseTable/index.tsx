@@ -13,7 +13,7 @@ import {
 } from "@watcourses/proto/courses";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { buildProto } from "@watcourses/utils/buildProto";
-import { action, autorun, computed, makeObservable, observable, reaction, when } from "mobx";
+import { action, autorun, computed, IReactionDisposer, makeObservable, observable, reaction, when } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { fromPromise, FULFILLED, IPromiseBasedObservable, PENDING } from "mobx-utils";
 import React from "react";
@@ -165,10 +165,13 @@ export class CourseTable extends React.Component<ICourseTableProps> {
     }
   };
 
+  private readonly searchReactionDisposer: IReactionDisposer;
+  private readonly searchResultDisposer: IReactionDisposer;
+
   constructor(props: ICourseTableProps) {
     super(props);
     makeObservable(this);
-    reaction(
+    this.searchReactionDisposer = reaction(
       () => [
         this.orderBy,
         this.order,
@@ -179,12 +182,17 @@ export class CourseTable extends React.Component<ICourseTableProps> {
       () => this.doSearch(),
       {fireImmediately: true},
     );
-    when(
+    this.searchResultDisposer = when(
       () => this.searchResultPromise?.state === FULFILLED,
       () => {
         this.cachedSearchResult = this.searchResult;
       },
-    )
+    );
+  }
+
+  componentWillUnmount() {
+    this.searchReactionDisposer();
+    this.searchResultDisposer();
   }
 
   render() {
