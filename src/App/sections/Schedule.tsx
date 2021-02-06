@@ -3,15 +3,17 @@ import '@rmwc/button/styles';
 import { Fab, FabProps } from "@rmwc/fab";
 import '@rmwc/fab/styles';
 import '@rmwc/tooltip/styles';
+import findSlots from "@watcourses/api/StudentProfile/findSlots";
 import {
   ScheduleShortList,
   ScheduleTermList,
 } from "@watcourses/components/ScheduleList";
-import Spacer from "@watcourses/components/Spacer";
+import { Spacer } from "@watcourses/components/Spacer";
 import { URL_BASE } from "@watcourses/constants/api";
 import { CheckResults, FindSlotRequest } from "@watcourses/proto/courses";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
+import { buildProto } from "@watcourses/utils/buildProto";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { observer } from "mobx-react";
 import React from 'react';
@@ -104,7 +106,7 @@ export class Schedule extends React.Component<IScheduleProps> {
     makeObservable(this);
   }
 
-  componentWillUnmount() {
+  componentDidMount() {
     const element = this.scheduleListRef.current!;
     element.addEventListener("wheel", this.handleWheel);
     this.handleDrawerShadow(element);
@@ -156,25 +158,14 @@ export class Schedule extends React.Component<IScheduleProps> {
   private onDragStart = (dragStart: DragStartParams) => {
     if (!dragStart.isSource) {
       return;
-    } // only need to do this once
-
-    fetch(`${URL_BASE}/profile/find_slots`, {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(FindSlotRequest.toJSON({
-        profile: StudentProfileStore.get().studentProfile,
-        courseCode: dragStart.payload!!,
-      })),
-    })
-      .then(res => res.json())
-      .then(res => {
-        runInAction(() => {
-          this.issues = res.slot;
-        });
-      })
-      .catch(error => {
-        throw(error);
-      });
+    }
+    // only need to do this once
+    findSlots(buildProto<FindSlotRequest>({
+      profile: StudentProfileStore.get().studentProfile,
+      courseCode: dragStart.payload!!,
+    })).then((response) => runInAction(() => {
+      this.issues = response.slot;
+    }));
   };
 
   render() {

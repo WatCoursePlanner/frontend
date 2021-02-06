@@ -1,4 +1,4 @@
-import Spacer from "@watcourses/components/Spacer";
+import { Spacer } from "@watcourses/components/Spacer";
 import { cleanScrollBar } from "@watcourses/constants/styles";
 import {
   CheckResults,

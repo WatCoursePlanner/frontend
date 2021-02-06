@@ -15,7 +15,7 @@ import styled from "styled-components";
 import { CourseDetail } from "./CourseDetail";
 
 interface IScheduleCourseProps {
-  course: CourseInfo | null,
+  course: CourseInfo | undefined,
   shortListOpen: boolean,
   scheduleListRef: React.RefObject<HTMLDivElement>,
 }
@@ -42,7 +42,7 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
   private active: boolean = false;
 
   @observable
-  private scrollTimeout: number | null = null;
+  private scrollTimeout: any = null;
 
   @action
   private toggleHover = () => {
@@ -65,17 +65,6 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
   };
 
   private cardRef: React.RefObject<HTMLDivElement> = React.createRef();
-
-  private allConditionsMet = () => {
-    const course = this.props.course;
-    if (!course) {
-      return true;
-    }
-    const prerequisites = RequisiteHelper.getPreRequisite(course);
-    const antirequisites = RequisiteHelper.getAntiRequisite(course);
-    return prerequisites.every((r) => r.met) &&
-      antirequisites.every((r) => r.met);
-  };
 
   /**
    * The following functions implements the horizontal
@@ -169,9 +158,7 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
       // stopped moving but is still within the edge,
       // updates every 10ms
       if (adjustWindowScroll()) {
-        this.scrollTimeout = setTimeout(
-          checkForWindowScroll, 10
-        )[Symbol.toPrimitive]();
+        this.scrollTimeout = setTimeout(checkForWindowScroll, 10);
       }
     };
 
@@ -199,7 +186,6 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
   render() {
     const {
       cardRef,
-      allConditionsMet,
       active,
       hovered,
       handleMouseDown,
@@ -213,6 +199,17 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
       course,
     } = this.props;
 
+    if (!course) {
+      return null;
+    }
+
+    const prerequisites = RequisiteHelper.getPreRequisite(course);
+    const antirequisites = RequisiteHelper.getAntiRequisite(course);
+
+    const allConditionsMet =
+      prerequisites.every((r) => r.met) &&
+      antirequisites.every((r) => r.met);
+
     return (
       <Draggable>
         <RootContainer>
@@ -220,13 +217,12 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
             <StyledCard
               outlined
               ref={cardRef}
-              className={`unselectable${
-                !allConditionsMet ? ' unmet-requisites' : ''
-              }`}
+              className={"unselectable"}
               id={'course-card'}
               tabIndex={0}
               active={active ? 1 : 0}
               hovered={hovered ? 1 : 0}
+              error={allConditionsMet ? 0 : 1}
               onMouseDown={handleMouseDown}
               onClick={handleSelectCourse}
               onKeyDown={(e) => {
@@ -301,17 +297,21 @@ const CardWrapper = styled.div`
 const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & {
   hovered: number,
   active: number,
-  ref: any
+  error: number,
+  ref: any,
 }>`
   width: 100%;
-  background-color: ${props => props.hovered ? '#fafafa' : 'white'};
+  background-color: ${props => props.error 
+          ? '#feeded' 
+          : props.hovered ? '#fafafa' : 'white'};
+  
   transition: background-color 0.2s ease,
   opacity 0.2s ease,
   box-shadow 0.2s ease;
   transition-delay: 0s;
 
   :hover {
-    transition-delay: 150ms
+    transition-delay: 150ms;
   }
 
   :focus {
@@ -326,7 +326,9 @@ const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & {
               0 1px 18px 0 rgba(0,0,0,0.12), 
               0 3px 5px -1px rgba(0,0,0,0.2)`
           : ''};
-  border-color: ${props => props.active ? `transparent` : 'inherited'};
+  border-color: ${props => props.error 
+          ? '#ff0000' 
+          : props.active ? `transparent` : 'inherited'};
   outline: none;
 `;
 
