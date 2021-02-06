@@ -93,7 +93,7 @@ export class AutoCompleteSearchBar extends React.Component<IAutoCompleteProps> {
         filterSelectedOptions
         filterOptions={sortByWeight}
         options={toJS(this.displayOptions)}
-        getOptionLabel={(option) => (option.title)}
+        getOptionLabel={(option) => (option.title ?? option)}
         onChange={(
           event,
           newValue: AutoCompleteOption | string | null

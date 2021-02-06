@@ -45,6 +45,7 @@
     "mobx-utils": "^6.0.3",
     "pdfjs-dist": "^2.5.207",
     "prop-types": "latest",
+    "query-string": "^6.13.8",
     "react": "^17.0.1",
     "react-content-loader": "^6.0.1",
     "react-dom": "^17.0.1",

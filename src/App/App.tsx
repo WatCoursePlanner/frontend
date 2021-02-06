@@ -7,9 +7,12 @@ import Welcome from "@watcourses/sections/Welcome";
 import { observer } from "mobx-react";
 import { fromPromise } from "mobx-utils";
 import React  from 'react';
-import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router";
+import { Redirect, Router } from "react-router-dom";
 
 import initializeApp from "./initializeApp";
+import { home, welcome } from "./paths";
+import { AppHistory } from "./services/AppHistory";
 
 @observer
 export class App extends React.Component {
@@ -26,15 +29,15 @@ export class App extends React.Component {
       options={RMWCTheme}
       style={{height: '100%'}}>
       <MUIThemeProvider theme={Theme}>
-        <Router>
+        <Router history={AppHistory.get().history}>
           <Switch>
             <Route path="/" exact>
-              <Redirect to="/home"/>
+              <Redirect to={home()}/>
             </Route>
-            <Route path="/home">
+            <Route path={home()}>
               <Home/>
             </Route>
-            <Route path="/welcome">
+            <Route path={welcome()}>
               <Welcome/>
             </Route>
           </Switch>

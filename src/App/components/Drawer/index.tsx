@@ -2,25 +2,21 @@ import { Dialog, DialogTitle, IconButton, InputAdornment, OutlinedInput } from "
 import { FileCopy } from "@material-ui/icons";
 import { Drawer as MaterialDrawer, DrawerContent, DrawerProps } from "@rmwc/drawer";
 import '@rmwc/drawer/styles';
-import { List, ListDivider, ListItem, ListItemGraphic, ListItemProps, ListItemText } from "@rmwc/list";
+import { List, ListDivider } from "@rmwc/list";
 import '@rmwc/list/styles';
+import { discover, schedule } from "@watcourses/paths";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { getStatePayloadForUrl } from "@watcourses/utils/LocalStorage";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { Link, RouteProps } from "react-router-dom";
 import styled from "styled-components";
 
-const tabIcons = [
-  'schedule',
-  'explore',
-];
+import { NavMenuItem, TAB_ICONS } from "./NavMenu";
 
 interface IDrawerProps {
   shadow: boolean,
   open: boolean,
-  location: RouteProps["location"]
 }
 
 @observer
@@ -55,12 +51,57 @@ export class Drawer extends React.Component<IDrawerProps> {
     makeObservable(this);
   }
 
+  renderShareScheduleModal = () => (
+    <Dialog open={this.shareOpen} onClose={() => this.setShareOpen(false)}>
+      <DialogTitle>Share your schedule</DialogTitle>
+      <OutlinedInput
+        id="outlined-adornment-password"
+        type="text"
+        value={this.shareLink}
+        disabled
+        autoFocus
+        style={{margin: "30px 50px"}}
+        endAdornment={
+          <InputAdornment position="end">
+            <IconButton
+              aria-label="copy to clipboard"
+              onClick={() => navigator.clipboard.writeText(this.shareLink)}
+              edge="end"
+            ><FileCopy/></IconButton>
+          </InputAdornment>
+        }
+        labelWidth={70}
+      />
+    </Dialog>
+  );
+
+  renderMenu = () => (
+    <List>
+      <NavMenuItem icon={TAB_ICONS.SCHEDULE} to={schedule.home()} exact>
+        Schedule
+      </NavMenuItem>
+      <NavMenuItem icon={TAB_ICONS.DISCOVER} to={discover.home()} exact>
+        Discover
+      </NavMenuItem>
+      <StyledListDivider/>
+      <NavMenuItem icon={TAB_ICONS.IMPORT}>
+        Import
+      </NavMenuItem>
+      <NavMenuItem icon={TAB_ICONS.EXPORT}>
+        Export
+      </NavMenuItem>
+      <NavMenuItem icon={TAB_ICONS.SHARE} onClick={this.share}>
+        Share my Schedule
+      </NavMenuItem>
+    </List>
+  );
+
   render() {
     const {
       open,
-      location,
       shadow,
     } = this.props;
+
     return (
       <StyledDrawer
         className={'unselectable'}
@@ -68,65 +109,8 @@ export class Drawer extends React.Component<IDrawerProps> {
         dismissible
         open={open}>
         <DrawerContent>
-          <List>
-            {['schedule', 'discover'].map((route, index) => (
-              <Link key={route} to={`/home/${route}`} style={{textDecoration: 'none'}}>
-                <CustomListItem
-                  activated={location?.pathname === `/home/${route}`}>
-                  <ListItemGraphic
-                    className={"material-icons-outlined"}
-                    style={{marginRight: 24}}
-                    icon={tabIcons[index]}/>
-                  <StyledListItemText>
-                    {route}
-                  </StyledListItemText>
-                </CustomListItem>
-              </Link>
-            ))}
-            <ListDivider style={{margin: '8px 0 8px 0'}}/>
-            <CustomListItem>
-              <ListItemGraphic
-                className={"material-icons-outlined"}
-                style={{marginRight: 24}}
-                icon={'upload'}/>
-              <StyledListItemText>Import</StyledListItemText>
-            </CustomListItem>
-            <CustomListItem>
-              <ListItemGraphic
-                className={"material-icons-outlined"}
-                style={{marginRight: 24}}
-                icon={'cloud_download'}/>
-              <StyledListItemText>Export</StyledListItemText>
-            </CustomListItem>
-            <CustomListItem onClick={this.share}>
-              <ListItemGraphic
-                className={"material-icons-outlined"}
-                style={{marginRight: 24}}
-                icon={'share'}/>
-              <StyledListItemText>Share my Schedule</StyledListItemText>
-            </CustomListItem>
-            <Dialog open={this.shareOpen} onClose={() => this.setShareOpen(false)}>
-              <DialogTitle>Share your schedule</DialogTitle>
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type="text"
-                value={this.shareLink}
-                disabled
-                autoFocus
-                style={{margin: "30px 50px"}}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="copy to clipboard"
-                      onClick={() => navigator.clipboard.writeText(this.shareLink)}
-                      edge="end"
-                    ><FileCopy/></IconButton>
-                  </InputAdornment>
-                }
-                labelWidth={70}
-              />
-            </Dialog>
-          </List>
+          {this.renderMenu()}
+          {this.renderShareScheduleModal()}
         </DrawerContent>
       </StyledDrawer>
     );
@@ -143,14 +127,6 @@ const StyledDrawer = styled(MaterialDrawer)<DrawerProps & React.HTMLProps<HTMLDi
   box-shadow: 0 0 16px ${props => props.shadow ? `rgba(0, 0, 0, .28)` : `rgba(0, 0, 0, 0)`};
 `;
 
-const CustomListItem = styled(ListItem)<ListItemProps & React.HTMLProps<HTMLDivElement>>`
-  margin: 4px 0 4px 0 !important;
-  -webkit-mask-image: radial-gradient(white, black);
-  border-radius: 0 100px 100px 0 !important;
-  padding-left: 24px !important;
-  text-transform: capitalize !important;
-`;
-
-const StyledListItemText = styled(ListItemText)`
-  font-weight: 600 !important;
+const StyledListDivider = styled(ListDivider)`
+  margin: 8px 0 8px 0;
 `;

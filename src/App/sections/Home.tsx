@@ -1,8 +1,9 @@
 import { DrawerAppContent } from '@rmwc/drawer';
 import { Drawer } from "@watcourses/components/Drawer";
 import { TopNav } from "@watcourses/components/TopNav";
-import search from "@watcourses/redux/slices/search";
+import { discover, home, schedule } from "@watcourses/paths";
 import { RootState } from "@watcourses/redux/store";
+import { AppHistory } from "@watcourses/services/AppHistory";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
 import { action, computed, makeObservable, observable } from "mobx";
@@ -10,14 +11,14 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Else, If, Then } from "react-if";
 import { connect, ConnectedProps } from "react-redux";
-import { Redirect, Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
-import { bindActionCreators, Dispatch } from "redux";
+import { Route, Switch } from "react-router";
+import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 
 import { Discover } from "./Discover";
 import { Schedule } from "./Schedule";
 
-interface IHomeProps extends ConnectedProps<typeof connector>, RouteComponentProps {
+interface IHomeProps extends ConnectedProps<typeof connector> {
 }
 
 @observer
@@ -47,6 +48,20 @@ class HomeBase extends React.Component<IHomeProps> {
     this.drawerOpen = open;
   };
 
+  @action
+  search = (query: string) => {
+    this.searchQuery = query;
+    AppHistory.get().goTo(discover.home());
+  };
+
+  searchCurrentInput = () => {
+    this.search(this.searchText);
+  };
+
+  onAutoCompleteSelect = (code: string) => {
+    this.search(code);
+  };
+
   constructor(props: IHomeProps) {
     super(props);
     makeObservable(this);
@@ -55,17 +70,7 @@ class HomeBase extends React.Component<IHomeProps> {
   render() {
     const {
       drawerShadow,
-      setSearchQuery,
-      location
     } = this.props;
-
-    const searchKeyword = () => {
-      setSearchQuery(this.setSearchText);
-    };
-
-    const onAutoCompleteSelect = (code: string) => {
-      console.error(`[Home] TODO Select ${code}`);
-    };
 
     return (
       <If condition={this.isLoading}>
@@ -75,8 +80,8 @@ class HomeBase extends React.Component<IHomeProps> {
         <Else>
           <Container>
             <TopNav
-              onSearch={searchKeyword}
-              onAutoCompleteSelect={onAutoCompleteSelect}
+              onSearch={this.searchCurrentInput}
+              onAutoCompleteSelect={this.onAutoCompleteSelect}
               toggleDrawer={() => this.setDrawerOpen(!this.drawerOpen)}
               searchText={this.searchText}
               setSearchText={this.setSearchText}
@@ -84,18 +89,17 @@ class HomeBase extends React.Component<IHomeProps> {
             <Drawer
               shadow={drawerShadow}
               open={this.drawerOpen}
-              location={location}
             />
             <AppContainer>
               <Switch>
-                <Route path="/home/schedule" exact>
+                <Route path={schedule.home()} exact>
                   <Schedule/>
                 </Route>
-                <Route path="/home/discover" exact>
+                <Route path={discover.home()} exact>
                   <Discover searchQuery={this.searchQuery}/>
                 </Route>
-                <Route path="/home" exact>
-                  <Redirect to="/home/schedule"/>
+                <Route path={home()} exact>
+                  <Redirect to={discover.home()}/>
                 </Route>
               </Switch>
             </AppContainer>
@@ -110,13 +114,9 @@ const mapState = (state: RootState) => ({
   drawerShadow: state.ui.drawerShadow,
 });
 
-const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-  setSearchQuery: search.actions.setSearchQuery,
-}, dispatch);
+const connector = connect(mapState);
 
-const connector = connect(mapState, mapDispatch);
-
-export const Home = connector(withRouter(HomeBase));
+export const Home = connector(HomeBase);
 
 const Container = styled.div`
   height: 100%;
