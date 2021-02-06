@@ -9,7 +9,6 @@ import {
   ScheduleTermList,
 } from "@watcourses/components/ScheduleList";
 import { Spacer } from "@watcourses/components/Spacer";
-import { URL_BASE } from "@watcourses/constants/api";
 import { CheckResults, FindSlotRequest } from "@watcourses/proto/courses";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";

@@ -1,5 +1,4 @@
 import searchCourses from "@watcourses/api/Course/search";
-import { COURSES_INFO_REFRESH_TIME } from "@watcourses/constants/api";
 import {
   CourseInfo,
   SearchCourseRequest,
@@ -11,6 +10,7 @@ import { action, computed, makeAutoObservable, observable } from "mobx";
 import { fromPromise, IPromiseBasedObservable, PENDING } from "mobx-utils";
 
 const LOCAL_STORAGE_COURSES_KEY = "LOCAL_STORAGE_COURSES_KEY";
+const COURSES_INFO_REFRESH_TIME = 24 * 60 * 60 * 1000 // in millis, 1 day
 
 interface ICachedCoursesStorage {
   lastUpdatedAt: number,
