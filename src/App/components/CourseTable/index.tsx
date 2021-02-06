@@ -3,7 +3,11 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import '@rmwc/circular-progress/styles';
-import { IconButton, IconButtonHTMLProps, IconButtonProps } from "@rmwc/icon-button";
+import {
+  IconButton,
+  IconButtonHTMLProps,
+  IconButtonProps,
+} from "@rmwc/icon-button";
 import searchCourses from "@watcourses/api/Course/search";
 import {
   SearchCourseRequest,
@@ -13,16 +17,29 @@ import {
 } from "@watcourses/proto/courses";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { buildProto } from "@watcourses/utils/buildProto";
-import { action, autorun, computed, IReactionDisposer, makeObservable, observable, reaction, when } from "mobx";
-import { disposeOnUnmount, observer } from "mobx-react";
-import { fromPromise, FULFILLED, IPromiseBasedObservable, PENDING } from "mobx-utils";
+import {
+  action,
+  computed,
+  IReactionDisposer,
+  makeObservable,
+  observable,
+  reaction,
+  when,
+} from "mobx";
+import { observer } from "mobx-react";
+import {
+  fromPromise,
+  FULFILLED,
+  IPromiseBasedObservable,
+  PENDING,
+} from "mobx-utils";
 import React from "react";
 import styled from "styled-components";
 
-import CourseTableRow from "./CourseTableRow";
-import CourseTableRowPlaceholder from "./CourseTableRowPlaceholder";
+import { CourseTableRow } from "./CourseTableRow";
+import { CourseTableRowPlaceholder } from "./CourseTableRowPlaceholder";
 import { ICourseDisplayData, Order } from "./CourseTableUtils";
-import EnhancedTableHead from "./EnhancedTableHead";
+import { EnhancedTableHead } from "./EnhancedTableHead";
 
 const Root = styled.div`
   width: 100%;
@@ -41,15 +58,15 @@ const StyledTableContainer = styled(TableContainer)`
  * `filled` needs to be a number instead of boolean
  * see https://github.com/styled-components/styled-components/issues/1198#issuecomment-336628848
  */
-export const StyledIconButton =
-  styled(IconButton)<IconButtonHTMLProps & IconButtonProps & { filled?: number }>`
-    color: #5f6368;
-    font-family: ${props =>
-            props.filled
-                    ? "Material Icons"
-                    : "Material Icons Outlined"
-    };
-  `;
+export const StyledIconButton = styled(IconButton)<IconButtonHTMLProps &
+  IconButtonProps & {
+  filled?: number
+}>`
+  color: #5f6368;
+  font-family: ${props => props.filled
+          ? "Material Icons"
+          : "Material Icons Outlined"};
+`;
 
 const PaginationWrapper = styled.div`
   min-height: 52px;
@@ -65,11 +82,11 @@ const searchOrderMap: Map<Order, Sort_Order> = new Map<Order, Sort_Order>([
   ["desc", Sort_Order.DESC],
 ]);
 
-const searchOrderByMap: Map<keyof ICourseDisplayData,
-  Sort_SortBy> = new Map<keyof ICourseDisplayData, Sort_SortBy>([
-  ["code", Sort_SortBy.CODE],
-  ["name", Sort_SortBy.TITLE],
-]);
+const searchOrderByMap: Map<keyof ICourseDisplayData, Sort_SortBy> =
+  new Map<keyof ICourseDisplayData, Sort_SortBy>([
+    ["code", Sort_SortBy.CODE],
+    ["name", Sort_SortBy.TITLE],
+  ]);
 
 @observer
 export class CourseTable extends React.Component<ICourseTableProps> {
@@ -166,6 +183,7 @@ export class CourseTable extends React.Component<ICourseTableProps> {
   };
 
   private readonly searchReactionDisposer: IReactionDisposer;
+
   private readonly searchResultDisposer: IReactionDisposer;
 
   constructor(props: ICourseTableProps) {
@@ -217,7 +235,9 @@ export class CourseTable extends React.Component<ICourseTableProps> {
               {
                 this.isLoading
                   ? Array.from(Array(this.rowsPerPage).keys())
-                    .map((row) => <CourseTableRowPlaceholder key={row}/>)
+                    .map((row) =>
+                      <CourseTableRowPlaceholder key={row}/>,
+                    )
                   : this.searchResult.results.map((row) =>
                     <CourseTableRow
                       key={row.code}
