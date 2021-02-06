@@ -104,7 +104,7 @@ export class Schedule extends React.Component<IScheduleProps> {
     makeObservable(this);
   }
 
-  componentDidMount() {
+  componentWillUnmount() {
     const element = this.scheduleListRef.current!;
     element.addEventListener("wheel", this.handleWheel);
     this.handleDrawerShadow(element);

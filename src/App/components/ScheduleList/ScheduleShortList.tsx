@@ -1,13 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 
-import { CourseList } from "./CourseList";
+import { CourseList, ICourseListProps } from "./CourseList";
 
-interface IShortListProps {
+interface IShortListProps extends ICourseListProps {
   shortlist: string[],
 }
 
-export class ScheduleShortList extends CourseList<IShortListProps> {
+export class ScheduleShortList extends React.Component<IShortListProps> {
   render() {
     const {
       shortlist,

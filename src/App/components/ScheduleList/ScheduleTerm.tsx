@@ -2,14 +2,14 @@ import { Schedule_TermSchedule } from "@watcourses/proto/courses";
 import React from "react";
 import styled from "styled-components";
 
-import { CourseList } from "./CourseList";
+import { CourseList, ICourseListProps } from "./CourseList";
 
-interface IScheduleTermProps {
+interface IScheduleTermProps extends ICourseListProps {
   term: Schedule_TermSchedule,
   showYear: boolean,
 }
 
-export class ScheduleTerm extends CourseList<IScheduleTermProps> {
+export class ScheduleTerm extends React.Component<IScheduleTermProps> {
   render() {
     const {
       term,

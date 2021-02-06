@@ -16,7 +16,7 @@ import styled from "styled-components";
 
 import { ScheduleCourse } from "./ScheduleCourse";
 
-interface ICourseListProps {
+export interface ICourseListProps {
   term?: Schedule_TermSchedule,
   shortlist?: string[],
   courses: { [courseCode: string]: CourseInfo }
@@ -28,7 +28,7 @@ interface ICourseListProps {
 }
 
 @observer
-export class CourseList<T> extends React.Component<ICourseListProps & T> {
+export class CourseList extends React.Component<ICourseListProps> {
 
   @observable
   private scrolled: boolean = false;
@@ -42,7 +42,7 @@ export class CourseList<T> extends React.Component<ICourseListProps & T> {
     }
   };
 
-  constructor(props: ICourseListProps & T) {
+  constructor(props: ICourseListProps) {
     super(props);
     makeObservable(this);
   }
