@@ -22,6 +22,8 @@ import { DragEndParams, DragStartParams } from "smooth-dnd/dist/src/exportTypes"
 import styled from "styled-components";
 
 interface IScheduleProps extends ConnectedProps<typeof connector> {
+  drawerShadow: boolean,
+  setDrawerShadow: (shadow: boolean) => void,
 }
 
 @observer
@@ -35,8 +37,8 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
 
   private scheduleListRef = React.createRef<HTMLDivElement>();
 
-  private handleScroll = (e: React.UIEvent<HTMLElement>) => {
-    if (e.currentTarget.scrollLeft > 0) {
+  private handleDrawerShadow = (e: HTMLElement) => {
+    if (e.scrollLeft > 0) {
       if (!this.props.drawerShadow) {
         this.props.setDrawerShadow(true);
       }
@@ -45,6 +47,10 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
         this.props.setDrawerShadow(false);
       }
     }
+  };
+
+  private handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    this.handleDrawerShadow(e.currentTarget);
   };
 
   private handleWheel = (e: any) => {
@@ -91,6 +97,7 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
   componentDidMount() {
     const element = this.scheduleListRef.current!;
     element.addEventListener("wheel", this.handleWheel);
+    this.handleDrawerShadow(element);
     return () => {
       element.removeEventListener("wheel", this.handleWheel);
       this.props.setDrawerShadow(false);
@@ -223,12 +230,10 @@ export class ScheduleBase extends React.Component<IScheduleProps> {
 const mapState = (state: RootState) => ({
   loading: state.studentProfile.loading,
   shortlistOpen: state.ui.shortlistOpen,
-  drawerShadow: state.ui.drawerShadow,
 });
 
 const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
   setShortlistOpen: ui.actions.setShortlistOpen,
-  setDrawerShadow: ui.actions.setDrawerShadow,
 }, dispatch);
 
 const connector = connect(mapState, mapDispatch);

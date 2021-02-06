@@ -2,7 +2,6 @@ import { DrawerAppContent } from '@rmwc/drawer';
 import { Drawer } from "@watcourses/components/Drawer";
 import { TopNav } from "@watcourses/components/TopNav";
 import { discover, home, schedule } from "@watcourses/paths";
-import { RootState } from "@watcourses/redux/store";
 import { AppHistory } from "@watcourses/services/AppHistory";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
@@ -10,7 +9,6 @@ import { action, computed, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { Else, If, Then } from "react-if";
-import { connect, ConnectedProps } from "react-redux";
 import { Route, Switch } from "react-router";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
@@ -18,11 +16,14 @@ import styled from "styled-components";
 import { Discover } from "./Discover";
 import { Schedule } from "./Schedule";
 
-interface IHomeProps extends ConnectedProps<typeof connector> {
+interface IHomeProps {
 }
 
 @observer
-class HomeBase extends React.Component<IHomeProps> {
+export class Home extends React.Component<IHomeProps> {
+
+  @observable
+  drawerShadow: boolean = false;
 
   @observable
   searchQuery: string = "";
@@ -49,6 +50,11 @@ class HomeBase extends React.Component<IHomeProps> {
   };
 
   @action
+  setDrawerShadow = (shadow: boolean) => {
+    this.drawerShadow = shadow;
+  };
+
+  @action
   search = (query: string) => {
     this.searchQuery = query;
     AppHistory.get().goTo(discover.home());
@@ -68,10 +74,6 @@ class HomeBase extends React.Component<IHomeProps> {
   }
 
   render() {
-    const {
-      drawerShadow,
-    } = this.props;
-
     return (
       <If condition={this.isLoading}>
         <Then>
@@ -85,15 +87,19 @@ class HomeBase extends React.Component<IHomeProps> {
               toggleDrawer={() => this.setDrawerOpen(!this.drawerOpen)}
               searchText={this.searchText}
               setSearchText={this.setSearchText}
-              issues={ProfileCoursesStore.get().profileCourses.issues ?? []}/>
+              issues={ProfileCoursesStore.get().profileCourses.issues ?? []}
+            />
             <Drawer
-              shadow={drawerShadow}
+              shadow={this.drawerShadow}
               open={this.drawerOpen}
             />
             <AppContainer>
               <Switch>
                 <Route path={schedule.home()} exact>
-                  <Schedule/>
+                  <Schedule
+                    drawerShadow={this.drawerShadow}
+                    setDrawerShadow={this.setDrawerShadow}
+                  />
                 </Route>
                 <Route path={discover.home()} exact>
                   <Discover searchQuery={this.searchQuery}/>
@@ -109,14 +115,6 @@ class HomeBase extends React.Component<IHomeProps> {
     );
   }
 }
-
-const mapState = (state: RootState) => ({
-  drawerShadow: state.ui.drawerShadow,
-});
-
-const connector = connect(mapState);
-
-export const Home = connector(HomeBase);
 
 const Container = styled.div`
   height: 100%;

@@ -10,6 +10,7 @@ import { getStatePayloadForUrl } from "@watcourses/utils/LocalStorage";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 import styled from "styled-components";
 
 import { NavMenuItem, TAB_ICONS } from "./NavMenu";
@@ -20,7 +21,7 @@ interface IDrawerProps {
 }
 
 @observer
-export class Drawer extends React.Component<IDrawerProps> {
+class DrawerBase extends React.Component<IDrawerProps & RouteComponentProps> {
   @observable
   shareLink = '';
 
@@ -46,7 +47,7 @@ export class Drawer extends React.Component<IDrawerProps> {
     this.setShareOpen(true);
   };
 
-  constructor(props: IDrawerProps) {
+  constructor(props: IDrawerProps & RouteComponentProps) {
     super(props);
     makeObservable(this);
   }
@@ -100,32 +101,40 @@ export class Drawer extends React.Component<IDrawerProps> {
     const {
       open,
       shadow,
+      location,
     } = this.props;
+
+    const shouldShowShadow = shadow && location.pathname === schedule.home()
 
     return (
       <StyledDrawer
         className={'unselectable'}
-        shadow={shadow ? 1 : 0}
+        shadow={shouldShowShadow ? 1 : 0}
         dismissible
         open={open}>
-        <DrawerContent>
+        <StyledDrawerContent>
           {this.renderMenu()}
           {this.renderShareScheduleModal()}
-        </DrawerContent>
+        </StyledDrawerContent>
       </StyledDrawer>
     );
   }
 }
 
+export const Drawer = withRouter(DrawerBase);
+
 const StyledDrawer = styled(MaterialDrawer)<DrawerProps & React.HTMLProps<HTMLDivElement> & { shadow: number }>`
   width: 276px;
   border-color: transparent;
-  padding-top: 72px;
+  padding-top: 64px;
   z-index: 3;
-  padding-right: 20px;
   transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 0 16px ${props => props.shadow ? `rgba(0, 0, 0, .28)` : `rgba(0, 0, 0, 0)`};
 `;
+
+const StyledDrawerContent = styled(DrawerContent)`
+  padding-right: 20px;
+`
 
 const StyledListDivider = styled(ListDivider)`
   margin: 8px 0 8px 0;

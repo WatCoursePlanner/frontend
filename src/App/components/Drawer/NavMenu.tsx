@@ -4,6 +4,10 @@ import { Else, If, Then } from "react-if";
 import { NavLink, RouteComponentProps, withRouter } from "react-router-dom";
 import styled from "styled-components";
 
+/**
+ * See https://material.io/resources/icons/?style=outline
+ * for available icons
+ */
 export const TAB_ICONS = {
   SCHEDULE: "schedule",
   DISCOVER: "explore",
