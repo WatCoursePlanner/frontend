@@ -28,7 +28,7 @@ $ yarn build
 ### Tech stack
 
 - [React](https://reactjs.org/)
-- [Redux](https://redux.js.org/)
+- [MobX](https://mobx.js.org/)
 - [styled-components](https://www.styled-components.com/)
 - [Material-UI](https://material-ui.com/)
 - [RMWC](https://rmwc.io/)

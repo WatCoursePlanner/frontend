@@ -1,21 +1,100 @@
-import Spacer from "@watcourses/components/Spacer";
+import { Spacer } from "@watcourses/components/Spacer";
 import { cleanScrollBar } from "@watcourses/constants/styles";
-import { CheckResults, CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
-import { CachedCourses } from "@watcourses/utils";
-import React, { useState } from "react";
+import {
+  CheckResults,
+  CourseInfo,
+  Schedule_TermSchedule,
+} from "@watcourses/proto/courses";
+import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
+import { SHORTLIST_TERM_NAME } from "@watcourses/stores/StudentProfileStore";
+import { action, makeObservable, observable } from "mobx";
+import { observer } from "mobx-react";
+import React from "react";
 import { Container } from "react-smooth-dnd";
 import { ContainerOptions, DropResult } from "smooth-dnd/dist/src/exportTypes";
 import styled from "styled-components";
 
-import ScheduleCourse from "./ScheduleCourse";
+import { ScheduleCourse } from "./ScheduleCourse";
 
-export type CourseListProps = {
-    term?: Schedule_TermSchedule,
-    shortlist?: string[],
-    courses: { [courseCode: string]: CourseInfo }
-    options: ContainerOptions,
-    onDropWithTerm: (result: DropResult, termName: string) => void,
-    issues?: CheckResults | null
+export interface ICourseListProps {
+  term?: Schedule_TermSchedule,
+  shortlist?: string[],
+  courses: { [courseCode: string]: CourseInfo }
+  options: ContainerOptions,
+  onDropWithTerm: (result: DropResult, termName: string) => void,
+  issues?: CheckResults | null
+  shortListOpen: boolean,
+  scheduleListRef: React.RefObject<HTMLDivElement>,
+}
+
+@observer
+export class CourseList extends React.Component<ICourseListProps> {
+
+  @observable
+  private scrolled: boolean = false;
+
+  @action
+  private handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    if (e.currentTarget.scrollTop > 0 && !this.scrolled) {
+      this.scrolled = true;
+    } else if (e.currentTarget.scrollTop <= 0 && this.scrolled) {
+      this.scrolled = false;
+    }
+  };
+
+  constructor(props: ICourseListProps) {
+    super(props);
+    makeObservable(this);
+  }
+
+  render() {
+    const {
+      term,
+      onDropWithTerm,
+      options,
+      courses,
+      shortlist,
+      shortListOpen,
+      scheduleListRef,
+    } = this.props;
+    return (
+      <CourseListWrapper>
+        <StyledContainer
+          className={'course-list'}
+          scrolled={this.scrolled ? 1 : 0}
+          onScroll={this.handleScroll}>
+          <Container
+            groupName={'terms'}
+            dropPlaceholder={{className: 'drop-placeholder'}}
+            getChildPayload={idx =>
+              term?.courseCodes[idx] ??
+              (shortlist ? shortlist[idx] : null)
+            }
+            onDrop={(e) => onDropWithTerm(
+              e,
+              term?.termName ??
+              (shortlist ? SHORTLIST_TERM_NAME : 'null'),
+            )}
+            dragClass="card-ghost"
+            dropClass="card-ghost-drop"
+            {...options}>
+            {(term?.courseCodes ?? shortlist ?? [])
+              .map((code, index) => (
+                <ScheduleCourse
+                  key={index}
+                  shortListOpen={shortListOpen}
+                  scheduleListRef={scheduleListRef}
+                  course={
+                    courses[code] ??
+                    CachedCoursesStore.get().getByCode(code)
+                  }/>
+              ))}
+          </Container>
+          <Spacer minWidth={'1px'} minHeight={'32px'}/>
+        </StyledContainer>
+      </CourseListWrapper>
+    );
+  }
 }
 
 const StyledContainer = styled.div<{ scrolled: number }>`
@@ -35,7 +114,9 @@ const StyledContainer = styled.div<{ scrolled: number }>`
     right: 12px;
     height: 8px;
     background-color: transparent;
-    box-shadow: inset 0 4px 4px 0 rgba(0, 0, 0, .14), inset 0 4px 2px -2px rgba(0, 0, 0, .12);
+    box-shadow: 
+            inset 0 4px 4px 0 rgba(0, 0, 0, .14), 
+            inset 0 4px 2px -2px rgba(0, 0, 0, .12);
     transition: opacity .2s;
     opacity: ${props => props.scrolled ? 1 : 0};
     z-index: 2;
@@ -66,7 +147,7 @@ const StyledContainer = styled.div<{ scrolled: number }>`
     overflow: visible !important;
     background-color: transparent;
   }
-`
+`;
 
 const CourseListWrapper = styled.div`
   display: flex;
@@ -87,44 +168,4 @@ const CourseListWrapper = styled.div`
     background-image: linear-gradient(to right, white, rgba(255, 255, 255, 0));
     z-index: 3;
   }
-`
-
-const CourseList = ({term, onDropWithTerm, options, courses, shortlist, issues}: CourseListProps) => {
-    const [scrolled, setScrolled] = useState(false)
-    const handleScroll = (e: React.UIEvent<HTMLElement>) => {
-        if (e.currentTarget.scrollTop > 0) {
-            if (!scrolled) {
-                setScrolled(true)
-            }
-        } else {
-            if (scrolled) {
-                setScrolled(false)
-            }
-        }
-    }
-
-    return (
-        <CourseListWrapper>
-            <StyledContainer
-                className={'course-list'}
-                scrolled={scrolled ? 1 : 0}
-                onScroll={handleScroll}>
-                <Container
-                    groupName={'terms'}
-                    dropPlaceholder={{className: 'drop-placeholder'}}
-                    getChildPayload={idx => term?.courseCodes[idx] ?? (shortlist ? shortlist[idx] : null)}
-                    onDrop={(e) => onDropWithTerm(e, term?.termName ?? (shortlist ? 'shortlist' : 'null'))}
-                    dragClass="card-ghost"
-                    dropClass="card-ghost-drop"
-                    {...options}>
-                    {(term?.courseCodes ?? shortlist ?? []).map((code, index) => (
-                        <ScheduleCourse key={index} course={courses[code] ?? CachedCourses.getByCode(code)}/>
-                    ))}
-                </Container>
-                <Spacer minWidth={'1px'} minHeight={'32px'}/>
-            </StyledContainer>
-        </CourseListWrapper>
-    )
-}
-
-export default CourseList
+`;

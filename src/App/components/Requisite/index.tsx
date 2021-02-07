@@ -1,5 +1,5 @@
-export { default as RequisiteGroupChecklist } from "./RequisiteGroupChecklist";
-export { default as RequisiteChecklist } from "./RequisiteChecklist";
+export { RequisiteGroupChecklist } from "./RequisiteGroupChecklist";
+export { RequisiteChecklist } from "./RequisiteChecklist";
 
 export interface IRequisite {
     code: string,

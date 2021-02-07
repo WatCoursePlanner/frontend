@@ -20,7 +20,7 @@ export const cleanScrollBar = css`
   ::-webkit-scrollbar-thumb:hover {
     background: #bdc1c6;
   }
-`
+`;
 
 export const cleanScrollBarWithWhiteBorder = css`
   ${cleanScrollBar}
@@ -31,4 +31,4 @@ export const cleanScrollBarWithWhiteBorder = css`
   ::-webkit-scrollbar-thumb {
     border: 4px solid white;
   }
-`
+`;

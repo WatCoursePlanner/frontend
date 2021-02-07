@@ -1,4 +1,4 @@
-import { RootState } from "@watcourses/redux/store";
+import { StudentProfile } from "@watcourses/proto/courses";
 // @ts-ignore
 import jsonurl from 'json-url/dist/browser/json-url';
 import 'json-url/dist/browser/json-url-lzstring';
@@ -7,33 +7,37 @@ import 'json-url/dist/browser/json-url-safe64';
 import 'json-url/dist/browser/json-url-vendors~lzma';
 import 'json-url/dist/browser/json-url-vendors~msgpack';
 
-const codec = jsonurl('lzma')
+import { buildProto } from "./buildProto";
 
-export function saveState(state: RootState) {
-    try {
-        localStorage.setItem('state', JSON.stringify(state.studentProfile));
-    } catch {
-    }
+const codec = jsonurl('lzma');
+
+const LOCAL_STORAGE_PROFILE_KEY = "STUDENT_PROFILE";
+
+export function saveStudentProfile(studentProfile: StudentProfile) {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_PROFILE_KEY, JSON.stringify(studentProfile));
+  } catch (error) {
+    throw error;
+  }
 }
 
-// Use `any` here to avoid cyclic reference
-export async function loadState(): Promise<any> {
-    try {
-        const params = new URLSearchParams(window.location.search)
-        const urlState = params.get("schedule")
-        if (urlState !== null) {
-            return {studentProfile: await codec.decompress(urlState)} as RootState
-        }
-        const serializedState = await localStorage.getItem('state');
-        if (serializedState === null) {
-            return undefined;
-        }
-        return {studentProfile: JSON.parse(serializedState)} as RootState;
-    } catch (err) {
-        return undefined;
+export async function loadStudentProfile(): Promise<StudentProfile | undefined> {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const urlState = params.get("schedule");
+    if (urlState !== null) {
+      return buildProto<StudentProfile>(await codec.decompress(urlState));
     }
+    const serializedState = localStorage.getItem(LOCAL_STORAGE_PROFILE_KEY);
+    if (serializedState === null) {
+      return undefined;
+    }
+    return buildProto<StudentProfile>(JSON.parse(serializedState));
+  } catch (err) {
+    return undefined;
+  }
 }
 
-export function getStatePayloadForUrl(state: RootState): Promise<string> {
-    return codec.compress(state.studentProfile)
+export function getStatePayloadForUrl(studentProfile: StudentProfile): Promise<string> {
+  return codec.compress(studentProfile);
 }

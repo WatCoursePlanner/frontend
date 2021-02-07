@@ -6,23 +6,29 @@ import ReactHtmlParser from "react-html-parser";
 
 import { AutoCompleteOption } from "./index";
 
-const Option = ({option}: { option: Fuzzysort.KeysResult<AutoCompleteOption> }) => (
-    <Grid container alignItems="center">
-        <Grid item xs>
-            {
-                option.obj ?
-                    <>
-                        <Typography variant="body1" color="textPrimary">
-                            {option[0] ? ReactHtmlParser(Fuzzysort.highlight(option[0]) ?? '') : option.obj.title}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            {option[1] ? ReactHtmlParser(Fuzzysort.highlight(option[1]) ?? '') : option.obj.subTitle}
-                        </Typography>
-                    </>
-                    : <></>
-            }
-        </Grid>
-    </Grid>
-)
+interface IOptionProps {
+  option: AutoCompleteOption,
+}
 
-export default Option
+export const Option = ({
+  option,
+}: IOptionProps) => (
+  <Grid container alignItems="center">
+    <Grid item xs>
+      <Typography variant="body1" color="textPrimary">
+        {
+          option.titleResult
+            ? ReactHtmlParser(Fuzzysort.highlight(option.titleResult) ?? '')
+            : option.title
+        }
+      </Typography>
+      <Typography variant="body2" color="textSecondary">
+        {
+          option.subTitleResult
+            ? ReactHtmlParser(Fuzzysort.highlight(option.subTitleResult) ?? '')
+            : option.subTitle
+        }
+      </Typography>
+    </Grid>
+  </Grid>
+);

@@ -1,11 +1,11 @@
-export function singletonGetter<T>(InstanceConstructor: { new (): T }) {
-    let instance: T;
+export function singletonGetter<T>(InstanceConstructor: { new(): T }) {
+  let instance: T;
 
-    return (): T => {
-        if (instance === undefined) {
-            instance = new InstanceConstructor();
-        }
+  return (): T => {
+    if (instance === undefined) {
+      instance = new InstanceConstructor();
+    }
 
-        return instance;
-    };
+    return instance;
+  };
 }

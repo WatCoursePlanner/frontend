@@ -1,121 +1,129 @@
 import { DrawerAppContent } from '@rmwc/drawer';
-import Drawer from "@watcourses/components/Drawer";
-import TopNav from "@watcourses/components/TopNav";
-import { CoopStream, CreateStudentProfileRequest } from "@watcourses/proto/courses";
-import { fetchProfileCourseAction } from "@watcourses/redux/slices/profileCourses";
-import search from "@watcourses/redux/slices/search";
-import { fetchStudentProfileAction } from "@watcourses/redux/slices/studentProfileSlice";
-import { RootState } from "@watcourses/redux/store";
-import { CachedCourses } from "@watcourses/utils";
-import React, { useEffect, useState } from "react";
+import { Drawer } from "@watcourses/components/Drawer";
+import { TopNav } from "@watcourses/components/TopNav";
+import { discover, home, schedule } from "@watcourses/paths";
+import { AppHistory } from "@watcourses/services/AppHistory";
+import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
+import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
+import { action, computed, makeObservable, observable } from "mobx";
+import { observer } from "mobx-react";
+import React from "react";
 import { Else, If, Then } from "react-if";
-import { connect, ConnectedProps } from "react-redux";
-import { Redirect, Route, Switch, useLocation } from "react-router-dom";
-import { bindActionCreators, Dispatch } from "redux";
+import { Route, Switch } from "react-router";
+import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 
-import Discover from "./Discover";
-import Schedule from "./Schedule";
+import { Discover } from "./Discover";
+import { Schedule } from "./Schedule";
+
+interface IHomeProps {
+}
+
+@observer
+export class Home extends React.Component<IHomeProps> {
+
+  @observable
+  drawerShadow: boolean = false;
+
+  @observable
+  searchQuery: string = "";
+
+  @observable
+  drawerOpen: boolean = true;
+
+  @observable
+  searchText: string = "";
+
+  @computed
+  private get isLoading() {
+    return CachedCoursesStore.get().isLoading;
+  }
+
+  @action
+  setSearchText = (text?: string) => {
+    this.searchText = text ?? "";
+  };
+
+  @action
+  setDrawerOpen = (open: boolean) => {
+    this.drawerOpen = open;
+  };
+
+  @action
+  setDrawerShadow = (shadow: boolean) => {
+    this.drawerShadow = shadow;
+  };
+
+  @action
+  search = (query: string) => {
+    this.searchQuery = query;
+    AppHistory.get().goTo(discover.home());
+  };
+
+  searchCurrentInput = () => {
+    this.search(this.searchText);
+  };
+
+  onAutoCompleteSelect = (code: string) => {
+    this.search(code);
+  };
+
+  constructor(props: IHomeProps) {
+    super(props);
+    makeObservable(this);
+  }
+
+  render() {
+    return (
+      <If condition={this.isLoading}>
+        <Then>
+          <p>TODO Implement Loading</p>
+        </Then>
+        <Else>
+          <Container>
+            <TopNav
+              onSearch={this.searchCurrentInput}
+              onAutoCompleteSelect={this.onAutoCompleteSelect}
+              toggleDrawer={() => this.setDrawerOpen(!this.drawerOpen)}
+              searchText={this.searchText}
+              setSearchText={this.setSearchText}
+              issues={ProfileCoursesStore.get().profileCourses.issues ?? []}
+            />
+            <Drawer
+              shadow={this.drawerShadow}
+              open={this.drawerOpen}
+            />
+            <AppContainer>
+              <Switch>
+                <Route path={schedule.home()} exact>
+                  <Schedule
+                    drawerShadow={this.drawerShadow}
+                    setDrawerShadow={this.setDrawerShadow}
+                  />
+                </Route>
+                <Route path={discover.home()} exact>
+                  <Discover searchQuery={this.searchQuery}/>
+                </Route>
+                <Route path={home()} exact>
+                  <Redirect to={discover.home()}/>
+                </Route>
+              </Switch>
+            </AppContainer>
+          </Container>
+        </Else>
+      </If>
+    );
+  }
+}
 
 const Container = styled.div`
   height: 100%;
   position: relative;
   display: flex;
-`
+`;
 
 const AppContainer = styled(DrawerAppContent)`
   margin-top: 64px;
   width: 100%;
   overflow-y: hidden;
-`
-
-type HomeProps = ConnectedProps<typeof connector>
-
-const HomeBase = ({
-                  studentProfile,
-                  fetchProfileCourse,
-                  profileCourses,
-                  fetchStudentProfile,
-                  drawerShadow,
-                  setSearchQuery
-              }: HomeProps) => {
-
-    const [drawerOpen, setDrawerOpen] = useState(true);
-    const [searchText, setSearchText] = useState('');
-    const [loading, setLoading] = useState(true);
-    const location = useLocation();
-
-    useEffect(() => {
-        CachedCourses.initialize().then((res) => {
-            if (!res) { return }
-            setLoading(false);
-        })
-
-        if (studentProfile === null) {
-            fetchStudentProfile(CreateStudentProfileRequest.fromJSON({
-                degrees: ["Software Engineering"],
-                startingYear: 2019,
-                coopStream: CoopStream.STREAM_8
-            }))
-        } else if (Object.keys(profileCourses.courses).length === 0) {
-            fetchProfileCourse(studentProfile)
-        }
-    }, [])
-
-    const searchKeyword = () => {
-        setSearchQuery(searchText)
-    }
-
-    const onAutoCompleteSelect = (code: string) => {
-        console.error(`[Home] TODO Select ${code}`)
-    }
-
-    return (
-        <If condition={loading}>
-            <Then>
-                <p>TODO Implement Loading</p>
-            </Then>
-            <Else>
-                <Container>
-                    <TopNav
-                        searchCallback={searchKeyword}
-                        onAutoCompleteSelect={onAutoCompleteSelect}
-                        toggleDrawer={() => setDrawerOpen(!drawerOpen)}
-                        searchText={searchText}
-                        setSearchText={setSearchText}
-                        issues={profileCourses.issues}/>
-                    <Drawer shadow={drawerShadow} open={drawerOpen} location={location}/>
-                    <AppContainer>
-                        <Switch>
-                            <Route path="/home/schedule" exact>
-                                <Schedule/>
-                            </Route>
-                            <Route path="/home/discover" exact>
-                                <Discover/>
-                            </Route>
-                            <Route path="/home" exact>
-                                <Redirect to="/home/schedule"/>
-                            </Route>
-                        </Switch>
-                    </AppContainer>
-                </Container>
-            </Else>
-        </If>
-    );
-}
-
-const mapState = (state: RootState) => ({
-    drawerShadow: state.ui.drawerShadow,
-    studentProfile: state.studentProfile.content,
-    profileCourses: state.profileCourses
-})
-
-const mapDispatch = (dispatch: Dispatch) => bindActionCreators({
-    fetchStudentProfile: fetchStudentProfileAction,
-    setSearchQuery: search.actions.setSearchQuery,
-    fetchProfileCourse: fetchProfileCourseAction
-}, dispatch)
-
-const connector = connect(mapState, mapDispatch)
-
-export const Home = connector(HomeBase)
+`;
