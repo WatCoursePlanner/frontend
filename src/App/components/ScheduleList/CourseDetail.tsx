@@ -20,36 +20,30 @@ import {
   IRequisiteGroup,
   RequisiteChecklist,
   RequisiteGroupChecklist,
-} from "@watcourses/components/Requisite";
+} from "@watcourses/components/ScheduleList/Requisite";
 import {
   ClickOutsideHandler,
 } from "@watcourses/components/utils/ClickOutsideHandler";
 import { cleanScrollBarWithWhiteBorder } from "@watcourses/constants/styles";
 import { CourseInfo } from "@watcourses/proto/courses";
-import { RequisiteHelper } from "@watcourses/utils/RequisiteHelper";
-import { action, makeObservable, observable } from "mobx";
+import { makeObservable, observable } from "mobx";
+import { observer } from "mobx-react";
 import React from "react";
 import { If, Then } from 'react-if';
 import styled from "styled-components";
+
+import { CourseDetailState } from "./CourseDetailState";
 
 interface ICourseDetailProps {
   course: CourseInfo | null,
   onDismiss: () => void
 }
 
+@observer
 export class CourseDetail extends React.Component<ICourseDetailProps> {
 
   @observable
-  private scrolled: boolean = false;
-
-  @action
-  private handleScroll = (e: React.UIEvent<HTMLElement>) => {
-    if (e.currentTarget.scrollTop > 0 && !this.scrolled) {
-      this.scrolled = true;
-    } else if (e.currentTarget.scrollTop <= 0 && this.scrolled) {
-      this.scrolled = false;
-    }
-  };
+  private courseDetailState = new CourseDetailState(this.props.course);
 
   private formatPrerequisiteString = (prerequisites: IRequisiteGroup[]) => {
     return `${
@@ -78,11 +72,20 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
       course,
       onDismiss,
     } = this.props;
-    const prerequisites = RequisiteHelper.getPreRequisite(course);
-    const antirequisites = RequisiteHelper.getAntiRequisite(course);
+
+    const {
+      registeredDescendents,
+      scrolled,
+      handleScroll,
+      prerequisites,
+      antirequisites,
+    } = this.courseDetailState;
 
     return (
-      <ClickOutsideHandler onClickOutside={onDismiss}>
+      <ClickOutsideHandler
+        onClickOutside={onDismiss}
+        ignoreContainerRefs={registeredDescendents}
+      >
         <StyledCard>
           <CardActions>
             <CardActionIcons>
@@ -103,8 +106,8 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
             </CardActionIcons>
           </CardActions>
           <CardContainer
-            scrolled={this.scrolled ? 1 : 0}
-            onScroll={this.handleScroll}>
+            scrolled={scrolled ? 1 : 0}
+            onScroll={handleScroll}>
             <List nonInteractive>
               <TitleContainer>
                 <CourseCode>
@@ -132,7 +135,10 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                     <ListContentSubtitle>
                       {this.formatPrerequisiteString(prerequisites)}
                     </ListContentSubtitle>
-                    <RequisiteGroupChecklist requisiteGroups={prerequisites}/>
+                    <RequisiteGroupChecklist
+                      courseDetailState={this.courseDetailState}
+                      requisiteGroups={prerequisites}
+                    />
                   </ListContent>
                 </StyledListItem>
               </Then></If>
@@ -147,7 +153,10 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                     <ListContentSubtitle>
                       {this.formatAntirequisiteString(antirequisites)}
                     </ListContentSubtitle>
-                    <RequisiteChecklist requisites={antirequisites}/>
+                    <RequisiteChecklist
+                      courseDetailState={this.courseDetailState}
+                      requisites={antirequisites}
+                    />
                   </ListContent>
                 </StyledListItem>
               </Then></If>

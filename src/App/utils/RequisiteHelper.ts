@@ -1,4 +1,4 @@
-import { IRequisite, IRequisiteGroup } from "@watcourses/components/Requisite";
+import { IRequisite, IRequisiteGroup } from "@watcourses/components/ScheduleList/Requisite";
 import { CourseInfo } from "@watcourses/proto/courses";
 
 type Condition = { type: string; data: string; operands: Condition[]; met: boolean | null; }

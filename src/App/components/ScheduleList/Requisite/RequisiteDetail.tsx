@@ -1,0 +1,100 @@
+import {
+  Card,
+  CardActionButton,
+  CardActionButtons,
+  CardActionIcon,
+  CardActionIcons,
+  CardActions,
+  CardProps,
+} from "@rmwc/card";
+import { Tooltip } from "@rmwc/tooltip";
+import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHandler";
+import { CourseInfo } from "@watcourses/proto/courses";
+import React from "react";
+import styled from "styled-components";
+
+interface IRequisiteDetailProps {
+  onDismiss: () => void,
+  course?: CourseInfo,
+}
+
+export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
+  renderCourse(course: CourseInfo) {
+    return (
+      <>
+        <TitleContainer>
+          <CourseCode>
+            {course.code}
+          </CourseCode>
+          <CourseName>
+            {course.name}
+          </CourseName>
+        </TitleContainer>
+        <CardActions>
+          <CardActionButtons>
+            <CardActionButton outlined>
+              Add to shortlist
+            </CardActionButton>
+          </CardActionButtons>
+          <CardActionIcons>
+            <Tooltip content="Open">
+              <CardActionIcon icon="open_in_new"/>
+            </Tooltip>
+          </CardActionIcons>
+        </CardActions>
+      </>
+    );
+  }
+
+  render() {
+    const {
+      onDismiss,
+      course,
+    } = this.props;
+    return (
+      <ClickOutsideHandler onClickOutside={onDismiss}>
+        <StyledCard>
+          <CardContainer>
+            {course && this.renderCourse(course)}
+          </CardContainer>
+        </StyledCard>
+      </ClickOutsideHandler>
+    );
+  }
+}
+
+const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement>>`
+  position: relative;
+  max-height: 80vh;
+  min-width: 300px;
+  background-color: white;
+  outline: none;
+  border-radius: 8px;
+  max-width: 448px;
+  width: 327px;
+  box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14),
+  0 9px 46px 8px rgba(0, 0, 0, 0.12),
+  0 11px 15px -7px rgba(0, 0, 0, 0.2);
+`;
+
+const CardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+`;
+
+const CourseCode = styled.span`
+  font-size: 22px;
+  font-weight: 500
+`;
+const CourseName = styled.span`
+  font-size: 14px;
+  line-height: 20px;
+  margin-top: 6px;
+`;

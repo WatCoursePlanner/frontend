@@ -1,6 +1,4 @@
 import { Fade } from "@material-ui/core";
-import Popper from "@material-ui/core/Popper";
-import { PopperProps } from "@material-ui/core/Popper/Popper";
 import { Card, CardProps } from "@rmwc/card";
 import '@rmwc/card/styles';
 import '@rmwc/ripple/styles';
@@ -13,6 +11,7 @@ import { Draggable } from 'react-smooth-dnd';
 import styled from "styled-components";
 
 import { CourseDetail } from "./CourseDetail";
+import { Popper } from "./Popper";
 
 interface IScheduleCourseProps {
   course: CourseInfo | undefined,
@@ -247,34 +246,20 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
                 </CourseName>
               </CardContainer>
             </StyledCard>
-            <StyledPopper
-              id={course?.code} open={active} anchorEl={cardRef.current}
-              transition
+            <Popper
+              id={course?.code}
+              open={active}
+              anchorEl={cardRef.current}
               placement="left-start"
-              modifiers={{
-                flip: {
-                  enabled: true,
-                },
-                preventOverflow: {
-                  enabled: true,
-                  boundariesElement: 'viewport',
-                },
-                offset: {
-                  enabled: true,
-                  offset: '0, 8',
-                },
-              }}>
-              {({TransitionProps}) => (
-                <Fade {...TransitionProps}>
-                  <div style={{maxHeight: '80vh'}}>
-                    <CourseDetail
-                      course={course}
-                      onDismiss={handleCloseDetail}
-                    />
-                  </div>
-                </Fade>
-              )}
-            </StyledPopper>
+              style={{marginBottom: '50px'}}
+            >
+              <div style={{maxHeight: '80vh'}}>
+                <CourseDetail
+                  course={course}
+                  onDismiss={handleCloseDetail}
+                />
+              </div>
+            </Popper>
           </CardWrapper>
         </RootContainer>
       </Draggable>
@@ -301,10 +286,10 @@ const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & {
   ref: any,
 }>`
   width: 100%;
-  background-color: ${props => props.error 
-          ? '#feeded' 
+  background-color: ${props => props.error
+          ? '#feeded'
           : props.hovered ? '#fafafa' : 'white'};
-  
+
   transition: background-color 0.2s ease,
   opacity 0.2s ease,
   box-shadow 0.2s ease;
@@ -326,8 +311,8 @@ const StyledCard = styled(Card)<CardProps & React.HTMLProps<HTMLDivElement> & {
               0 1px 18px 0 rgba(0,0,0,0.12), 
               0 3px 5px -1px rgba(0,0,0,0.2)`
           : ''};
-  border-color: ${props => props.error 
-          ? '#ff0000' 
+  border-color: ${props => props.error
+          ? '#ff0000'
           : props.active ? `transparent` : 'inherited'};
   outline: none;
 `;
@@ -353,10 +338,4 @@ const Error = styled.span`
 const CourseName = styled.span`
   font-size: 14px;
   margin-top: 6px;
-`;
-
-const StyledPopper = styled(Popper)<PopperProps>`
-  z-index: 9999;
-  margin-bottom: 50px;
-  max-height: 80vh;
 `;
