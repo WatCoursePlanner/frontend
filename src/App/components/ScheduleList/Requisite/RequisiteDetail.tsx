@@ -13,13 +13,22 @@ import { CourseInfo } from "@watcourses/proto/courses";
 import React from "react";
 import styled from "styled-components";
 
+import { IRequisite, RequisiteType } from "./index";
+
 interface IRequisiteDetailProps {
   onDismiss: () => void,
   course?: CourseInfo,
+  requisite: IRequisite,
 }
 
 export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
   renderCourse(course: CourseInfo) {
+    const {requisite} = this.props;
+    const isPrerequisite = requisite.type === RequisiteType.PREREQUISITE;
+
+    // logical XNOR
+    const isInSchedule = isPrerequisite === requisite.met;
+
     return (
       <>
         <TitleContainer>
@@ -32,8 +41,12 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
         </TitleContainer>
         <CardActions>
           <CardActionButtons>
-            <CardActionButton outlined>
-              Add to shortlist
+            <CardActionButton
+              outlined={!requisite.necessary}
+              raised={requisite.necessary}
+              danger={isInSchedule}
+            >
+              {isInSchedule ? "Remove" : "Add"}
             </CardActionButton>
           </CardActionButtons>
           <CardActionIcons>
