@@ -1,18 +1,31 @@
 import React from "react";
 
 interface IClickOutsideHandlerProps {
-  onClickOutside: () => unknown
+  onClickOutside: () => unknown,
+  ignoreContainerRefs?: Set<React.RefObject<HTMLElement>>,
 }
 
 export class ClickOutsideHandler extends React.Component<IClickOutsideHandlerProps> {
-  private wrapperRef: HTMLDivElement | undefined;
+  private wrapperRef: React.RefObject<HTMLDivElement> = React.createRef();
 
-  setWrapperRef = (node: HTMLDivElement) => {
-    this.wrapperRef = node;
+  private isInIgnoredContainers = (event: any) => {
+    if (!this.props.ignoreContainerRefs) {
+      return false;
+    }
+    for (const ref of this.props.ignoreContainerRefs) {
+      if (ref.current?.contains(event.target)) {
+        return true;
+      }
+    }
+    return false;
   };
 
-  handleClickOutside = (event: any) => {
-    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+  private handleClickOutside = (event: any) => {
+    if (
+      this.wrapperRef &&
+      !this.wrapperRef.current?.contains(event.target) &&
+      !this.isInIgnoredContainers(event)
+    ) {
       this.props.onClickOutside();
     }
   };
@@ -27,7 +40,7 @@ export class ClickOutsideHandler extends React.Component<IClickOutsideHandlerPro
 
   render() {
     return (
-      <div ref={this.setWrapperRef}>
+      <div ref={this.wrapperRef}>
         {this.props.children}
       </div>
     );

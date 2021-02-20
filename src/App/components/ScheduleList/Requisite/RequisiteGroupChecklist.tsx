@@ -2,14 +2,18 @@ import { ListItemGraphic, ListItemGraphicProps } from "@rmwc/list";
 import React from "react";
 import styled from "styled-components";
 
+import { CourseDetailState } from "../CourseDetailState";
+
 import { IRequisiteGroup, RequisiteChecklist } from "./index";
 
 interface IRequisiteGroupChecklistProps {
   requisiteGroups: IRequisiteGroup[];
+  courseDetailState: CourseDetailState;
 }
 
 export const RequisiteGroupChecklist = ({
   requisiteGroups,
+  courseDetailState,
 }: IRequisiteGroupChecklistProps) => {
   return (
     <RootContainer>
@@ -23,7 +27,10 @@ export const RequisiteGroupChecklist = ({
             <RequisiteCount>
               {`${requisiteGroup.requires} of`}
             </RequisiteCount>
-            <RequisiteChecklist requisites={requisiteGroup.requisites}/>
+            <RequisiteChecklist
+              courseDetailState={courseDetailState}
+              requisites={requisiteGroup.requisites}
+            />
           </RequisiteChecklistWrapper>
         </RequisiteGroupContainer>,
       )}
