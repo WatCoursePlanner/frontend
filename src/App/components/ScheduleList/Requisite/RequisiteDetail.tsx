@@ -10,8 +10,12 @@ import {
 import { Tooltip } from "@rmwc/tooltip";
 import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHandler";
 import { CourseInfo } from "@watcourses/proto/courses";
+import { action, makeObservable, observable } from "mobx";
+import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
+
+import { AddOrMoveCourseToTermMenu } from "../AddOrMoveCourseToTermMenu";
 
 import { IRequisite, RequisiteType } from "./index";
 
@@ -21,9 +25,66 @@ interface IRequisiteDetailProps {
   requisite: IRequisite,
 }
 
+@observer
 export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
+  @observable
+  private addCourseMenuOpen = false;
+
+  @action
+  private setAddCourseMenuOpen = (open: boolean) => {
+    this.addCourseMenuOpen = open;
+  };
+
+  constructor(props: IRequisiteDetailProps) {
+    super(props);
+    makeObservable(this);
+  }
+
+  private renderRemoveButton = () => {
+    const {requisite} = this.props;
+    return (
+      <CardActionButton
+        outlined={!requisite.necessary}
+        raised={requisite.necessary}
+        danger
+      >
+        Remove
+      </CardActionButton>
+    );
+  }
+
+  private renderAddButton = () => {
+    const {requisite} = this.props;
+    const {
+      addCourseMenuOpen,
+      setAddCourseMenuOpen,
+    } = this;
+    return (
+      <AddOrMoveCourseToTermMenu
+        title={"Add to"}
+        open={addCourseMenuOpen}
+        onClose={() => setAddCourseMenuOpen(false)}
+        onSelect={() => {
+          // TODO
+        }}
+      >
+        <CardActionButton
+          outlined={!requisite.necessary}
+          raised={requisite.necessary}
+          onClick={() => setAddCourseMenuOpen(true)}
+        >
+          Add
+        </CardActionButton>
+      </AddOrMoveCourseToTermMenu>
+    );
+  }
+
   renderCourse(course: CourseInfo) {
     const {requisite} = this.props;
+    const {
+      renderRemoveButton,
+      renderAddButton,
+    } = this;
     const isPrerequisite = requisite.type === RequisiteType.PREREQUISITE;
 
     // logical XNOR
@@ -41,13 +102,7 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
         </TitleContainer>
         <CardActions>
           <CardActionButtons>
-            <CardActionButton
-              outlined={!requisite.necessary}
-              raised={requisite.necessary}
-              danger={isInSchedule}
-            >
-              {isInSchedule ? "Remove" : "Add"}
-            </CardActionButton>
+            {isInSchedule ? renderRemoveButton() : renderAddButton()}
           </CardActionButtons>
           <CardActionIcons>
             <Tooltip content="Open">
