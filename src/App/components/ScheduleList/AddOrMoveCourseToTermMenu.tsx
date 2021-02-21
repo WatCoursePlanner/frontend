@@ -32,7 +32,7 @@ export class AddOrMoveCourseToTermMenu extends React.Component<IAddOrMoveCourseT
 
     const terms = studentProfile.schedule?.terms;
 
-    if (!studentProfile || !studentProfile.schedule || !terms) {
+    if (!terms) {
       return null;
     }
 
@@ -73,10 +73,7 @@ interface IMenuTermProps {
   showYear: boolean,
 }
 
-const MenuTerm = ({
-  term,
-  showYear,
-}: IMenuTermProps) => {
+const MenuTerm = ({term, showYear}: IMenuTermProps) => {
   return (<>
     {showYear && (<>
       <ListDivider/>
