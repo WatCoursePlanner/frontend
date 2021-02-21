@@ -1,4 +1,4 @@
-import { insertAt, removeAt } from "../helpers";
+import { capitalize, insertAt, removeAt } from "../helpers";
 
 describe("helpers", () => {
   it("insertAt", () => {
@@ -10,5 +10,13 @@ describe("helpers", () => {
     expect(removeAt([1, 2, 4], 1)).toEqual([1, 4]);
     expect(removeAt([], 1)).toEqual([]);
     expect(removeAt([1], 0)).toEqual([]);
+  });
+  it("capitalize", () => {
+    expect(capitalize("test")).toEqual("Test");
+    expect(capitalize("test aaa")).toEqual("Test aaa");
+    expect(capitalize("tEsT aaaHJgGhjjkjk")).toEqual("Test aaahjgghjjkjk");
+    expect(capitalize("")).toEqual("");
+    expect(capitalize("TEST")).toEqual("Test");
+    expect(capitalize("tEST")).toEqual("Test");
   });
 });
