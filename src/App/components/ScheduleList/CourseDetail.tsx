@@ -110,8 +110,8 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                 title={"Move to"} 
                 open={moveToMenuOpen} 
                 onClose={() => setMoveToMenuOpen(false)} 
-                onSelect={() => {
-                  // TODO
+                onSelect={(term) => {
+                  console.error(`[TODO] Move ${course?.code} to ${term.termName}`)
                 }}
               >
                 <Tooltip content="Move">

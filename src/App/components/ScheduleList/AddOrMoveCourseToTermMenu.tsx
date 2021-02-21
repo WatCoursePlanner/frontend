@@ -42,9 +42,6 @@ export class AddOrMoveCourseToTermMenu extends React.Component<IAddOrMoveCourseT
       <MenuSurfaceAnchor>
         <StyledMenu
           open={open}
-          onSelect={(event) => onSelect(
-            terms[event.detail.index],
-          )}
           onClose={onClose}
         >
           <MenuTitle>{title}</MenuTitle>
@@ -58,6 +55,10 @@ export class AddOrMoveCourseToTermMenu extends React.Component<IAddOrMoveCourseT
                 key={index}
                 showYear={showYear}
                 term={term}
+                onSelect={() => {
+                  onSelect(term);
+                  onClose();
+                }}
               />
             );
           })}
@@ -71,15 +72,16 @@ export class AddOrMoveCourseToTermMenu extends React.Component<IAddOrMoveCourseT
 interface IMenuTermProps {
   term: Schedule_TermSchedule,
   showYear: boolean,
+  onSelect: () => void,
 }
 
-const MenuTerm = ({term, showYear}: IMenuTermProps) => {
+const MenuTerm = ({term, showYear, onSelect}: IMenuTermProps) => {
   return (<>
     {showYear && (<>
       <ListDivider/>
       <Year>{term.year}</Year>
     </>)}
-    <MenuItem>
+    <MenuItem onClick={onSelect}>
       {capitalize(term.term.toString())} ({term.termName})
     </MenuItem>
   </>);

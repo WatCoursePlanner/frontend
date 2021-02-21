@@ -40,7 +40,7 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
     makeObservable(this);
   }
 
-  private renderRemoveButton = () => {
+  private renderRemoveButton = (course: CourseInfo) => {
     const {requisite} = this.props;
     return (
       <CardActionButton
@@ -53,7 +53,7 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
     );
   }
 
-  private renderAddButton = () => {
+  private renderAddButton = (course: CourseInfo) => {
     const {requisite} = this.props;
     const {
       addCourseMenuOpen,
@@ -64,8 +64,8 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
         title={"Add to"}
         open={addCourseMenuOpen}
         onClose={() => setAddCourseMenuOpen(false)}
-        onSelect={() => {
-          // TODO
+        onSelect={(term) => {
+          console.error(`[TODO] Add ${course?.code} to ${term.termName}`)
         }}
       >
         <CardActionButton
@@ -102,7 +102,9 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
         </TitleContainer>
         <CardActions>
           <CardActionButtons>
-            {isInSchedule ? renderRemoveButton() : renderAddButton()}
+            {isInSchedule
+              ? renderRemoveButton(course)
+              : renderAddButton(course)}
           </CardActionButtons>
           <CardActionIcons>
             <Tooltip content="Open">

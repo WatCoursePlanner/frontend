@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "esnext",
+    "module": "commonjs",
     "lib": [
       "es2019",
       "es2020.bigint",
@@ -17,18 +17,14 @@
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
     "experimentalDecorators": true,
-    "jsx": "react-jsx",
-    "rootDirs": [
-      "src"
-    ],
+    "jsx": "react",
+    "rootDirs": ["src"],
     "baseUrl": "./src",
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true
+    // Update mappings in config/alias.js as well.
+    "paths": {
+      "@watcourses": ["App"],
+      "@watcourses/*": ["App/*"]
+    },
   },
   "include": [
     "src/typings/"
