@@ -1,5 +1,6 @@
 import { Chip, ChipHTMLProps, ChipProps } from "@rmwc/chip";
 import '@rmwc/chip/styles';
+import { Popper } from "@watcourses/components/Popper/Popper";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
@@ -7,7 +8,6 @@ import React from "react";
 import styled from "styled-components";
 
 import { CourseDetailState } from "../CourseDetailState";
-import { Popper } from "../Popper";
 
 import { IRequisite, RequisiteContent, REQUISITE_ICONS } from "./index";
 import { RequisiteDetail } from "./RequisiteDetail";

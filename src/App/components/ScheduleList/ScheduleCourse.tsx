@@ -11,7 +11,6 @@ import { Draggable } from 'react-smooth-dnd';
 import styled from "styled-components";
 
 import { CourseDetail } from "./CourseDetail";
-import { Popper } from "./Popper";
 
 interface IScheduleCourseProps {
   course?: CourseInfo,

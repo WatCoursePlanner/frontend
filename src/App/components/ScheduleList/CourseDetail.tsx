@@ -33,6 +33,7 @@ import React from "react";
 import { If, Then } from 'react-if';
 import styled from "styled-components";
 
+import { AddOrMoveCourseToTermMenu } from "./AddOrMoveCourseToTermMenu";
 import { CourseDetailState } from "./CourseDetailState";
 
 interface ICourseDetailProps {
@@ -46,9 +47,13 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
 
   @observable
   private moveToMenuOpen = false;
-
   @observable
   private courseDetailState = new CourseDetailState(this.props.course);
+  
+  @action
+  private setMoveToMenuOpen = (open: boolean) => {
+    this.moveToMenuOpen = open;
+  }
 
   @action
   private setMoveToMenuOpen = (open: boolean) => {
@@ -83,6 +88,11 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
       onDismiss,
       fromTerm,
     } = this.props;
+    
+    const {
+      moveToMenuOpen,
+      setMoveToMenuOpen,
+    } = this;
 
     const {
       moveToMenuOpen,
