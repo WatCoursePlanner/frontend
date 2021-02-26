@@ -10,11 +10,11 @@ import {
 import { Tooltip } from "@rmwc/tooltip";
 import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHandler";
 import { CourseInfo } from "@watcourses/proto/courses";
+import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
-import { StudentProfileStore } from "../../../stores/StudentProfileStore";
 
 import { AddOrMoveCourseToTermMenu } from "../AddOrMoveCourseToTermMenu";
 
@@ -84,7 +84,7 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
     );
   }
 
-  renderCourse(course: CourseInfo) {
+  renderCourse = (course: CourseInfo) => {
     const {requisite} = this.props;
     const {
       renderRemoveButton,

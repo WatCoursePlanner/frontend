@@ -55,11 +55,6 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
     this.moveToMenuOpen = open;
   }
 
-  @action
-  private setMoveToMenuOpen = (open: boolean) => {
-    this.moveToMenuOpen = open;
-  };
-
   private formatPrerequisiteString = (prerequisites: IRequisiteGroup[]) => {
     return `${
       prerequisites.filter((t: IRequisiteGroup) => t.met).length
@@ -89,11 +84,6 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
       fromTerm,
     } = this.props;
     
-    const {
-      moveToMenuOpen,
-      setMoveToMenuOpen,
-    } = this;
-
     const {
       moveToMenuOpen,
       setMoveToMenuOpen,
