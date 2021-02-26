@@ -1,8 +1,8 @@
-import { Fade } from "@material-ui/core";
 import { Card, CardProps } from "@rmwc/card";
 import '@rmwc/card/styles';
 import '@rmwc/ripple/styles';
-import { CourseInfo } from "@watcourses/proto/courses";
+import { Popper } from "@watcourses/components/Popper/Popper";
+import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
 import { RequisiteHelper } from "@watcourses/utils/RequisiteHelper";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
@@ -14,7 +14,8 @@ import { CourseDetail } from "./CourseDetail";
 import { Popper } from "./Popper";
 
 interface IScheduleCourseProps {
-  course: CourseInfo | undefined,
+  course?: CourseInfo,
+  fromTerm?: Schedule_TermSchedule,
   shortListOpen: boolean,
   scheduleListRef: React.RefObject<HTMLDivElement>,
 }
@@ -196,6 +197,7 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
 
     const {
       course,
+      fromTerm,
     } = this.props;
 
     if (!course) {
@@ -256,6 +258,7 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
               <div style={{maxHeight: '80vh'}}>
                 <CourseDetail
                   course={course}
+                  fromTerm={fromTerm}
                   onDismiss={handleCloseDetail}
                 />
               </div>

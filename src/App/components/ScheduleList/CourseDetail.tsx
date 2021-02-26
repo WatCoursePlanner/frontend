@@ -25,8 +25,9 @@ import {
   ClickOutsideHandler,
 } from "@watcourses/components/utils/ClickOutsideHandler";
 import { cleanScrollBarWithWhiteBorder } from "@watcourses/constants/styles";
-import { CourseInfo } from "@watcourses/proto/courses";
-import { makeObservable, observable } from "mobx";
+import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
+import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
+import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { If, Then } from 'react-if';
@@ -35,15 +36,24 @@ import styled from "styled-components";
 import { CourseDetailState } from "./CourseDetailState";
 
 interface ICourseDetailProps {
-  course: CourseInfo | null,
-  onDismiss: () => void
+  course?: CourseInfo,
+  fromTerm?: Schedule_TermSchedule,
+  onDismiss: () => void,
 }
 
 @observer
 export class CourseDetail extends React.Component<ICourseDetailProps> {
 
   @observable
+  private moveToMenuOpen = false;
+
+  @observable
   private courseDetailState = new CourseDetailState(this.props.course);
+
+  @action
+  private setMoveToMenuOpen = (open: boolean) => {
+    this.moveToMenuOpen = open;
+  };
 
   private formatPrerequisiteString = (prerequisites: IRequisiteGroup[]) => {
     return `${
@@ -71,7 +81,13 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
     const {
       course,
       onDismiss,
+      fromTerm,
     } = this.props;
+
+    const {
+      moveToMenuOpen,
+      setMoveToMenuOpen,
+    } = this;
 
     const {
       registeredDescendents,
@@ -92,9 +108,26 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
               <Tooltip content="Open">
                 <CardActionIcon icon="open_in_new"/>
               </Tooltip>
-              <Tooltip content="Move">
-                <CardActionIcon icon="forward"/>
-              </Tooltip>
+              <AddOrMoveCourseToTermMenu
+                title={"Move to"}
+                open={moveToMenuOpen}
+                onClose={() => setMoveToMenuOpen(false)}
+                onSelect={(term) => {
+                  if (!course || !fromTerm) {
+                    return;
+                  }
+                  StudentProfileStore.get()
+                    .moveCourse(course, fromTerm, term);
+                  onDismiss();
+                }}
+              >
+                <Tooltip content="Move">
+                  <CardActionIcon
+                    onClick={() => setMoveToMenuOpen(true)}
+                    icon="forward"
+                  />
+                </Tooltip>
+              </AddOrMoveCourseToTermMenu>
               <Tooltip content="Delete">
                 <CardActionIcon icon="delete_outline"/>
               </Tooltip>

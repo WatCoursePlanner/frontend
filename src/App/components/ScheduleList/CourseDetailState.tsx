@@ -6,7 +6,7 @@ import React from "react";
 export class CourseDetailState {
 
   @observable
-  private readonly _course: CourseInfo | null = null;
+  private readonly _course?: CourseInfo;
 
   @computed
   get prerequisites() {
@@ -43,7 +43,7 @@ export class CourseDetailState {
     }
   };
 
-  constructor(course: CourseInfo | null) {
+  constructor(course?: CourseInfo) {
     makeObservable(this);
     this._course = course;
   }

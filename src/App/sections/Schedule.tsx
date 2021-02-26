@@ -132,7 +132,7 @@ export class Schedule extends React.Component<IScheduleProps> {
     if (dropResult.removedIndex !== null) {
       removeCourseFromTerm({
         termName,
-        index: dropResult.removedIndex,
+        indexOrCode: dropResult.removedIndex,
       });
     }
     if (dropResult.addedIndex !== null) {
@@ -145,12 +145,12 @@ export class Schedule extends React.Component<IScheduleProps> {
     // Don't update if both are not null, i.e. move to the same column
     if (dropResult.removedIndex === null || dropResult.addedIndex === null) {
       // Update on the second drop callback (i.e. when firstDrop === true)
-      if (!this.firstDrop) {
-        this.firstDrop = true;
-      } else {
-        ProfileCoursesStore.get().fetchProfileCourses();
-        this.firstDrop = false;
-      }
+      // if (!this.firstDrop) {
+      //   this.firstDrop = true;
+      // } else {
+      ProfileCoursesStore.get().fetchProfileCourses();
+      //   this.firstDrop = false;
+      // }
     }
   };
 
@@ -160,7 +160,7 @@ export class Schedule extends React.Component<IScheduleProps> {
     }
     // only need to do this once
     findSlots(buildProto<FindSlotRequest>({
-      profile: StudentProfileStore.get().studentProfile,
+      profile: StudentProfileStore.get().workingStudentProfile,
       courseCode: dragStart.payload!!,
     })).then((response) => runInAction(() => {
       this.issues = response.slot;
@@ -169,7 +169,11 @@ export class Schedule extends React.Component<IScheduleProps> {
 
   render() {
     const profileCourses = ProfileCoursesStore.get().profileCourses.courses;
-    const studentProfile = StudentProfileStore.get().studentProfile;
+    const {
+      workingStudentProfile,
+      isLoading,
+      isDirty,
+    } = StudentProfileStore.get();
     return (
       <OuterContainer>
         <ScheduleContainer>
@@ -177,11 +181,11 @@ export class Schedule extends React.Component<IScheduleProps> {
             ref={this.scheduleListRef}
             onScroll={this.handleScroll}>
             <Spacer minWidth={'16px'} minHeight={'100%'}/>
-            <If condition={!!profileCourses && !!studentProfile}>
-              <Then>
-                <ScheduleTermList
-                  profileCourses={profileCourses!}
-                  studentProfile={studentProfile}
+            {
+              !!profileCourses && !!workingStudentProfile &&
+              <ScheduleTermList
+                  profileCourses={profileCourses}
+                  studentProfile={workingStudentProfile}
                   issues={this.issues}
                   options={{
                     onDragEnd: this.onDragEnd,
@@ -190,11 +194,14 @@ export class Schedule extends React.Component<IScheduleProps> {
                   onDropWithTerm={this.onDropWithTerm}
                   shortListOpen={this.shortListOpen}
                   scheduleListRef={this.scheduleListRef}
-                />
-              </Then>
-            </If>
+              />
+            }
             <Spacer minWidth={'240px'} minHeight={'100%'}/>
-            <StyledFab icon="add" label="Add Term"/>
+            <StyledFab
+              icon={isLoading ? "loading" : "save"} // TODO loading animation
+              label="Save"
+              exited={!isDirty}
+            />
           </ScheduleListContainer>
           <ShortListButton
             unelevated
@@ -206,10 +213,10 @@ export class Schedule extends React.Component<IScheduleProps> {
           />
         </ScheduleContainer>
         <ShortListContainer open={this.shortListOpen}>
-          <If condition={!!profileCourses && !!studentProfile}>
-            <Then>
-              <ScheduleShortList
-                shortlist={studentProfile?.shortList ?? []}
+          {
+            !!profileCourses && !!workingStudentProfile &&
+            <ScheduleShortList
+                shortlist={workingStudentProfile.shortList ?? []}
                 courses={profileCourses!}
                 options={{
                   onDragEnd: this.onDragEnd,
@@ -218,9 +225,8 @@ export class Schedule extends React.Component<IScheduleProps> {
                 onDropWithTerm={this.onDropWithTerm}
                 shortListOpen={this.shortListOpen}
                 scheduleListRef={this.scheduleListRef}
-              />
-            </Then>
-          </If>
+            />
+          }
         </ShortListContainer>
       </OuterContainer>
     );

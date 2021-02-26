@@ -78,7 +78,7 @@ export class ProfileCoursesStore {
     this.profileCoursesPromise = fromPromise(
       checkStudentProfile(
         buildProto<StudentProfile>(
-          StudentProfileStore.get().studentProfile,
+          StudentProfileStore.get().workingStudentProfile,
         ),
       ),
     );

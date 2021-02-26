@@ -106,7 +106,7 @@ export class RequisiteHelper {
     return [];
   }
 
-  static getPreRequisite(course: CourseInfo | null): IRequisiteGroup[] {
+  static getPreRequisite(course?: CourseInfo): IRequisiteGroup[] {
     const json = course?.preRequisite?.json;
     if (!json) {
       return [];
@@ -118,7 +118,7 @@ export class RequisiteHelper {
     return this.parseRequisite(requisite);
   }
 
-  static getAntiRequisite(course: CourseInfo | null): IRequisite[] {
+  static getAntiRequisite(course?: CourseInfo): IRequisite[] {
     const json = course?.antiRequisite?.json;
     if (!json) {
       return [];

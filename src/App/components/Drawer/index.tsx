@@ -52,7 +52,7 @@ class DrawerBase extends React.Component<IDrawerProps> {
   share = async () => {
     const loc = window.location;
     this.setShareLink(`${loc.protocol}//${loc.host}${loc.pathname}?schedule=${
-      await getStatePayloadForUrl(StudentProfileStore.get().studentProfile)
+      await getStatePayloadForUrl(StudentProfileStore.get().workingStudentProfile)
     }`);
     this.setShareOpen(true);
   };

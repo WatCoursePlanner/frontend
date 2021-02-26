@@ -12,6 +12,7 @@ import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHa
 import { CourseInfo } from "@watcourses/proto/courses";
 import React from "react";
 import styled from "styled-components";
+import { StudentProfileStore } from "../../../stores/StudentProfileStore";
 
 import { IRequisite, RequisiteType } from "./index";
 
@@ -22,6 +23,62 @@ interface IRequisiteDetailProps {
 }
 
 export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
+  @observable
+  private addCourseMenuOpen = false;
+
+  @action
+  private setAddCourseMenuOpen = (open: boolean) => {
+    this.addCourseMenuOpen = open;
+  };
+
+  constructor(props: IRequisiteDetailProps) {
+    super(props);
+    makeObservable(this);
+  }
+
+  private renderRemoveButton = (course: CourseInfo) => {
+    const {requisite} = this.props;
+    return (
+      <CardActionButton
+        outlined={!requisite.necessary}
+        raised={requisite.necessary}
+        danger
+      >
+        Remove
+      </CardActionButton>
+    );
+  }
+
+  private renderAddButton = (course: CourseInfo) => {
+    const {requisite} = this.props;
+    const {
+      addCourseMenuOpen,
+      setAddCourseMenuOpen,
+    } = this;
+    return (
+      <AddOrMoveCourseToTermMenu
+        title={"Add to"}
+        open={addCourseMenuOpen}
+        onClose={() => setAddCourseMenuOpen(false)}
+        onSelect={(term) => {
+          StudentProfileStore.get().addCourseToTerm({
+            code: course.code,
+            termName: term.termName,
+            index: -1,
+          })
+        }}
+      >
+        <CardActionButton
+          outlined={!requisite.necessary}
+          raised={requisite.necessary}
+          onClick={() => setAddCourseMenuOpen(true)}
+        >
+          Add
+        </CardActionButton>
+      </AddOrMoveCourseToTermMenu>
+    );
+  }
+
   renderCourse(course: CourseInfo) {
     const {requisite} = this.props;
     const isPrerequisite = requisite.type === RequisiteType.PREREQUISITE;

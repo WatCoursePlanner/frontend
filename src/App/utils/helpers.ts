@@ -18,6 +18,9 @@ export function removeAt<T>(
   arr: Array<T>,
   index: number,
 ): Array<T> {
+  if (index < 0) {
+    return arr;
+  }
   const ret = cloneDeep(arr);
   ret.splice(index, 1);
   return ret;

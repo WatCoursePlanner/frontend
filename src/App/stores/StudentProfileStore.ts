@@ -1,13 +1,16 @@
 import createStudentProfile from "@watcourses/api/StudentProfile/create";
 import {
   CoopStream,
+  CourseInfo,
   CreateStudentProfileRequest,
+  Schedule_TermSchedule,
   StudentProfile,
 } from "@watcourses/proto/courses";
 import { buildProto } from "@watcourses/utils/buildProto";
 import { insertAt, removeAt } from "@watcourses/utils/helpers";
 import { saveStudentProfile } from "@watcourses/utils/LocalStorage";
 import { singletonGetter } from "@watcourses/utils/SingletonGetter";
+import { isEqual } from "lodash";
 import { action, computed, makeAutoObservable, observable, when } from "mobx";
 import {
   fromPromise,
@@ -16,29 +19,55 @@ import {
   PENDING,
 } from "mobx-utils";
 
-interface IAddOrRemoveCourseProps {
+interface IAddOrRemoveCourseProps extends ITermOperationProps {
+  /**
+   * Is the operation adding course to the term (will be deletion if false).
+   */
   isAdd: boolean,
-  termName: string,
+  /**
+   * Index for insertion/deletion.
+   * A negative index on insertion means inserting at the end.
+   * A negative index performs no operation.
+   */
   index: number,
+  /**
+   * Course code of the course to add, optional if removing.
+   */
   code?: string,
 }
 
-export interface IAddCourseProps {
+interface IAddCourseProps {
+  /**
+   * Index for insertion.
+   * A negative index means inserting at the end.
+   */
   index: number,
-  code?: string,
+  /**
+   * Course code of the course to add / delete.
+   */
+  code: string,
 }
 
-export interface IRemoveCourseProps {
+interface IRemoveCourseProps {
+  /**
+   * Index or code of the code to remove.
+   * A negative index performs no operation.
+   */
   indexOrCode: number | string,
 }
 
-export interface IAddCourseToTermProps extends IAddCourseProps {
+interface ITermOperationProps {
+  /**
+   * Term name for the term to operate on.
+   * termName === SHORTLIST_TERM_NAME means to operate on the shortlist.
+   */
   termName: string,
 }
 
-export interface IRemoveCourseFromTermProps {
-  termName: string,
-  index: number,
+interface IAddCourseToTermProps extends IAddCourseProps, ITermOperationProps {
+}
+
+interface IRemoveCourseFromTermProps extends IRemoveCourseProps, ITermOperationProps {
 }
 
 export const SHORTLIST_TERM_NAME = "shortlist";
@@ -57,20 +86,30 @@ export class StudentProfileStore {
   @observable
   private studentProfilePromise?: IPromiseBasedObservable<StudentProfile>;
 
+  @observable
+  workingStudentProfile: StudentProfile =
+    buildProto<StudentProfile>({
+      schedule: {
+        terms: [],
+      },
+      shortList: [],
+    });
+
   @computed
   get isLoading(): boolean {
     return this.studentProfilePromise?.state === PENDING;
   }
 
-  private cachedStudentProfile: StudentProfile =
-    buildProto<StudentProfile>({
-      schedule: {
-        terms: [],
-      },
-    });
+  @computed
+  get isDirty(): boolean {
+    return !isEqual(
+      this.studentProfile?.schedule,
+      this.workingStudentProfile.schedule
+    );
+  }
 
   @computed
-  get studentProfile(): StudentProfile {
+  private get studentProfile(): StudentProfile | undefined {
     return this.studentProfilePromise?.case({
       fulfilled: (response: StudentProfile) => response,
       rejected: () => buildProto<StudentProfile>({
@@ -78,7 +117,7 @@ export class StudentProfileStore {
           terms: [],
         },
       }),
-    }) ?? this.cachedStudentProfile;
+    });
   }
 
   constructor() {
@@ -86,7 +125,10 @@ export class StudentProfileStore {
     when(
       () => this.studentProfilePromise?.state === FULFILLED,
       () => {
-        this.cachedStudentProfile = this.studentProfile;
+        if (!this.studentProfile) {
+          return;
+        }
+        this.workingStudentProfile = this.studentProfile;
         saveStudentProfile(this.studentProfile);
       },
     );
@@ -105,22 +147,31 @@ export class StudentProfileStore {
     return promise;
   };
 
+  @computed
+  get allTerms(): Schedule_TermSchedule[] {
+    return this.studentProfile?.schedule?.terms ?? [];
+  }
+
+  findTermsWithCourse = (code: string) => {
+    return this.allTerms.filter(term => term.courseCodes.includes(code));
+  };
+
   @action
   private addOrRemoveFromTermOrShortlist = ({
     isAdd,
     termName,
     index,
     code,
-  }: IAddOrRemoveCourseProps) => {
-    if (!this.studentProfile.schedule) {
+  }: IAddOrRemoveCourseProps): void => {
+    if (!this.workingStudentProfile.schedule) {
       return;
     }
     const isShortList = termName === SHORTLIST_TERM_NAME;
     const newProfile = buildProto<StudentProfile>({
-      ...this.studentProfile,
-      schedule: isShortList ? this.studentProfile.schedule : {
-        ...this.studentProfile.schedule,
-        terms: this.studentProfile.schedule.terms
+      ...this.workingStudentProfile,
+      schedule: isShortList ? this.workingStudentProfile.schedule : {
+        ...this.workingStudentProfile.schedule,
+        terms: this.workingStudentProfile.schedule.terms
           .map((term) =>
             (term.termName === termName)
               ? {
@@ -132,51 +183,89 @@ export class StudentProfileStore {
               : term,
           ),
       },
+      // TODO shortlist change should do API call immediately
       shortList: isShortList
         ? (
           isAdd
-            ? insertAt(this.studentProfile.shortList, index, code)
-            : removeAt(this.studentProfile.shortList, index)
+            ? insertAt(this.workingStudentProfile.shortList, index, code)
+            : removeAt(this.workingStudentProfile.shortList, index)
         )
-        : this.studentProfile.shortList,
+        : this.workingStudentProfile.shortList,
     });
-    this.cachedStudentProfile = newProfile;
-    this.studentProfilePromise = fromPromise(Promise.resolve(newProfile));
+    this.workingStudentProfile = newProfile;
+    // const promise = Promise.resolve(newProfile);
+    // this.studentProfilePromise = fromPromise(promise);
+    // return promise;
   };
 
-  @action
   addCourseToTerm = ({code, termName, index}: IAddCourseToTermProps) => {
-    this.addOrRemoveFromTermOrShortlist({
+    return this.addOrRemoveFromTermOrShortlist({
       isAdd: true, code, termName, index,
     });
   };
 
-  @action
-  removeCourseFromTerm = ({termName, index}: IRemoveCourseFromTermProps) => {
-    this.addOrRemoveFromTermOrShortlist({
-      isAdd: false, termName, index,
+  removeCourseFromTerm = ({
+    termName,
+    indexOrCode,
+  }: IRemoveCourseFromTermProps) => {
+    return this.addOrRemoveFromTermOrShortlist({
+      isAdd: false,
+      termName,
+      index: typeof indexOrCode === "number"
+        ? indexOrCode
+        : this.allTerms
+        .find(it => it.termName === termName)?.courseCodes
+        .indexOf(indexOrCode) ?? -1,
     });
   };
 
-  @action
+  removeCourseFromSchedule = (code: string) => {
+    return this.allTerms
+      .forEach(term => this.removeCourseFromTerm({
+        termName: term.termName,
+        indexOrCode: code,
+      }));
+  };
+
   addCourseToShortList = ({code, index}: IAddCourseProps) => {
-    this.addOrRemoveFromTermOrShortlist({
+    return this.addOrRemoveFromTermOrShortlist({
       isAdd: true, termName: SHORTLIST_TERM_NAME, code, index,
     });
   };
 
-  @action
   removeCourseFromShortlist = ({indexOrCode}: IRemoveCourseProps) => {
-    this.addOrRemoveFromTermOrShortlist({
+    return this.addOrRemoveFromTermOrShortlist({
       isAdd: false,
       termName: SHORTLIST_TERM_NAME,
       index: typeof indexOrCode === "number"
         ? indexOrCode
-        : this.studentProfile.shortList.findIndex(code => code === indexOrCode),
+        : this.workingStudentProfile.shortList.indexOf(indexOrCode) ?? -1,
     });
   };
 
   isInShortList = (courseCode: string) => {
-    return this.studentProfile.shortList.includes(courseCode);
+    return this.workingStudentProfile.shortList.includes(courseCode);
   };
+
+  moveCourse = (
+    course: CourseInfo,
+    fromTerm: Schedule_TermSchedule,
+    toTerm: Schedule_TermSchedule,
+    index: number = -1,
+  ) => {
+    this.removeCourseFromTerm({
+      termName: fromTerm.termName,
+      indexOrCode: course.code,
+    });
+    this.addCourseToTerm({
+      termName: toTerm.termName,
+      code: course.code,
+      index,
+    });
+  };
+
+  @action
+  save() {
+    // TODO save student profile
+  }
 }

@@ -84,6 +84,7 @@ export class CourseList extends React.Component<ICourseListProps> {
                   key={index}
                   shortListOpen={shortListOpen}
                   scheduleListRef={scheduleListRef}
+                  fromTerm={term}
                   course={
                     courses[code] ??
                     CachedCoursesStore.get().getByCode(code)
