@@ -2,6 +2,7 @@ import { Fade } from "@material-ui/core";
 import { Card, CardProps } from "@rmwc/card";
 import '@rmwc/card/styles';
 import '@rmwc/ripple/styles';
+import { Popper } from "@watcourses/components/Popper/Popper";
 import { CourseInfo } from "@watcourses/proto/courses";
 import { RequisiteHelper } from "@watcourses/utils/RequisiteHelper";
 import { action, makeObservable, observable } from "mobx";
@@ -11,7 +12,6 @@ import { Draggable } from 'react-smooth-dnd';
 import styled from "styled-components";
 
 import { CourseDetail } from "./CourseDetail";
-import { Popper } from "./Popper";
 
 interface IScheduleCourseProps {
   course: CourseInfo | undefined,

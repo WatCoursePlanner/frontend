@@ -15,35 +15,18 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "experimentalDecorators": true,
     "jsx": "react",
+    "rootDirs": ["src"],
     "baseUrl": "./src",
     // Update mappings in config/alias.js as well.
     "paths": {
-      "@watcourses": [
-        "App"
-      ],
-      "@watcourses/*": [
-        "App/*"
-      ]
+      "@watcourses": ["App"],
+      "@watcourses/*": ["App/*"]
     },
-    "useDefineForClassFields": true,
-    "experimentalDecorators": true
   },
   "include": [
     "src/typings/"
-  ],
-  "exclude": [
-    "node_modules",
-    "e2e",
-    "test",
-    "bin",
-    "dist",
-    "build",
-    "static",
-    "config",
-    "public",
-    "scripts",
-    "stories",
-    "is-dev-server-on.js"
   ]
 }
