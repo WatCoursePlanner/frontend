@@ -1,6 +1,7 @@
 /* eslint-disable */
-import { Writer, Reader } from 'protobufjs/minimal';
+import { Writer, Reader } from "protobufjs/minimal";
 
+export const protobufPackage = "com.watcourses.wat_courses.proto";
 
 export interface UserInfo {
   firstName: string;
@@ -15,9 +16,7 @@ export interface LoginOrRegisterResponse {
   userInfo: UserInfo | undefined;
 }
 
-/**
- *  For a new user who uses email+password login: RegisterRequest -> LoginOrRegisterResponse
- */
+/** For a new user who uses email+password login: RegisterRequest -> LoginOrRegisterResponse */
 export interface RegisterRequest {
   firstName: string;
   lastName: string;
@@ -25,17 +24,13 @@ export interface RegisterRequest {
   password: string;
 }
 
-/**
- *  For an existing user who uses email+password login: LoginRequest -> LoginOrRegisterResponse
- */
+/** For an existing user who uses email+password login: LoginRequest -> LoginOrRegisterResponse */
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
-/**
- *  For a new/existing user who uses Google to login: GoogleLoginOrRegisterRequest -> LoginOrRegisterResponse
- */
+/** For a new/existing user who uses Google to login: GoogleLoginOrRegisterRequest -> LoginOrRegisterResponse */
 export interface GoogleLoginOrRegisterRequest {
   token: string;
 }
@@ -51,31 +46,6 @@ const baseUserInfo: object = {
   pictureUrl: "",
 };
 
-const baseLoginOrRegisterResponse: object = {
-  success: false,
-  reason: "",
-};
-
-const baseRegisterRequest: object = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  password: "",
-};
-
-const baseLoginRequest: object = {
-  email: "",
-  password: "",
-};
-
-const baseGoogleLoginOrRegisterRequest: object = {
-  token: "",
-};
-
-const baseSetUserDataRequest: object = {
-  data: "",
-};
-
 export const UserInfo = {
   encode(message: UserInfo, writer: Writer = Writer.create()): Writer {
     writer.uint32(10).string(message.firstName);
@@ -84,7 +54,8 @@ export const UserInfo = {
     writer.uint32(34).string(message.pictureUrl);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): UserInfo {
+
+  decode(input: Reader | Uint8Array, length?: number): UserInfo {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseUserInfo } as UserInfo;
@@ -110,6 +81,7 @@ export const UserInfo = {
     }
     return message;
   },
+
   fromJSON(object: any): UserInfo {
     const message = { ...baseUserInfo } as UserInfo;
     if (object.firstName !== undefined && object.firstName !== null) {
@@ -134,6 +106,7 @@ export const UserInfo = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<UserInfo>): UserInfo {
     const message = { ...baseUserInfo } as UserInfo;
     if (object.firstName !== undefined && object.firstName !== null) {
@@ -158,18 +131,24 @@ export const UserInfo = {
     }
     return message;
   },
+
   toJSON(message: UserInfo): unknown {
     const obj: any = {};
-    obj.firstName = message.firstName || "";
-    obj.lastName = message.lastName || "";
-    obj.email = message.email || "";
-    obj.pictureUrl = message.pictureUrl || "";
+    message.firstName !== undefined && (obj.firstName = message.firstName);
+    message.lastName !== undefined && (obj.lastName = message.lastName);
+    message.email !== undefined && (obj.email = message.email);
+    message.pictureUrl !== undefined && (obj.pictureUrl = message.pictureUrl);
     return obj;
   },
 };
 
+const baseLoginOrRegisterResponse: object = { success: false, reason: "" };
+
 export const LoginOrRegisterResponse = {
-  encode(message: LoginOrRegisterResponse, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: LoginOrRegisterResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
     writer.uint32(8).bool(message.success);
     writer.uint32(18).string(message.reason);
     if (message.userInfo !== undefined && message.userInfo !== undefined) {
@@ -177,10 +156,13 @@ export const LoginOrRegisterResponse = {
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): LoginOrRegisterResponse {
+
+  decode(input: Reader | Uint8Array, length?: number): LoginOrRegisterResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseLoginOrRegisterResponse } as LoginOrRegisterResponse;
+    const message = {
+      ...baseLoginOrRegisterResponse,
+    } as LoginOrRegisterResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -200,8 +182,11 @@ export const LoginOrRegisterResponse = {
     }
     return message;
   },
+
   fromJSON(object: any): LoginOrRegisterResponse {
-    const message = { ...baseLoginOrRegisterResponse } as LoginOrRegisterResponse;
+    const message = {
+      ...baseLoginOrRegisterResponse,
+    } as LoginOrRegisterResponse;
     if (object.success !== undefined && object.success !== null) {
       message.success = Boolean(object.success);
     } else {
@@ -219,8 +204,13 @@ export const LoginOrRegisterResponse = {
     }
     return message;
   },
-  fromPartial(object: DeepPartial<LoginOrRegisterResponse>): LoginOrRegisterResponse {
-    const message = { ...baseLoginOrRegisterResponse } as LoginOrRegisterResponse;
+
+  fromPartial(
+    object: DeepPartial<LoginOrRegisterResponse>
+  ): LoginOrRegisterResponse {
+    const message = {
+      ...baseLoginOrRegisterResponse,
+    } as LoginOrRegisterResponse;
     if (object.success !== undefined && object.success !== null) {
       message.success = object.success;
     } else {
@@ -238,13 +228,24 @@ export const LoginOrRegisterResponse = {
     }
     return message;
   },
+
   toJSON(message: LoginOrRegisterResponse): unknown {
     const obj: any = {};
-    obj.success = message.success || false;
-    obj.reason = message.reason || "";
-    obj.userInfo = message.userInfo ? UserInfo.toJSON(message.userInfo) : undefined;
+    message.success !== undefined && (obj.success = message.success);
+    message.reason !== undefined && (obj.reason = message.reason);
+    message.userInfo !== undefined &&
+      (obj.userInfo = message.userInfo
+        ? UserInfo.toJSON(message.userInfo)
+        : undefined);
     return obj;
   },
+};
+
+const baseRegisterRequest: object = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
 };
 
 export const RegisterRequest = {
@@ -255,7 +256,8 @@ export const RegisterRequest = {
     writer.uint32(34).string(message.password);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): RegisterRequest {
+
+  decode(input: Reader | Uint8Array, length?: number): RegisterRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseRegisterRequest } as RegisterRequest;
@@ -281,6 +283,7 @@ export const RegisterRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): RegisterRequest {
     const message = { ...baseRegisterRequest } as RegisterRequest;
     if (object.firstName !== undefined && object.firstName !== null) {
@@ -305,6 +308,7 @@ export const RegisterRequest = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<RegisterRequest>): RegisterRequest {
     const message = { ...baseRegisterRequest } as RegisterRequest;
     if (object.firstName !== undefined && object.firstName !== null) {
@@ -329,15 +333,18 @@ export const RegisterRequest = {
     }
     return message;
   },
+
   toJSON(message: RegisterRequest): unknown {
     const obj: any = {};
-    obj.firstName = message.firstName || "";
-    obj.lastName = message.lastName || "";
-    obj.email = message.email || "";
-    obj.password = message.password || "";
+    message.firstName !== undefined && (obj.firstName = message.firstName);
+    message.lastName !== undefined && (obj.lastName = message.lastName);
+    message.email !== undefined && (obj.email = message.email);
+    message.password !== undefined && (obj.password = message.password);
     return obj;
   },
 };
+
+const baseLoginRequest: object = { email: "", password: "" };
 
 export const LoginRequest = {
   encode(message: LoginRequest, writer: Writer = Writer.create()): Writer {
@@ -345,7 +352,8 @@ export const LoginRequest = {
     writer.uint32(18).string(message.password);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): LoginRequest {
+
+  decode(input: Reader | Uint8Array, length?: number): LoginRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseLoginRequest } as LoginRequest;
@@ -365,6 +373,7 @@ export const LoginRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): LoginRequest {
     const message = { ...baseLoginRequest } as LoginRequest;
     if (object.email !== undefined && object.email !== null) {
@@ -379,6 +388,7 @@ export const LoginRequest = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<LoginRequest>): LoginRequest {
     const message = { ...baseLoginRequest } as LoginRequest;
     if (object.email !== undefined && object.email !== null) {
@@ -393,23 +403,35 @@ export const LoginRequest = {
     }
     return message;
   },
+
   toJSON(message: LoginRequest): unknown {
     const obj: any = {};
-    obj.email = message.email || "";
-    obj.password = message.password || "";
+    message.email !== undefined && (obj.email = message.email);
+    message.password !== undefined && (obj.password = message.password);
     return obj;
   },
 };
 
+const baseGoogleLoginOrRegisterRequest: object = { token: "" };
+
 export const GoogleLoginOrRegisterRequest = {
-  encode(message: GoogleLoginOrRegisterRequest, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: GoogleLoginOrRegisterRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
     writer.uint32(10).string(message.token);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): GoogleLoginOrRegisterRequest {
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): GoogleLoginOrRegisterRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseGoogleLoginOrRegisterRequest } as GoogleLoginOrRegisterRequest;
+    const message = {
+      ...baseGoogleLoginOrRegisterRequest,
+    } as GoogleLoginOrRegisterRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -423,8 +445,11 @@ export const GoogleLoginOrRegisterRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): GoogleLoginOrRegisterRequest {
-    const message = { ...baseGoogleLoginOrRegisterRequest } as GoogleLoginOrRegisterRequest;
+    const message = {
+      ...baseGoogleLoginOrRegisterRequest,
+    } as GoogleLoginOrRegisterRequest;
     if (object.token !== undefined && object.token !== null) {
       message.token = String(object.token);
     } else {
@@ -432,8 +457,13 @@ export const GoogleLoginOrRegisterRequest = {
     }
     return message;
   },
-  fromPartial(object: DeepPartial<GoogleLoginOrRegisterRequest>): GoogleLoginOrRegisterRequest {
-    const message = { ...baseGoogleLoginOrRegisterRequest } as GoogleLoginOrRegisterRequest;
+
+  fromPartial(
+    object: DeepPartial<GoogleLoginOrRegisterRequest>
+  ): GoogleLoginOrRegisterRequest {
+    const message = {
+      ...baseGoogleLoginOrRegisterRequest,
+    } as GoogleLoginOrRegisterRequest;
     if (object.token !== undefined && object.token !== null) {
       message.token = object.token;
     } else {
@@ -441,19 +471,26 @@ export const GoogleLoginOrRegisterRequest = {
     }
     return message;
   },
+
   toJSON(message: GoogleLoginOrRegisterRequest): unknown {
     const obj: any = {};
-    obj.token = message.token || "";
+    message.token !== undefined && (obj.token = message.token);
     return obj;
   },
 };
 
+const baseSetUserDataRequest: object = { data: "" };
+
 export const SetUserDataRequest = {
-  encode(message: SetUserDataRequest, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: SetUserDataRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
     writer.uint32(10).string(message.data);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): SetUserDataRequest {
+
+  decode(input: Reader | Uint8Array, length?: number): SetUserDataRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseSetUserDataRequest } as SetUserDataRequest;
@@ -470,6 +507,7 @@ export const SetUserDataRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): SetUserDataRequest {
     const message = { ...baseSetUserDataRequest } as SetUserDataRequest;
     if (object.data !== undefined && object.data !== null) {
@@ -479,6 +517,7 @@ export const SetUserDataRequest = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<SetUserDataRequest>): SetUserDataRequest {
     const message = { ...baseSetUserDataRequest } as SetUserDataRequest;
     if (object.data !== undefined && object.data !== null) {
@@ -488,15 +527,16 @@ export const SetUserDataRequest = {
     }
     return message;
   },
+
   toJSON(message: SetUserDataRequest): unknown {
     const obj: any = {};
-    obj.data = message.data || "";
+    message.data !== undefined && (obj.data = message.data);
     return obj;
   },
 };
 
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
-type DeepPartial<T> = T extends Builtin
+export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>

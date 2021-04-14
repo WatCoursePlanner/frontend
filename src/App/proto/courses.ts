@@ -1,6 +1,151 @@
 /* eslint-disable */
-import { Writer, Reader } from 'protobufjs/minimal';
+import { Writer, Reader } from "protobufjs/minimal";
 
+export const protobufPackage = "com.watcourses.wat_courses.proto";
+
+export enum Term {
+  SPRING = 0,
+  WINTER = 1,
+  FALL = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function termFromJSON(object: any): Term {
+  switch (object) {
+    case 0:
+    case "SPRING":
+      return Term.SPRING;
+    case 1:
+    case "WINTER":
+      return Term.WINTER;
+    case 2:
+    case "FALL":
+      return Term.FALL;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Term.UNRECOGNIZED;
+  }
+}
+
+export function termToJSON(object: Term): string {
+  switch (object) {
+    case Term.SPRING:
+      return "SPRING";
+    case Term.WINTER:
+      return "WINTER";
+    case Term.FALL:
+      return "FALL";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+export enum ConditionType {
+  TRUE = 0,
+  FALSE = 1,
+  AND = 2,
+  OR = 3,
+  NOT = 4,
+  HAS_COURSE = 5,
+  HAS_LABEL = 6,
+  SATISFIES_LIST = 7,
+  UNRECOGNIZED = -1,
+}
+
+export function conditionTypeFromJSON(object: any): ConditionType {
+  switch (object) {
+    case 0:
+    case "TRUE":
+      return ConditionType.TRUE;
+    case 1:
+    case "FALSE":
+      return ConditionType.FALSE;
+    case 2:
+    case "AND":
+      return ConditionType.AND;
+    case 3:
+    case "OR":
+      return ConditionType.OR;
+    case 4:
+    case "NOT":
+      return ConditionType.NOT;
+    case 5:
+    case "HAS_COURSE":
+      return ConditionType.HAS_COURSE;
+    case 6:
+    case "HAS_LABEL":
+      return ConditionType.HAS_LABEL;
+    case 7:
+    case "SATISFIES_LIST":
+      return ConditionType.SATISFIES_LIST;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return ConditionType.UNRECOGNIZED;
+  }
+}
+
+export function conditionTypeToJSON(object: ConditionType): string {
+  switch (object) {
+    case ConditionType.TRUE:
+      return "TRUE";
+    case ConditionType.FALSE:
+      return "FALSE";
+    case ConditionType.AND:
+      return "AND";
+    case ConditionType.OR:
+      return "OR";
+    case ConditionType.NOT:
+      return "NOT";
+    case ConditionType.HAS_COURSE:
+      return "HAS_COURSE";
+    case ConditionType.HAS_LABEL:
+      return "HAS_LABEL";
+    case ConditionType.SATISFIES_LIST:
+      return "SATISFIES_LIST";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+export enum CoopStream {
+  NO_COOP = 0,
+  STREAM_4 = 1,
+  STREAM_8 = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function coopStreamFromJSON(object: any): CoopStream {
+  switch (object) {
+    case 0:
+    case "NO_COOP":
+      return CoopStream.NO_COOP;
+    case 1:
+    case "STREAM_4":
+      return CoopStream.STREAM_4;
+    case 2:
+    case "STREAM_8":
+      return CoopStream.STREAM_8;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return CoopStream.UNRECOGNIZED;
+  }
+}
+
+export function coopStreamToJSON(object: CoopStream): string {
+  switch (object) {
+    case CoopStream.NO_COOP:
+      return "NO_COOP";
+    case CoopStream.STREAM_4:
+      return "STREAM_4";
+    case CoopStream.STREAM_8:
+      return "STREAM_8";
+    default:
+      return "UNKNOWN";
+  }
+}
 
 export interface RuleInfo {
   rawString: string;
@@ -48,11 +193,97 @@ export interface Sort {
   order: Sort_Order;
 }
 
+export enum Sort_SortBy {
+  TITLE = 1,
+  CODE = 2,
+  LIKED = 3,
+  EASY = 4,
+  USEFUL = 5,
+  RATINGS_COUNT = 6,
+  UNRECOGNIZED = -1,
+}
+
+export function sort_SortByFromJSON(object: any): Sort_SortBy {
+  switch (object) {
+    case 1:
+    case "TITLE":
+      return Sort_SortBy.TITLE;
+    case 2:
+    case "CODE":
+      return Sort_SortBy.CODE;
+    case 3:
+    case "LIKED":
+      return Sort_SortBy.LIKED;
+    case 4:
+    case "EASY":
+      return Sort_SortBy.EASY;
+    case 5:
+    case "USEFUL":
+      return Sort_SortBy.USEFUL;
+    case 6:
+    case "RATINGS_COUNT":
+      return Sort_SortBy.RATINGS_COUNT;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Sort_SortBy.UNRECOGNIZED;
+  }
+}
+
+export function sort_SortByToJSON(object: Sort_SortBy): string {
+  switch (object) {
+    case Sort_SortBy.TITLE:
+      return "TITLE";
+    case Sort_SortBy.CODE:
+      return "CODE";
+    case Sort_SortBy.LIKED:
+      return "LIKED";
+    case Sort_SortBy.EASY:
+      return "EASY";
+    case Sort_SortBy.USEFUL:
+      return "USEFUL";
+    case Sort_SortBy.RATINGS_COUNT:
+      return "RATINGS_COUNT";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+export enum Sort_Order {
+  ASC = 1,
+  DESC = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function sort_OrderFromJSON(object: any): Sort_Order {
+  switch (object) {
+    case 1:
+    case "ASC":
+      return Sort_Order.ASC;
+    case 2:
+    case "DESC":
+      return Sort_Order.DESC;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Sort_Order.UNRECOGNIZED;
+  }
+}
+
+export function sort_OrderToJSON(object: Sort_Order): string {
+  switch (object) {
+    case Sort_Order.ASC:
+      return "ASC";
+    case Sort_Order.DESC:
+      return "DESC";
+    default:
+      return "UNKNOWN";
+  }
+}
+
 export interface SearchCourseRequest {
   pagination: PaginationInfoRequest | undefined;
-  /**
-   *  if true, do not return requisite info
-   */
+  /** if true, do not return requisite info */
   basicInfoOnly: boolean;
   searchQuery: string;
   sort: Sort | undefined;
@@ -69,17 +300,11 @@ export interface Schedule {
 
 export interface Schedule_TermSchedule {
   courseCodes: string[];
-  /**
-   *  e.g. 1A, 2B
-   */
+  /** e.g. 1A, 2B */
   termName: string;
-  /**
-   *  e.g. 2020
-   */
+  /** e.g. 2020 */
   year: number;
-  /**
-   *  e.g. Spring
-   */
+  /** e.g. Spring */
   term: Term;
 }
 
@@ -88,14 +313,13 @@ export interface StudentProfile {
   labels: string[];
   degrees: string[];
   shortList: string[];
+  ownerEmail: string;
 }
 
 export interface CreateStudentProfileRequest {
   degrees: string[];
   startingYear: number;
-  /**
-   *  not used for now.
-   */
+  /** not used for now. */
   coopStream: CoopStream;
   schedule: Schedule | undefined;
 }
@@ -107,26 +331,64 @@ export interface CheckResults {
 
 export interface CheckResults_Issue {
   type: CheckResults_Issue_Type;
-  /**
-   *  Either the code of the course or the name of the cond
-   */
+  /** Either the code of the course or the name of the cond */
   subjectName: string;
-  /**
-   *  Condition that failed in the check (string, logical expression).
-   */
+  /** Condition that failed in the check (string, logical expression). */
   relatedCond: string;
-  /**
-   *  The raw condition, if applicable
-   */
+  /** The raw condition, if applicable */
   relatedCondRaw: string;
-  /**
-   *  courses in the cond.
-   */
+  /** courses in the cond. */
   relatedCourse: string[];
-  /**
-   *  course list in the cond.
-   */
+  /** course list in the cond. */
   relatedCourseList: string[];
+}
+
+export enum CheckResults_Issue_Type {
+  PRE_REQUISITE_NOT_MET = 1,
+  CO_REQUISITE_NOT_MET = 2,
+  ANTI_REQUISITE_NOT_MET = 3,
+  DEGREE_REQUIREMENTS_NOT_MET = 4,
+  UNRECOGNIZED = -1,
+}
+
+export function checkResults_Issue_TypeFromJSON(
+  object: any
+): CheckResults_Issue_Type {
+  switch (object) {
+    case 1:
+    case "PRE_REQUISITE_NOT_MET":
+      return CheckResults_Issue_Type.PRE_REQUISITE_NOT_MET;
+    case 2:
+    case "CO_REQUISITE_NOT_MET":
+      return CheckResults_Issue_Type.CO_REQUISITE_NOT_MET;
+    case 3:
+    case "ANTI_REQUISITE_NOT_MET":
+      return CheckResults_Issue_Type.ANTI_REQUISITE_NOT_MET;
+    case 4:
+    case "DEGREE_REQUIREMENTS_NOT_MET":
+      return CheckResults_Issue_Type.DEGREE_REQUIREMENTS_NOT_MET;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return CheckResults_Issue_Type.UNRECOGNIZED;
+  }
+}
+
+export function checkResults_Issue_TypeToJSON(
+  object: CheckResults_Issue_Type
+): string {
+  switch (object) {
+    case CheckResults_Issue_Type.PRE_REQUISITE_NOT_MET:
+      return "PRE_REQUISITE_NOT_MET";
+    case CheckResults_Issue_Type.CO_REQUISITE_NOT_MET:
+      return "CO_REQUISITE_NOT_MET";
+    case CheckResults_Issue_Type.ANTI_REQUISITE_NOT_MET:
+      return "ANTI_REQUISITE_NOT_MET";
+    case CheckResults_Issue_Type.DEGREE_REQUIREMENTS_NOT_MET:
+      return "DEGREE_REQUIREMENTS_NOT_MET";
+    default:
+      return "UNKNOWN";
+  }
 }
 
 export interface FindSlotRequest {
@@ -135,9 +397,7 @@ export interface FindSlotRequest {
 }
 
 export interface FindSlotResponse {
-  /**
-   *  The term name and check results of the corresponding slot
-   */
+  /** The term name and check results of the corresponding slot */
   slot: { [key: string]: CheckResults };
 }
 
@@ -167,360 +427,6 @@ const baseRuleInfo: object = {
   json: "",
 };
 
-const baseCourseInfo: object = {
-  name: "",
-  code: "",
-  description: "",
-  faculty: "",
-  offeringTerms: 0,
-  id: "",
-  liked: 0,
-  useful: 0,
-  easy: 0,
-  commentsCount: 0,
-  ratingsCount: 0,
-};
-
-const baseCourseList: object = {
-  name: "",
-  courses: "",
-};
-
-const basePaginationInfoRequest: object = {
-  zeroBasedPage: 0,
-  limit: 0,
-};
-
-const basePaginationInfoResponse: object = {
-  totalPages: 0,
-  currentPage: 0,
-  limit: 0,
-  totalResults: 0,
-};
-
-const baseSort: object = {
-  sortBy: 1,
-  order: 1,
-};
-
-const baseSearchCourseRequest: object = {
-  basicInfoOnly: false,
-  searchQuery: "",
-};
-
-const baseSearchCourseResponse: object = {
-};
-
-const baseSchedule: object = {
-};
-
-const baseSchedule_TermSchedule: object = {
-  courseCodes: "",
-  termName: "",
-  year: 0,
-  term: 0,
-};
-
-const baseStudentProfile: object = {
-  labels: "",
-  degrees: "",
-  shortList: "",
-};
-
-const baseCreateStudentProfileRequest: object = {
-  degrees: "",
-  startingYear: 0,
-  coopStream: 0,
-};
-
-const baseCheckResults: object = {
-};
-
-const baseCheckResults_Issue: object = {
-  type: 1,
-  subjectName: "",
-  relatedCond: "",
-  relatedCondRaw: "",
-  relatedCourse: "",
-  relatedCourseList: "",
-};
-
-const baseFindSlotRequest: object = {
-  courseCode: "",
-};
-
-const baseFindSlotResponse: object = {
-};
-
-const baseFindSlotResponse_SlotEntry: object = {
-  key: "",
-};
-
-const baseBatchGetCourseRequest: object = {
-  courseCodes: "",
-};
-
-const baseBatchGetCourseResponse: object = {
-};
-
-const baseEventRequest: object = {
-  type: "",
-  subject: "",
-  data: "",
-};
-
-export const Term = {
-  SPRING: 0 as const,
-  WINTER: 1 as const,
-  FALL: 2 as const,
-  UNRECOGNIZED: -1 as const,
-  fromJSON(object: any): Term {
-    switch (object) {
-      case 0:
-      case "SPRING":
-        return Term.SPRING;
-      case 1:
-      case "WINTER":
-        return Term.WINTER;
-      case 2:
-      case "FALL":
-        return Term.FALL;
-      case -1:
-      case "UNRECOGNIZED":
-      default:
-        return Term.UNRECOGNIZED;
-    }
-  },
-  toJSON(object: Term): string {
-    switch (object) {
-      case Term.SPRING:
-        return "SPRING";
-      case Term.WINTER:
-        return "WINTER";
-      case Term.FALL:
-        return "FALL";
-      default:
-        return "UNKNOWN";
-    }
-  },
-}
-
-export type Term = 0 | 1 | 2 | -1;
-
-export const ConditionType = {
-  TRUE: 0 as const,
-  FALSE: 1 as const,
-  AND: 2 as const,
-  OR: 3 as const,
-  NOT: 4 as const,
-  HAS_COURSE: 5 as const,
-  HAS_LABEL: 6 as const,
-  SATISFIES_LIST: 7 as const,
-  UNRECOGNIZED: -1 as const,
-  fromJSON(object: any): ConditionType {
-    switch (object) {
-      case 0:
-      case "TRUE":
-        return ConditionType.TRUE;
-      case 1:
-      case "FALSE":
-        return ConditionType.FALSE;
-      case 2:
-      case "AND":
-        return ConditionType.AND;
-      case 3:
-      case "OR":
-        return ConditionType.OR;
-      case 4:
-      case "NOT":
-        return ConditionType.NOT;
-      case 5:
-      case "HAS_COURSE":
-        return ConditionType.HAS_COURSE;
-      case 6:
-      case "HAS_LABEL":
-        return ConditionType.HAS_LABEL;
-      case 7:
-      case "SATISFIES_LIST":
-        return ConditionType.SATISFIES_LIST;
-      case -1:
-      case "UNRECOGNIZED":
-      default:
-        return ConditionType.UNRECOGNIZED;
-    }
-  },
-  toJSON(object: ConditionType): string {
-    switch (object) {
-      case ConditionType.TRUE:
-        return "TRUE";
-      case ConditionType.FALSE:
-        return "FALSE";
-      case ConditionType.AND:
-        return "AND";
-      case ConditionType.OR:
-        return "OR";
-      case ConditionType.NOT:
-        return "NOT";
-      case ConditionType.HAS_COURSE:
-        return "HAS_COURSE";
-      case ConditionType.HAS_LABEL:
-        return "HAS_LABEL";
-      case ConditionType.SATISFIES_LIST:
-        return "SATISFIES_LIST";
-      default:
-        return "UNKNOWN";
-    }
-  },
-}
-
-export type ConditionType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | -1;
-
-export const CoopStream = {
-  NO_COOP: 0 as const,
-  STREAM_4: 1 as const,
-  STREAM_8: 2 as const,
-  UNRECOGNIZED: -1 as const,
-  fromJSON(object: any): CoopStream {
-    switch (object) {
-      case 0:
-      case "NO_COOP":
-        return CoopStream.NO_COOP;
-      case 1:
-      case "STREAM_4":
-        return CoopStream.STREAM_4;
-      case 2:
-      case "STREAM_8":
-        return CoopStream.STREAM_8;
-      case -1:
-      case "UNRECOGNIZED":
-      default:
-        return CoopStream.UNRECOGNIZED;
-    }
-  },
-  toJSON(object: CoopStream): string {
-    switch (object) {
-      case CoopStream.NO_COOP:
-        return "NO_COOP";
-      case CoopStream.STREAM_4:
-        return "STREAM_4";
-      case CoopStream.STREAM_8:
-        return "STREAM_8";
-      default:
-        return "UNKNOWN";
-    }
-  },
-}
-
-export type CoopStream = 0 | 1 | 2 | -1;
-
-export const Sort_SortBy = {
-  TITLE: 1 as const,
-  CODE: 2 as const,
-  UNRECOGNIZED: -1 as const,
-  fromJSON(object: any): Sort_SortBy {
-    switch (object) {
-      case 1:
-      case "TITLE":
-        return Sort_SortBy.TITLE;
-      case 2:
-      case "CODE":
-        return Sort_SortBy.CODE;
-      case -1:
-      case "UNRECOGNIZED":
-      default:
-        return Sort_SortBy.UNRECOGNIZED;
-    }
-  },
-  toJSON(object: Sort_SortBy): string {
-    switch (object) {
-      case Sort_SortBy.TITLE:
-        return "TITLE";
-      case Sort_SortBy.CODE:
-        return "CODE";
-      default:
-        return "UNKNOWN";
-    }
-  },
-}
-
-export type Sort_SortBy = 1 | 2 | -1;
-
-export const Sort_Order = {
-  ASC: 1 as const,
-  DESC: 2 as const,
-  UNRECOGNIZED: -1 as const,
-  fromJSON(object: any): Sort_Order {
-    switch (object) {
-      case 1:
-      case "ASC":
-        return Sort_Order.ASC;
-      case 2:
-      case "DESC":
-        return Sort_Order.DESC;
-      case -1:
-      case "UNRECOGNIZED":
-      default:
-        return Sort_Order.UNRECOGNIZED;
-    }
-  },
-  toJSON(object: Sort_Order): string {
-    switch (object) {
-      case Sort_Order.ASC:
-        return "ASC";
-      case Sort_Order.DESC:
-        return "DESC";
-      default:
-        return "UNKNOWN";
-    }
-  },
-}
-
-export type Sort_Order = 1 | 2 | -1;
-
-export const CheckResults_Issue_Type = {
-  PRE_REQUISITE_NOT_MET: 1 as const,
-  CO_REQUISITE_NOT_MET: 2 as const,
-  ANTI_REQUISITE_NOT_MET: 3 as const,
-  DEGREE_REQUIREMENTS_NOT_MET: 4 as const,
-  UNRECOGNIZED: -1 as const,
-  fromJSON(object: any): CheckResults_Issue_Type {
-    switch (object) {
-      case 1:
-      case "PRE_REQUISITE_NOT_MET":
-        return CheckResults_Issue_Type.PRE_REQUISITE_NOT_MET;
-      case 2:
-      case "CO_REQUISITE_NOT_MET":
-        return CheckResults_Issue_Type.CO_REQUISITE_NOT_MET;
-      case 3:
-      case "ANTI_REQUISITE_NOT_MET":
-        return CheckResults_Issue_Type.ANTI_REQUISITE_NOT_MET;
-      case 4:
-      case "DEGREE_REQUIREMENTS_NOT_MET":
-        return CheckResults_Issue_Type.DEGREE_REQUIREMENTS_NOT_MET;
-      case -1:
-      case "UNRECOGNIZED":
-      default:
-        return CheckResults_Issue_Type.UNRECOGNIZED;
-    }
-  },
-  toJSON(object: CheckResults_Issue_Type): string {
-    switch (object) {
-      case CheckResults_Issue_Type.PRE_REQUISITE_NOT_MET:
-        return "PRE_REQUISITE_NOT_MET";
-      case CheckResults_Issue_Type.CO_REQUISITE_NOT_MET:
-        return "CO_REQUISITE_NOT_MET";
-      case CheckResults_Issue_Type.ANTI_REQUISITE_NOT_MET:
-        return "ANTI_REQUISITE_NOT_MET";
-      case CheckResults_Issue_Type.DEGREE_REQUIREMENTS_NOT_MET:
-        return "DEGREE_REQUIREMENTS_NOT_MET";
-      default:
-        return "UNKNOWN";
-    }
-  },
-}
-
-export type CheckResults_Issue_Type = 1 | 2 | 3 | 4 | -1;
-
 export const RuleInfo = {
   encode(message: RuleInfo, writer: Writer = Writer.create()): Writer {
     writer.uint32(10).string(message.rawString);
@@ -529,7 +435,8 @@ export const RuleInfo = {
     writer.uint32(34).string(message.json);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): RuleInfo {
+
+  decode(input: Reader | Uint8Array, length?: number): RuleInfo {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseRuleInfo } as RuleInfo;
@@ -555,6 +462,7 @@ export const RuleInfo = {
     }
     return message;
   },
+
   fromJSON(object: any): RuleInfo {
     const message = { ...baseRuleInfo } as RuleInfo;
     if (object.rawString !== undefined && object.rawString !== null) {
@@ -579,6 +487,7 @@ export const RuleInfo = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<RuleInfo>): RuleInfo {
     const message = { ...baseRuleInfo } as RuleInfo;
     if (object.rawString !== undefined && object.rawString !== null) {
@@ -603,14 +512,31 @@ export const RuleInfo = {
     }
     return message;
   },
+
   toJSON(message: RuleInfo): unknown {
     const obj: any = {};
-    obj.rawString = message.rawString || "";
-    obj.logicString = message.logicString || "";
-    obj.fullyResolved = message.fullyResolved || false;
-    obj.json = message.json || "";
+    message.rawString !== undefined && (obj.rawString = message.rawString);
+    message.logicString !== undefined &&
+      (obj.logicString = message.logicString);
+    message.fullyResolved !== undefined &&
+      (obj.fullyResolved = message.fullyResolved);
+    message.json !== undefined && (obj.json = message.json);
     return obj;
   },
+};
+
+const baseCourseInfo: object = {
+  name: "",
+  code: "",
+  description: "",
+  faculty: "",
+  offeringTerms: 0,
+  id: "",
+  liked: 0,
+  useful: 0,
+  easy: 0,
+  commentsCount: 0,
+  ratingsCount: 0,
 };
 
 export const CourseInfo = {
@@ -625,13 +551,22 @@ export const CourseInfo = {
     }
     writer.ldelim();
     writer.uint32(50).string(message.id);
-    if (message.preRequisite !== undefined && message.preRequisite !== undefined) {
+    if (
+      message.preRequisite !== undefined &&
+      message.preRequisite !== undefined
+    ) {
       RuleInfo.encode(message.preRequisite, writer.uint32(58).fork()).ldelim();
     }
-    if (message.coRequisite !== undefined && message.coRequisite !== undefined) {
+    if (
+      message.coRequisite !== undefined &&
+      message.coRequisite !== undefined
+    ) {
       RuleInfo.encode(message.coRequisite, writer.uint32(66).fork()).ldelim();
     }
-    if (message.antiRequisite !== undefined && message.antiRequisite !== undefined) {
+    if (
+      message.antiRequisite !== undefined &&
+      message.antiRequisite !== undefined
+    ) {
       RuleInfo.encode(message.antiRequisite, writer.uint32(74).fork()).ldelim();
     }
     writer.uint32(81).double(message.liked);
@@ -641,7 +576,8 @@ export const CourseInfo = {
     writer.uint32(112).int32(message.ratingsCount);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): CourseInfo {
+
+  decode(input: Reader | Uint8Array, length?: number): CourseInfo {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseCourseInfo } as CourseInfo;
@@ -705,6 +641,7 @@ export const CourseInfo = {
     }
     return message;
   },
+
   fromJSON(object: any): CourseInfo {
     const message = { ...baseCourseInfo } as CourseInfo;
     message.offeringTerms = [];
@@ -730,7 +667,7 @@ export const CourseInfo = {
     }
     if (object.offeringTerms !== undefined && object.offeringTerms !== null) {
       for (const e of object.offeringTerms) {
-        message.offeringTerms.push(Term.fromJSON(e));
+        message.offeringTerms.push(termFromJSON(e));
       }
     }
     if (object.id !== undefined && object.id !== null) {
@@ -780,6 +717,7 @@ export const CourseInfo = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<CourseInfo>): CourseInfo {
     const message = { ...baseCourseInfo } as CourseInfo;
     message.offeringTerms = [];
@@ -855,29 +793,44 @@ export const CourseInfo = {
     }
     return message;
   },
+
   toJSON(message: CourseInfo): unknown {
     const obj: any = {};
-    obj.name = message.name || "";
-    obj.code = message.code || "";
-    obj.description = message.description || "";
-    obj.faculty = message.faculty || "";
+    message.name !== undefined && (obj.name = message.name);
+    message.code !== undefined && (obj.code = message.code);
+    message.description !== undefined &&
+      (obj.description = message.description);
+    message.faculty !== undefined && (obj.faculty = message.faculty);
     if (message.offeringTerms) {
-      obj.offeringTerms = message.offeringTerms.map(e => Term.toJSON(e));
+      obj.offeringTerms = message.offeringTerms.map((e) => termToJSON(e));
     } else {
       obj.offeringTerms = [];
     }
-    obj.id = message.id || "";
-    obj.preRequisite = message.preRequisite ? RuleInfo.toJSON(message.preRequisite) : undefined;
-    obj.coRequisite = message.coRequisite ? RuleInfo.toJSON(message.coRequisite) : undefined;
-    obj.antiRequisite = message.antiRequisite ? RuleInfo.toJSON(message.antiRequisite) : undefined;
-    obj.liked = message.liked || 0;
-    obj.useful = message.useful || 0;
-    obj.easy = message.easy || 0;
-    obj.commentsCount = message.commentsCount || 0;
-    obj.ratingsCount = message.ratingsCount || 0;
+    message.id !== undefined && (obj.id = message.id);
+    message.preRequisite !== undefined &&
+      (obj.preRequisite = message.preRequisite
+        ? RuleInfo.toJSON(message.preRequisite)
+        : undefined);
+    message.coRequisite !== undefined &&
+      (obj.coRequisite = message.coRequisite
+        ? RuleInfo.toJSON(message.coRequisite)
+        : undefined);
+    message.antiRequisite !== undefined &&
+      (obj.antiRequisite = message.antiRequisite
+        ? RuleInfo.toJSON(message.antiRequisite)
+        : undefined);
+    message.liked !== undefined && (obj.liked = message.liked);
+    message.useful !== undefined && (obj.useful = message.useful);
+    message.easy !== undefined && (obj.easy = message.easy);
+    message.commentsCount !== undefined &&
+      (obj.commentsCount = message.commentsCount);
+    message.ratingsCount !== undefined &&
+      (obj.ratingsCount = message.ratingsCount);
     return obj;
   },
 };
+
+const baseCourseList: object = { name: "", courses: "" };
 
 export const CourseList = {
   encode(message: CourseList, writer: Writer = Writer.create()): Writer {
@@ -887,7 +840,8 @@ export const CourseList = {
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): CourseList {
+
+  decode(input: Reader | Uint8Array, length?: number): CourseList {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseCourseList } as CourseList;
@@ -908,6 +862,7 @@ export const CourseList = {
     }
     return message;
   },
+
   fromJSON(object: any): CourseList {
     const message = { ...baseCourseList } as CourseList;
     message.courses = [];
@@ -923,6 +878,7 @@ export const CourseList = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<CourseList>): CourseList {
     const message = { ...baseCourseList } as CourseList;
     message.courses = [];
@@ -938,11 +894,12 @@ export const CourseList = {
     }
     return message;
   },
+
   toJSON(message: CourseList): unknown {
     const obj: any = {};
-    obj.name = message.name || "";
+    message.name !== undefined && (obj.name = message.name);
     if (message.courses) {
-      obj.courses = message.courses.map(e => e || "");
+      obj.courses = message.courses.map((e) => e);
     } else {
       obj.courses = [];
     }
@@ -950,13 +907,19 @@ export const CourseList = {
   },
 };
 
+const basePaginationInfoRequest: object = { zeroBasedPage: 0, limit: 0 };
+
 export const PaginationInfoRequest = {
-  encode(message: PaginationInfoRequest, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: PaginationInfoRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
     writer.uint32(8).int32(message.zeroBasedPage);
     writer.uint32(16).int32(message.limit);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): PaginationInfoRequest {
+
+  decode(input: Reader | Uint8Array, length?: number): PaginationInfoRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePaginationInfoRequest } as PaginationInfoRequest;
@@ -976,6 +939,7 @@ export const PaginationInfoRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): PaginationInfoRequest {
     const message = { ...basePaginationInfoRequest } as PaginationInfoRequest;
     if (object.zeroBasedPage !== undefined && object.zeroBasedPage !== null) {
@@ -990,7 +954,10 @@ export const PaginationInfoRequest = {
     }
     return message;
   },
-  fromPartial(object: DeepPartial<PaginationInfoRequest>): PaginationInfoRequest {
+
+  fromPartial(
+    object: DeepPartial<PaginationInfoRequest>
+  ): PaginationInfoRequest {
     const message = { ...basePaginationInfoRequest } as PaginationInfoRequest;
     if (object.zeroBasedPage !== undefined && object.zeroBasedPage !== null) {
       message.zeroBasedPage = object.zeroBasedPage;
@@ -1004,23 +971,36 @@ export const PaginationInfoRequest = {
     }
     return message;
   },
+
   toJSON(message: PaginationInfoRequest): unknown {
     const obj: any = {};
-    obj.zeroBasedPage = message.zeroBasedPage || 0;
-    obj.limit = message.limit || 0;
+    message.zeroBasedPage !== undefined &&
+      (obj.zeroBasedPage = message.zeroBasedPage);
+    message.limit !== undefined && (obj.limit = message.limit);
     return obj;
   },
 };
 
+const basePaginationInfoResponse: object = {
+  totalPages: 0,
+  currentPage: 0,
+  limit: 0,
+  totalResults: 0,
+};
+
 export const PaginationInfoResponse = {
-  encode(message: PaginationInfoResponse, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: PaginationInfoResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
     writer.uint32(8).int32(message.totalPages);
     writer.uint32(16).int32(message.currentPage);
     writer.uint32(24).int32(message.limit);
     writer.uint32(32).int32(message.totalResults);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): PaginationInfoResponse {
+
+  decode(input: Reader | Uint8Array, length?: number): PaginationInfoResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePaginationInfoResponse } as PaginationInfoResponse;
@@ -1046,6 +1026,7 @@ export const PaginationInfoResponse = {
     }
     return message;
   },
+
   fromJSON(object: any): PaginationInfoResponse {
     const message = { ...basePaginationInfoResponse } as PaginationInfoResponse;
     if (object.totalPages !== undefined && object.totalPages !== null) {
@@ -1070,7 +1051,10 @@ export const PaginationInfoResponse = {
     }
     return message;
   },
-  fromPartial(object: DeepPartial<PaginationInfoResponse>): PaginationInfoResponse {
+
+  fromPartial(
+    object: DeepPartial<PaginationInfoResponse>
+  ): PaginationInfoResponse {
     const message = { ...basePaginationInfoResponse } as PaginationInfoResponse;
     if (object.totalPages !== undefined && object.totalPages !== null) {
       message.totalPages = object.totalPages;
@@ -1094,15 +1078,20 @@ export const PaginationInfoResponse = {
     }
     return message;
   },
+
   toJSON(message: PaginationInfoResponse): unknown {
     const obj: any = {};
-    obj.totalPages = message.totalPages || 0;
-    obj.currentPage = message.currentPage || 0;
-    obj.limit = message.limit || 0;
-    obj.totalResults = message.totalResults || 0;
+    message.totalPages !== undefined && (obj.totalPages = message.totalPages);
+    message.currentPage !== undefined &&
+      (obj.currentPage = message.currentPage);
+    message.limit !== undefined && (obj.limit = message.limit);
+    message.totalResults !== undefined &&
+      (obj.totalResults = message.totalResults);
     return obj;
   },
 };
+
+const baseSort: object = { sortBy: 1, order: 1 };
 
 export const Sort = {
   encode(message: Sort, writer: Writer = Writer.create()): Writer {
@@ -1110,7 +1099,8 @@ export const Sort = {
     writer.uint32(16).int32(message.order);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): Sort {
+
+  decode(input: Reader | Uint8Array, length?: number): Sort {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseSort } as Sort;
@@ -1130,20 +1120,22 @@ export const Sort = {
     }
     return message;
   },
+
   fromJSON(object: any): Sort {
     const message = { ...baseSort } as Sort;
     if (object.sortBy !== undefined && object.sortBy !== null) {
-      message.sortBy = Sort_SortBy.fromJSON(object.sortBy);
+      message.sortBy = sort_SortByFromJSON(object.sortBy);
     } else {
       message.sortBy = 1;
     }
     if (object.order !== undefined && object.order !== null) {
-      message.order = Sort_Order.fromJSON(object.order);
+      message.order = sort_OrderFromJSON(object.order);
     } else {
       message.order = 1;
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<Sort>): Sort {
     const message = { ...baseSort } as Sort;
     if (object.sortBy !== undefined && object.sortBy !== null) {
@@ -1158,18 +1150,32 @@ export const Sort = {
     }
     return message;
   },
+
   toJSON(message: Sort): unknown {
     const obj: any = {};
-    obj.sortBy = Sort_SortBy.toJSON(message.sortBy);
-    obj.order = Sort_Order.toJSON(message.order);
+    message.sortBy !== undefined &&
+      (obj.sortBy = sort_SortByToJSON(message.sortBy));
+    message.order !== undefined &&
+      (obj.order = sort_OrderToJSON(message.order));
     return obj;
   },
 };
 
+const baseSearchCourseRequest: object = {
+  basicInfoOnly: false,
+  searchQuery: "",
+};
+
 export const SearchCourseRequest = {
-  encode(message: SearchCourseRequest, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: SearchCourseRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
     if (message.pagination !== undefined && message.pagination !== undefined) {
-      PaginationInfoRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+      PaginationInfoRequest.encode(
+        message.pagination,
+        writer.uint32(10).fork()
+      ).ldelim();
     }
     writer.uint32(16).bool(message.basicInfoOnly);
     writer.uint32(26).string(message.searchQuery);
@@ -1178,7 +1184,8 @@ export const SearchCourseRequest = {
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): SearchCourseRequest {
+
+  decode(input: Reader | Uint8Array, length?: number): SearchCourseRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseSearchCourseRequest } as SearchCourseRequest;
@@ -1186,7 +1193,10 @@ export const SearchCourseRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.pagination = PaginationInfoRequest.decode(reader, reader.uint32());
+          message.pagination = PaginationInfoRequest.decode(
+            reader,
+            reader.uint32()
+          );
           break;
         case 2:
           message.basicInfoOnly = reader.bool();
@@ -1204,6 +1214,7 @@ export const SearchCourseRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): SearchCourseRequest {
     const message = { ...baseSearchCourseRequest } as SearchCourseRequest;
     if (object.pagination !== undefined && object.pagination !== null) {
@@ -1228,6 +1239,7 @@ export const SearchCourseRequest = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<SearchCourseRequest>): SearchCourseRequest {
     const message = { ...baseSearchCourseRequest } as SearchCourseRequest;
     if (object.pagination !== undefined && object.pagination !== null) {
@@ -1252,27 +1264,43 @@ export const SearchCourseRequest = {
     }
     return message;
   },
+
   toJSON(message: SearchCourseRequest): unknown {
     const obj: any = {};
-    obj.pagination = message.pagination ? PaginationInfoRequest.toJSON(message.pagination) : undefined;
-    obj.basicInfoOnly = message.basicInfoOnly || false;
-    obj.searchQuery = message.searchQuery || "";
-    obj.sort = message.sort ? Sort.toJSON(message.sort) : undefined;
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PaginationInfoRequest.toJSON(message.pagination)
+        : undefined);
+    message.basicInfoOnly !== undefined &&
+      (obj.basicInfoOnly = message.basicInfoOnly);
+    message.searchQuery !== undefined &&
+      (obj.searchQuery = message.searchQuery);
+    message.sort !== undefined &&
+      (obj.sort = message.sort ? Sort.toJSON(message.sort) : undefined);
     return obj;
   },
 };
 
+const baseSearchCourseResponse: object = {};
+
 export const SearchCourseResponse = {
-  encode(message: SearchCourseResponse, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: SearchCourseResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
     if (message.pagination !== undefined && message.pagination !== undefined) {
-      PaginationInfoResponse.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+      PaginationInfoResponse.encode(
+        message.pagination,
+        writer.uint32(10).fork()
+      ).ldelim();
     }
     for (const v of message.results) {
       CourseInfo.encode(v!, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): SearchCourseResponse {
+
+  decode(input: Reader | Uint8Array, length?: number): SearchCourseResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseSearchCourseResponse } as SearchCourseResponse;
@@ -1281,7 +1309,10 @@ export const SearchCourseResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.pagination = PaginationInfoResponse.decode(reader, reader.uint32());
+          message.pagination = PaginationInfoResponse.decode(
+            reader,
+            reader.uint32()
+          );
           break;
         case 2:
           message.results.push(CourseInfo.decode(reader, reader.uint32()));
@@ -1293,6 +1324,7 @@ export const SearchCourseResponse = {
     }
     return message;
   },
+
   fromJSON(object: any): SearchCourseResponse {
     const message = { ...baseSearchCourseResponse } as SearchCourseResponse;
     message.results = [];
@@ -1308,11 +1340,14 @@ export const SearchCourseResponse = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<SearchCourseResponse>): SearchCourseResponse {
     const message = { ...baseSearchCourseResponse } as SearchCourseResponse;
     message.results = [];
     if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PaginationInfoResponse.fromPartial(object.pagination);
+      message.pagination = PaginationInfoResponse.fromPartial(
+        object.pagination
+      );
     } else {
       message.pagination = undefined;
     }
@@ -1323,17 +1358,25 @@ export const SearchCourseResponse = {
     }
     return message;
   },
+
   toJSON(message: SearchCourseResponse): unknown {
     const obj: any = {};
-    obj.pagination = message.pagination ? PaginationInfoResponse.toJSON(message.pagination) : undefined;
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PaginationInfoResponse.toJSON(message.pagination)
+        : undefined);
     if (message.results) {
-      obj.results = message.results.map(e => e ? CourseInfo.toJSON(e) : undefined);
+      obj.results = message.results.map((e) =>
+        e ? CourseInfo.toJSON(e) : undefined
+      );
     } else {
       obj.results = [];
     }
     return obj;
   },
 };
+
+const baseSchedule: object = {};
 
 export const Schedule = {
   encode(message: Schedule, writer: Writer = Writer.create()): Writer {
@@ -1342,7 +1385,8 @@ export const Schedule = {
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): Schedule {
+
+  decode(input: Reader | Uint8Array, length?: number): Schedule {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseSchedule } as Schedule;
@@ -1351,7 +1395,9 @@ export const Schedule = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.terms.push(Schedule_TermSchedule.decode(reader, reader.uint32()));
+          message.terms.push(
+            Schedule_TermSchedule.decode(reader, reader.uint32())
+          );
           break;
         default:
           reader.skipType(tag & 7);
@@ -1360,6 +1406,7 @@ export const Schedule = {
     }
     return message;
   },
+
   fromJSON(object: any): Schedule {
     const message = { ...baseSchedule } as Schedule;
     message.terms = [];
@@ -1370,6 +1417,7 @@ export const Schedule = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<Schedule>): Schedule {
     const message = { ...baseSchedule } as Schedule;
     message.terms = [];
@@ -1380,10 +1428,13 @@ export const Schedule = {
     }
     return message;
   },
+
   toJSON(message: Schedule): unknown {
     const obj: any = {};
     if (message.terms) {
-      obj.terms = message.terms.map(e => e ? Schedule_TermSchedule.toJSON(e) : undefined);
+      obj.terms = message.terms.map((e) =>
+        e ? Schedule_TermSchedule.toJSON(e) : undefined
+      );
     } else {
       obj.terms = [];
     }
@@ -1391,8 +1442,18 @@ export const Schedule = {
   },
 };
 
+const baseSchedule_TermSchedule: object = {
+  courseCodes: "",
+  termName: "",
+  year: 0,
+  term: 0,
+};
+
 export const Schedule_TermSchedule = {
-  encode(message: Schedule_TermSchedule, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: Schedule_TermSchedule,
+    writer: Writer = Writer.create()
+  ): Writer {
     for (const v of message.courseCodes) {
       writer.uint32(10).string(v!);
     }
@@ -1401,7 +1462,8 @@ export const Schedule_TermSchedule = {
     writer.uint32(32).int32(message.term);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): Schedule_TermSchedule {
+
+  decode(input: Reader | Uint8Array, length?: number): Schedule_TermSchedule {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseSchedule_TermSchedule } as Schedule_TermSchedule;
@@ -1428,6 +1490,7 @@ export const Schedule_TermSchedule = {
     }
     return message;
   },
+
   fromJSON(object: any): Schedule_TermSchedule {
     const message = { ...baseSchedule_TermSchedule } as Schedule_TermSchedule;
     message.courseCodes = [];
@@ -1447,13 +1510,16 @@ export const Schedule_TermSchedule = {
       message.year = 0;
     }
     if (object.term !== undefined && object.term !== null) {
-      message.term = Term.fromJSON(object.term);
+      message.term = termFromJSON(object.term);
     } else {
       message.term = 0;
     }
     return message;
   },
-  fromPartial(object: DeepPartial<Schedule_TermSchedule>): Schedule_TermSchedule {
+
+  fromPartial(
+    object: DeepPartial<Schedule_TermSchedule>
+  ): Schedule_TermSchedule {
     const message = { ...baseSchedule_TermSchedule } as Schedule_TermSchedule;
     message.courseCodes = [];
     if (object.courseCodes !== undefined && object.courseCodes !== null) {
@@ -1478,18 +1544,26 @@ export const Schedule_TermSchedule = {
     }
     return message;
   },
+
   toJSON(message: Schedule_TermSchedule): unknown {
     const obj: any = {};
     if (message.courseCodes) {
-      obj.courseCodes = message.courseCodes.map(e => e || "");
+      obj.courseCodes = message.courseCodes.map((e) => e);
     } else {
       obj.courseCodes = [];
     }
-    obj.termName = message.termName || "";
-    obj.year = message.year || 0;
-    obj.term = Term.toJSON(message.term);
+    message.termName !== undefined && (obj.termName = message.termName);
+    message.year !== undefined && (obj.year = message.year);
+    message.term !== undefined && (obj.term = termToJSON(message.term));
     return obj;
   },
+};
+
+const baseStudentProfile: object = {
+  labels: "",
+  degrees: "",
+  shortList: "",
+  ownerEmail: "",
 };
 
 export const StudentProfile = {
@@ -1506,9 +1580,11 @@ export const StudentProfile = {
     for (const v of message.shortList) {
       writer.uint32(34).string(v!);
     }
+    writer.uint32(42).string(message.ownerEmail);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): StudentProfile {
+
+  decode(input: Reader | Uint8Array, length?: number): StudentProfile {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseStudentProfile } as StudentProfile;
@@ -1530,6 +1606,9 @@ export const StudentProfile = {
         case 4:
           message.shortList.push(reader.string());
           break;
+        case 5:
+          message.ownerEmail = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1537,6 +1616,7 @@ export const StudentProfile = {
     }
     return message;
   },
+
   fromJSON(object: any): StudentProfile {
     const message = { ...baseStudentProfile } as StudentProfile;
     message.labels = [];
@@ -1562,8 +1642,14 @@ export const StudentProfile = {
         message.shortList.push(String(e));
       }
     }
+    if (object.ownerEmail !== undefined && object.ownerEmail !== null) {
+      message.ownerEmail = String(object.ownerEmail);
+    } else {
+      message.ownerEmail = "";
+    }
     return message;
   },
+
   fromPartial(object: DeepPartial<StudentProfile>): StudentProfile {
     const message = { ...baseStudentProfile } as StudentProfile;
     message.labels = [];
@@ -1589,32 +1675,51 @@ export const StudentProfile = {
         message.shortList.push(e);
       }
     }
+    if (object.ownerEmail !== undefined && object.ownerEmail !== null) {
+      message.ownerEmail = object.ownerEmail;
+    } else {
+      message.ownerEmail = "";
+    }
     return message;
   },
+
   toJSON(message: StudentProfile): unknown {
     const obj: any = {};
-    obj.schedule = message.schedule ? Schedule.toJSON(message.schedule) : undefined;
+    message.schedule !== undefined &&
+      (obj.schedule = message.schedule
+        ? Schedule.toJSON(message.schedule)
+        : undefined);
     if (message.labels) {
-      obj.labels = message.labels.map(e => e || "");
+      obj.labels = message.labels.map((e) => e);
     } else {
       obj.labels = [];
     }
     if (message.degrees) {
-      obj.degrees = message.degrees.map(e => e || "");
+      obj.degrees = message.degrees.map((e) => e);
     } else {
       obj.degrees = [];
     }
     if (message.shortList) {
-      obj.shortList = message.shortList.map(e => e || "");
+      obj.shortList = message.shortList.map((e) => e);
     } else {
       obj.shortList = [];
     }
+    message.ownerEmail !== undefined && (obj.ownerEmail = message.ownerEmail);
     return obj;
   },
 };
 
+const baseCreateStudentProfileRequest: object = {
+  degrees: "",
+  startingYear: 0,
+  coopStream: 0,
+};
+
 export const CreateStudentProfileRequest = {
-  encode(message: CreateStudentProfileRequest, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: CreateStudentProfileRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
     for (const v of message.degrees) {
       writer.uint32(10).string(v!);
     }
@@ -1625,10 +1730,16 @@ export const CreateStudentProfileRequest = {
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): CreateStudentProfileRequest {
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): CreateStudentProfileRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseCreateStudentProfileRequest } as CreateStudentProfileRequest;
+    const message = {
+      ...baseCreateStudentProfileRequest,
+    } as CreateStudentProfileRequest;
     message.degrees = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -1652,8 +1763,11 @@ export const CreateStudentProfileRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): CreateStudentProfileRequest {
-    const message = { ...baseCreateStudentProfileRequest } as CreateStudentProfileRequest;
+    const message = {
+      ...baseCreateStudentProfileRequest,
+    } as CreateStudentProfileRequest;
     message.degrees = [];
     if (object.degrees !== undefined && object.degrees !== null) {
       for (const e of object.degrees) {
@@ -1666,7 +1780,7 @@ export const CreateStudentProfileRequest = {
       message.startingYear = 0;
     }
     if (object.coopStream !== undefined && object.coopStream !== null) {
-      message.coopStream = CoopStream.fromJSON(object.coopStream);
+      message.coopStream = coopStreamFromJSON(object.coopStream);
     } else {
       message.coopStream = 0;
     }
@@ -1677,8 +1791,13 @@ export const CreateStudentProfileRequest = {
     }
     return message;
   },
-  fromPartial(object: DeepPartial<CreateStudentProfileRequest>): CreateStudentProfileRequest {
-    const message = { ...baseCreateStudentProfileRequest } as CreateStudentProfileRequest;
+
+  fromPartial(
+    object: DeepPartial<CreateStudentProfileRequest>
+  ): CreateStudentProfileRequest {
+    const message = {
+      ...baseCreateStudentProfileRequest,
+    } as CreateStudentProfileRequest;
     message.degrees = [];
     if (object.degrees !== undefined && object.degrees !== null) {
       for (const e of object.degrees) {
@@ -1702,19 +1821,27 @@ export const CreateStudentProfileRequest = {
     }
     return message;
   },
+
   toJSON(message: CreateStudentProfileRequest): unknown {
     const obj: any = {};
     if (message.degrees) {
-      obj.degrees = message.degrees.map(e => e || "");
+      obj.degrees = message.degrees.map((e) => e);
     } else {
       obj.degrees = [];
     }
-    obj.startingYear = message.startingYear || 0;
-    obj.coopStream = CoopStream.toJSON(message.coopStream);
-    obj.schedule = message.schedule ? Schedule.toJSON(message.schedule) : undefined;
+    message.startingYear !== undefined &&
+      (obj.startingYear = message.startingYear);
+    message.coopStream !== undefined &&
+      (obj.coopStream = coopStreamToJSON(message.coopStream));
+    message.schedule !== undefined &&
+      (obj.schedule = message.schedule
+        ? Schedule.toJSON(message.schedule)
+        : undefined);
     return obj;
   },
 };
+
+const baseCheckResults: object = {};
 
 export const CheckResults = {
   encode(message: CheckResults, writer: Writer = Writer.create()): Writer {
@@ -1726,7 +1853,8 @@ export const CheckResults = {
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): CheckResults {
+
+  decode(input: Reader | Uint8Array, length?: number): CheckResults {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseCheckResults } as CheckResults;
@@ -1736,10 +1864,14 @@ export const CheckResults = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.issues.push(CheckResults_Issue.decode(reader, reader.uint32()));
+          message.issues.push(
+            CheckResults_Issue.decode(reader, reader.uint32())
+          );
           break;
         case 2:
-          message.checkedCourses.push(CourseInfo.decode(reader, reader.uint32()));
+          message.checkedCourses.push(
+            CourseInfo.decode(reader, reader.uint32())
+          );
           break;
         default:
           reader.skipType(tag & 7);
@@ -1748,6 +1880,7 @@ export const CheckResults = {
     }
     return message;
   },
+
   fromJSON(object: any): CheckResults {
     const message = { ...baseCheckResults } as CheckResults;
     message.issues = [];
@@ -1764,6 +1897,7 @@ export const CheckResults = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<CheckResults>): CheckResults {
     const message = { ...baseCheckResults } as CheckResults;
     message.issues = [];
@@ -1780,15 +1914,20 @@ export const CheckResults = {
     }
     return message;
   },
+
   toJSON(message: CheckResults): unknown {
     const obj: any = {};
     if (message.issues) {
-      obj.issues = message.issues.map(e => e ? CheckResults_Issue.toJSON(e) : undefined);
+      obj.issues = message.issues.map((e) =>
+        e ? CheckResults_Issue.toJSON(e) : undefined
+      );
     } else {
       obj.issues = [];
     }
     if (message.checkedCourses) {
-      obj.checkedCourses = message.checkedCourses.map(e => e ? CourseInfo.toJSON(e) : undefined);
+      obj.checkedCourses = message.checkedCourses.map((e) =>
+        e ? CourseInfo.toJSON(e) : undefined
+      );
     } else {
       obj.checkedCourses = [];
     }
@@ -1796,8 +1935,20 @@ export const CheckResults = {
   },
 };
 
+const baseCheckResults_Issue: object = {
+  type: 1,
+  subjectName: "",
+  relatedCond: "",
+  relatedCondRaw: "",
+  relatedCourse: "",
+  relatedCourseList: "",
+};
+
 export const CheckResults_Issue = {
-  encode(message: CheckResults_Issue, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: CheckResults_Issue,
+    writer: Writer = Writer.create()
+  ): Writer {
     writer.uint32(8).int32(message.type);
     writer.uint32(18).string(message.subjectName);
     writer.uint32(26).string(message.relatedCond);
@@ -1810,7 +1961,8 @@ export const CheckResults_Issue = {
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): CheckResults_Issue {
+
+  decode(input: Reader | Uint8Array, length?: number): CheckResults_Issue {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseCheckResults_Issue } as CheckResults_Issue;
@@ -1844,12 +1996,13 @@ export const CheckResults_Issue = {
     }
     return message;
   },
+
   fromJSON(object: any): CheckResults_Issue {
     const message = { ...baseCheckResults_Issue } as CheckResults_Issue;
     message.relatedCourse = [];
     message.relatedCourseList = [];
     if (object.type !== undefined && object.type !== null) {
-      message.type = CheckResults_Issue_Type.fromJSON(object.type);
+      message.type = checkResults_Issue_TypeFromJSON(object.type);
     } else {
       message.type = 1;
     }
@@ -1873,13 +2026,17 @@ export const CheckResults_Issue = {
         message.relatedCourse.push(String(e));
       }
     }
-    if (object.relatedCourseList !== undefined && object.relatedCourseList !== null) {
+    if (
+      object.relatedCourseList !== undefined &&
+      object.relatedCourseList !== null
+    ) {
       for (const e of object.relatedCourseList) {
         message.relatedCourseList.push(String(e));
       }
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<CheckResults_Issue>): CheckResults_Issue {
     const message = { ...baseCheckResults_Issue } as CheckResults_Issue;
     message.relatedCourse = [];
@@ -1909,32 +2066,42 @@ export const CheckResults_Issue = {
         message.relatedCourse.push(e);
       }
     }
-    if (object.relatedCourseList !== undefined && object.relatedCourseList !== null) {
+    if (
+      object.relatedCourseList !== undefined &&
+      object.relatedCourseList !== null
+    ) {
       for (const e of object.relatedCourseList) {
         message.relatedCourseList.push(e);
       }
     }
     return message;
   },
+
   toJSON(message: CheckResults_Issue): unknown {
     const obj: any = {};
-    obj.type = CheckResults_Issue_Type.toJSON(message.type);
-    obj.subjectName = message.subjectName || "";
-    obj.relatedCond = message.relatedCond || "";
-    obj.relatedCondRaw = message.relatedCondRaw || "";
+    message.type !== undefined &&
+      (obj.type = checkResults_Issue_TypeToJSON(message.type));
+    message.subjectName !== undefined &&
+      (obj.subjectName = message.subjectName);
+    message.relatedCond !== undefined &&
+      (obj.relatedCond = message.relatedCond);
+    message.relatedCondRaw !== undefined &&
+      (obj.relatedCondRaw = message.relatedCondRaw);
     if (message.relatedCourse) {
-      obj.relatedCourse = message.relatedCourse.map(e => e || "");
+      obj.relatedCourse = message.relatedCourse.map((e) => e);
     } else {
       obj.relatedCourse = [];
     }
     if (message.relatedCourseList) {
-      obj.relatedCourseList = message.relatedCourseList.map(e => e || "");
+      obj.relatedCourseList = message.relatedCourseList.map((e) => e);
     } else {
       obj.relatedCourseList = [];
     }
     return obj;
   },
 };
+
+const baseFindSlotRequest: object = { courseCode: "" };
 
 export const FindSlotRequest = {
   encode(message: FindSlotRequest, writer: Writer = Writer.create()): Writer {
@@ -1944,7 +2111,8 @@ export const FindSlotRequest = {
     writer.uint32(18).string(message.courseCode);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): FindSlotRequest {
+
+  decode(input: Reader | Uint8Array, length?: number): FindSlotRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseFindSlotRequest } as FindSlotRequest;
@@ -1964,6 +2132,7 @@ export const FindSlotRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): FindSlotRequest {
     const message = { ...baseFindSlotRequest } as FindSlotRequest;
     if (object.profile !== undefined && object.profile !== null) {
@@ -1978,6 +2147,7 @@ export const FindSlotRequest = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<FindSlotRequest>): FindSlotRequest {
     const message = { ...baseFindSlotRequest } as FindSlotRequest;
     if (object.profile !== undefined && object.profile !== null) {
@@ -1992,22 +2162,32 @@ export const FindSlotRequest = {
     }
     return message;
   },
+
   toJSON(message: FindSlotRequest): unknown {
     const obj: any = {};
-    obj.profile = message.profile ? StudentProfile.toJSON(message.profile) : undefined;
-    obj.courseCode = message.courseCode || "";
+    message.profile !== undefined &&
+      (obj.profile = message.profile
+        ? StudentProfile.toJSON(message.profile)
+        : undefined);
+    message.courseCode !== undefined && (obj.courseCode = message.courseCode);
     return obj;
   },
 };
 
+const baseFindSlotResponse: object = {};
+
 export const FindSlotResponse = {
   encode(message: FindSlotResponse, writer: Writer = Writer.create()): Writer {
     Object.entries(message.slot).forEach(([key, value]) => {
-      FindSlotResponse_SlotEntry.encode({ key: key as any, value }, writer.uint32(10).fork()).ldelim();
-    })
+      FindSlotResponse_SlotEntry.encode(
+        { key: key as any, value },
+        writer.uint32(10).fork()
+      ).ldelim();
+    });
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): FindSlotResponse {
+
+  decode(input: Reader | Uint8Array, length?: number): FindSlotResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseFindSlotResponse } as FindSlotResponse;
@@ -2016,7 +2196,10 @@ export const FindSlotResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          const entry1 = FindSlotResponse_SlotEntry.decode(reader, reader.uint32());
+          const entry1 = FindSlotResponse_SlotEntry.decode(
+            reader,
+            reader.uint32()
+          );
           if (entry1.value !== undefined) {
             message.slot[entry1.key] = entry1.value;
           }
@@ -2028,16 +2211,18 @@ export const FindSlotResponse = {
     }
     return message;
   },
+
   fromJSON(object: any): FindSlotResponse {
     const message = { ...baseFindSlotResponse } as FindSlotResponse;
     message.slot = {};
     if (object.slot !== undefined && object.slot !== null) {
       Object.entries(object.slot).forEach(([key, value]) => {
         message.slot[key] = CheckResults.fromJSON(value);
-      })
+      });
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<FindSlotResponse>): FindSlotResponse {
     const message = { ...baseFindSlotResponse } as FindSlotResponse;
     message.slot = {};
@@ -2046,29 +2231,46 @@ export const FindSlotResponse = {
         if (value !== undefined) {
           message.slot[key] = CheckResults.fromPartial(value);
         }
-      })
+      });
     }
     return message;
   },
+
   toJSON(message: FindSlotResponse): unknown {
     const obj: any = {};
-    obj.slot = message.slot || undefined;
+    obj.slot = {};
+    if (message.slot) {
+      Object.entries(message.slot).forEach(([k, v]) => {
+        obj.slot[k] = CheckResults.toJSON(v);
+      });
+    }
     return obj;
   },
 };
 
+const baseFindSlotResponse_SlotEntry: object = { key: "" };
+
 export const FindSlotResponse_SlotEntry = {
-  encode(message: FindSlotResponse_SlotEntry, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: FindSlotResponse_SlotEntry,
+    writer: Writer = Writer.create()
+  ): Writer {
     writer.uint32(10).string(message.key);
     if (message.value !== undefined && message.value !== undefined) {
       CheckResults.encode(message.value, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): FindSlotResponse_SlotEntry {
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): FindSlotResponse_SlotEntry {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseFindSlotResponse_SlotEntry } as FindSlotResponse_SlotEntry;
+    const message = {
+      ...baseFindSlotResponse_SlotEntry,
+    } as FindSlotResponse_SlotEntry;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2085,8 +2287,11 @@ export const FindSlotResponse_SlotEntry = {
     }
     return message;
   },
+
   fromJSON(object: any): FindSlotResponse_SlotEntry {
-    const message = { ...baseFindSlotResponse_SlotEntry } as FindSlotResponse_SlotEntry;
+    const message = {
+      ...baseFindSlotResponse_SlotEntry,
+    } as FindSlotResponse_SlotEntry;
     if (object.key !== undefined && object.key !== null) {
       message.key = String(object.key);
     } else {
@@ -2099,8 +2304,13 @@ export const FindSlotResponse_SlotEntry = {
     }
     return message;
   },
-  fromPartial(object: DeepPartial<FindSlotResponse_SlotEntry>): FindSlotResponse_SlotEntry {
-    const message = { ...baseFindSlotResponse_SlotEntry } as FindSlotResponse_SlotEntry;
+
+  fromPartial(
+    object: DeepPartial<FindSlotResponse_SlotEntry>
+  ): FindSlotResponse_SlotEntry {
+    const message = {
+      ...baseFindSlotResponse_SlotEntry,
+    } as FindSlotResponse_SlotEntry;
     if (object.key !== undefined && object.key !== null) {
       message.key = object.key;
     } else {
@@ -2113,22 +2323,32 @@ export const FindSlotResponse_SlotEntry = {
     }
     return message;
   },
+
   toJSON(message: FindSlotResponse_SlotEntry): unknown {
     const obj: any = {};
-    obj.key = message.key || "";
-    obj.value = message.value ? CheckResults.toJSON(message.value) : undefined;
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined &&
+      (obj.value = message.value
+        ? CheckResults.toJSON(message.value)
+        : undefined);
     return obj;
   },
 };
 
+const baseBatchGetCourseRequest: object = { courseCodes: "" };
+
 export const BatchGetCourseRequest = {
-  encode(message: BatchGetCourseRequest, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: BatchGetCourseRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
     for (const v of message.courseCodes) {
       writer.uint32(10).string(v!);
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): BatchGetCourseRequest {
+
+  decode(input: Reader | Uint8Array, length?: number): BatchGetCourseRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseBatchGetCourseRequest } as BatchGetCourseRequest;
@@ -2146,6 +2366,7 @@ export const BatchGetCourseRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): BatchGetCourseRequest {
     const message = { ...baseBatchGetCourseRequest } as BatchGetCourseRequest;
     message.courseCodes = [];
@@ -2156,7 +2377,10 @@ export const BatchGetCourseRequest = {
     }
     return message;
   },
-  fromPartial(object: DeepPartial<BatchGetCourseRequest>): BatchGetCourseRequest {
+
+  fromPartial(
+    object: DeepPartial<BatchGetCourseRequest>
+  ): BatchGetCourseRequest {
     const message = { ...baseBatchGetCourseRequest } as BatchGetCourseRequest;
     message.courseCodes = [];
     if (object.courseCodes !== undefined && object.courseCodes !== null) {
@@ -2166,10 +2390,11 @@ export const BatchGetCourseRequest = {
     }
     return message;
   },
+
   toJSON(message: BatchGetCourseRequest): unknown {
     const obj: any = {};
     if (message.courseCodes) {
-      obj.courseCodes = message.courseCodes.map(e => e || "");
+      obj.courseCodes = message.courseCodes.map((e) => e);
     } else {
       obj.courseCodes = [];
     }
@@ -2177,14 +2402,20 @@ export const BatchGetCourseRequest = {
   },
 };
 
+const baseBatchGetCourseResponse: object = {};
+
 export const BatchGetCourseResponse = {
-  encode(message: BatchGetCourseResponse, writer: Writer = Writer.create()): Writer {
+  encode(
+    message: BatchGetCourseResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
     for (const v of message.results) {
       CourseInfo.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): BatchGetCourseResponse {
+
+  decode(input: Reader | Uint8Array, length?: number): BatchGetCourseResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseBatchGetCourseResponse } as BatchGetCourseResponse;
@@ -2202,6 +2433,7 @@ export const BatchGetCourseResponse = {
     }
     return message;
   },
+
   fromJSON(object: any): BatchGetCourseResponse {
     const message = { ...baseBatchGetCourseResponse } as BatchGetCourseResponse;
     message.results = [];
@@ -2212,7 +2444,10 @@ export const BatchGetCourseResponse = {
     }
     return message;
   },
-  fromPartial(object: DeepPartial<BatchGetCourseResponse>): BatchGetCourseResponse {
+
+  fromPartial(
+    object: DeepPartial<BatchGetCourseResponse>
+  ): BatchGetCourseResponse {
     const message = { ...baseBatchGetCourseResponse } as BatchGetCourseResponse;
     message.results = [];
     if (object.results !== undefined && object.results !== null) {
@@ -2222,16 +2457,21 @@ export const BatchGetCourseResponse = {
     }
     return message;
   },
+
   toJSON(message: BatchGetCourseResponse): unknown {
     const obj: any = {};
     if (message.results) {
-      obj.results = message.results.map(e => e ? CourseInfo.toJSON(e) : undefined);
+      obj.results = message.results.map((e) =>
+        e ? CourseInfo.toJSON(e) : undefined
+      );
     } else {
       obj.results = [];
     }
     return obj;
   },
 };
+
+const baseEventRequest: object = { type: "", subject: "", data: "" };
 
 export const EventRequest = {
   encode(message: EventRequest, writer: Writer = Writer.create()): Writer {
@@ -2240,7 +2480,8 @@ export const EventRequest = {
     writer.uint32(26).string(message.data);
     return writer;
   },
-  decode(input: Uint8Array | Reader, length?: number): EventRequest {
+
+  decode(input: Reader | Uint8Array, length?: number): EventRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseEventRequest } as EventRequest;
@@ -2263,6 +2504,7 @@ export const EventRequest = {
     }
     return message;
   },
+
   fromJSON(object: any): EventRequest {
     const message = { ...baseEventRequest } as EventRequest;
     if (object.type !== undefined && object.type !== null) {
@@ -2282,6 +2524,7 @@ export const EventRequest = {
     }
     return message;
   },
+
   fromPartial(object: DeepPartial<EventRequest>): EventRequest {
     const message = { ...baseEventRequest } as EventRequest;
     if (object.type !== undefined && object.type !== null) {
@@ -2301,17 +2544,18 @@ export const EventRequest = {
     }
     return message;
   },
+
   toJSON(message: EventRequest): unknown {
     const obj: any = {};
-    obj.type = message.type || "";
-    obj.subject = message.subject || "";
-    obj.data = message.data || "";
+    message.type !== undefined && (obj.type = message.type);
+    message.subject !== undefined && (obj.subject = message.subject);
+    message.data !== undefined && (obj.data = message.data);
     return obj;
   },
 };
 
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
-type DeepPartial<T> = T extends Builtin
+export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
