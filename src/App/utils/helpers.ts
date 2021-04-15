@@ -4,7 +4,11 @@ export function insertAt<T>(
   arr: Array<T>,
   index: number,
   element: T,
+  allowDuplications: boolean = true, // when false, do not insert if element already exists
 ): Array<T> {
+  if (!allowDuplications && arr.includes(element)) {
+    return arr;
+  }
   const ret = cloneDeep(arr);
   if (index < 0) {
     ret.push(element);

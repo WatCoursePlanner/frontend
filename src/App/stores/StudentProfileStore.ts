@@ -110,7 +110,7 @@ export class StudentProfileStore {
     isAdd,
     termName,
     index,
-    code,
+    code, // only for insertion
   }: IAddOrRemoveCourseProps) => {
     if (!this.studentProfile.schedule) {
       return;
@@ -126,7 +126,7 @@ export class StudentProfileStore {
               ? {
                 ...term,
                 courseCodes: isAdd
-                  ? insertAt(term.courseCodes, index, code)
+                  ? insertAt(term.courseCodes, index, code, false)
                   : removeAt(term.courseCodes, index),
               }
               : term,
@@ -135,7 +135,7 @@ export class StudentProfileStore {
       shortList: isShortList
         ? (
           isAdd
-            ? insertAt(this.studentProfile.shortList, index, code)
+            ? insertAt(this.studentProfile.shortList, index, code, false)
             : removeAt(this.studentProfile.shortList, index)
         )
         : this.studentProfile.shortList,
@@ -155,6 +155,23 @@ export class StudentProfileStore {
   removeCourseFromTerm = ({termName, index}: IRemoveCourseFromTermProps) => {
     this.addOrRemoveFromTermOrShortlist({
       isAdd: false, termName, index,
+    });
+  };
+
+  @action
+  removeCourseFromSchedule = (courseCode: string) => {
+    const term = this.studentProfile.schedule?.terms.find(
+      (t) => t.courseCodes.includes(courseCode)
+    );
+
+    if (!term) {
+      return;
+    }
+
+    this.addOrRemoveFromTermOrShortlist({
+      isAdd: false,
+      termName: term.termName,
+      index: term.courseCodes.indexOf(courseCode),
     });
   };
 
