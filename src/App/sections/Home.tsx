@@ -12,6 +12,7 @@ import { Else, If, Then } from "react-if";
 import { Route, Switch } from "react-router";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
+import { SignInModal } from "../components/SignIn/SignInModal";
 
 import { Discover } from "./Discover";
 import { Schedule } from "./Schedule";
@@ -105,11 +106,12 @@ export class Home extends React.Component<IHomeProps> {
                   <Discover searchQuery={this.searchQuery}/>
                 </Route>
                 <Route path={home()} exact>
-                  <Redirect to={discover.home()}/>
+                  <Redirect to={schedule.home()}/>
                 </Route>
               </Switch>
             </AppContainer>
           </Container>
+          <SignInModal/>
         </Else>
       </If>
     );

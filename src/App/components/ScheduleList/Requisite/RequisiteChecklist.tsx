@@ -1,5 +1,4 @@
 import { ChipSet } from "@rmwc/chip";
-import '@rmwc/chip/styles';
 import React from "react";
 import styled from "styled-components";
 

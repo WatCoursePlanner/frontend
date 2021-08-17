@@ -4,13 +4,14 @@ interface IRequest<T> {
 
 export default function post<T>(
   url: string,
-  request: IRequest<T>,
-  data: T,
+  request?: IRequest<T>,
+  data?: T,
 ) {
   return fetch(url, {
     method: 'post',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(request.toJSON(data)),
+    body: request && data ? JSON.stringify(request.toJSON(data)) : null,
+    credentials: "include",
   })
     .then(response => response.json())
     .then(result => {

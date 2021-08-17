@@ -1,14 +1,12 @@
 import { Avatar } from "@rmwc/avatar";
-import '@rmwc/avatar/styles';
 import { Badge, BadgeAnchor } from "@rmwc/badge";
-import '@rmwc/badge/styles';
 import {
   IconButton,
   IconButtonHTMLProps,
   IconButtonProps,
 } from "@rmwc/icon-button";
 import { MenuSurface, MenuSurfaceAnchor } from "@rmwc/menu";
-import '@rmwc/menu/styles';
+
 import {
   TopAppBar,
   TopAppBarProps,
@@ -16,7 +14,6 @@ import {
   TopAppBarSection,
   TopAppBarTitle,
 } from "@rmwc/top-app-bar";
-import '@rmwc/top-app-bar/styles';
 import {
   AutoCompleteOption,
   AutoCompleteSearchBar,

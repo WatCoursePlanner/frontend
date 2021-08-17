@@ -11,9 +11,8 @@ import {
   DrawerContent,
   DrawerProps,
 } from "@rmwc/drawer";
-import '@rmwc/drawer/styles';
+
 import { List, ListDivider } from "@rmwc/list";
-import '@rmwc/list/styles';
 import { discover, schedule } from "@watcourses/paths";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { getStatePayloadForUrl } from "@watcourses/utils/LocalStorage";

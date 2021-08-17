@@ -1,6 +1,6 @@
 import { Fade, Popper as MaterialPopper } from "@material-ui/core";
 import { PopperProps } from "@material-ui/core/Popper/Popper";
-import '@rmwc/chip/styles';
+
 import { ThemeProvider as RMWCThemeProvider } from "@rmwc/theme";
 import { RMWCTheme } from "@watcourses/constants/theme";
 import React from "react";

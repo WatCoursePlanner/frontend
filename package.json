@@ -21,6 +21,8 @@
     "@rmwc/textfield": "^6.1.3",
     "@rmwc/theme": "^6.1.2",
     "@rmwc/top-app-bar": "^6.1.3",
+    "@types/gapi": "^0.0.39",
+    "@types/gapi.auth2": "^0.0.53",
     "@types/lodash": "^4.14.158",
     "@types/match-sorter": "^6.0.0",
     "@types/node": "^14.0.22",
@@ -61,7 +63,8 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-react": "^5.0.0",
     "tslint-react-hooks": "^2.2.2",
-    "utility-types": "^3.10.0"
+    "utility-types": "^3.10.0",
+    "yarn": "^1.22.11"
   },
   "scripts": {
     "webpack": "webpack --config config/webpack.prod.conf.js",
@@ -108,7 +111,7 @@
     "sass-loader": "^10.1.1",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.0.14",
-    "ts-proto": "^1.53.0",
+    "ts-proto": "^1.74.0",
     "typescript": "^4.1.3",
     "webpack": "^5.20.0",
     "webpack-cli": "^4.5.0",
