@@ -63,7 +63,8 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-react": "^5.0.0",
     "tslint-react-hooks": "^2.2.2",
-    "utility-types": "^3.10.0"
+    "utility-types": "^3.10.0",
+    "yarn": "^1.22.11"
   },
   "scripts": {
     "webpack": "webpack --config config/webpack.prod.conf.js",

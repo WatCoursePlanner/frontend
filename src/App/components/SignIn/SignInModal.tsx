@@ -48,36 +48,6 @@ export class SignInModal extends React.Component {
     this._password = password;
   };
 
-  @computed
-  private get email() {
-    return this._email;
-  }
-
-  @action
-  private setEmail = (email: string) => {
-    this._email = email;
-  };
-
-  @computed
-  private get pending() {
-    return this._pending;
-  }
-
-  @action
-  private setPending = (pending: boolean) => {
-    this._pending = pending;
-  };
-
-  @computed
-  private get error() {
-    return this._error;
-  }
-
-  @action
-  private setError = (error: string | null) => {
-    this._error = error;
-  };
-
   @action
   private toggleShowPassword = () => {
     this.showPassword = !this.showPassword;
