@@ -91,7 +91,7 @@ export class CourseList extends React.Component<ICourseListProps> {
                   }/>
               ))}
           </Container>
-          <Spacer minWidth={'1px'} minHeight={'32px'}/>
+          <Spacer width={'1px'} height={'32px'}/>
         </StyledContainer>
       </CourseListWrapper>
     );

@@ -1,18 +1,30 @@
+import { unSelectable } from "@watcourses/constants/styles";
 import React from "react";
 import styled from "styled-components";
 
 export type ISpacerProps = {
-  minWidth: string,
-  minHeight: string
+  width?: string | number;
+  height?: string | number;
 }
 
-export const Spacer = ({minWidth, minHeight}: ISpacerProps) => {
+export const Spacer = ({width, height}: ISpacerProps) => {
   return (
-    <SizedBox minWidth={minWidth} minHeight={minHeight}/>
+    <SizedBox
+      width={withPx(width)}
+      height={withPx(height)}
+    />
   );
 };
 
+const withPx = (value: string | number | undefined): string => {
+  if (!value) {
+    return "";
+  }
+  return typeof value === "number" ? `${value}px` : value;
+};
+
 const SizedBox = styled.div<ISpacerProps>`
-  min-width: ${props => props.minWidth};
-  min-height: ${props => props.minHeight};
+  min-width: ${props => props.width};
+  min-height: ${props => props.height};
+  ${unSelectable};
 `;

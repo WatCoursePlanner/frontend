@@ -1,8 +1,5 @@
 import { Button, ButtonHTMLProps, ButtonProps } from "@rmwc/button";
-import '@rmwc/button/styles';
 import { Fab, FabProps } from "@rmwc/fab";
-import '@rmwc/fab/styles';
-import '@rmwc/tooltip/styles';
 import findSlots from "@watcourses/api/StudentProfile/findSlots";
 import {
   ScheduleShortList,
@@ -16,7 +13,6 @@ import { buildProto } from "@watcourses/utils/buildProto";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { observer } from "mobx-react";
 import React from 'react';
-import { If, Then } from "react-if";
 import { DropResult } from "react-smooth-dnd";
 import {
   DragEndParams,
@@ -180,7 +176,7 @@ export class Schedule extends React.Component<IScheduleProps> {
           <ScheduleListContainer
             ref={this.scheduleListRef}
             onScroll={this.handleScroll}>
-            <Spacer minWidth={'16px'} minHeight={'100%'}/>
+            <Spacer width={'16px'} height={'100%'}/>
             {
               !!profileCourses && !!workingStudentProfile &&
               <ScheduleTermList
@@ -196,7 +192,7 @@ export class Schedule extends React.Component<IScheduleProps> {
                   scheduleListRef={this.scheduleListRef}
               />
             }
-            <Spacer minWidth={'240px'} minHeight={'100%'}/>
+            <Spacer width={'240px'} height={'100%'}/>
             <StyledFab
               icon={isLoading ? "loading" : "save"} // TODO loading animation
               label="Save"

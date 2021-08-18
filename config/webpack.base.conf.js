@@ -1,4 +1,5 @@
 const path = require('path');
+const tsconfig = require('../tsconfig.json');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
@@ -11,7 +12,12 @@ module.exports = {
         publicPath: '/',
     },
     resolve: {
-        alias: require("./alias"),
+        alias: Object.keys(tsconfig.compilerOptions.paths).reduce((aliases, aliasName) => {
+            aliases[aliasName] = path.resolve(
+                `${tsconfig.compilerOptions.baseUrl}/${tsconfig.compilerOptions.paths[aliasName][0]}`
+            );
+            return aliases;
+        }, {}),
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
         plugins: [
             new TsconfigPathsPlugin(),
@@ -40,8 +46,8 @@ module.exports = {
                     options: {
                         presets: ['@babel/preset-env'],
                         plugins: [
-                            ["@babel/plugin-proposal-decorators", { "legacy": true }],
-                            ["@babel/plugin-proposal-class-properties", { "loose": false }],
+                            ["@babel/plugin-proposal-decorators", {"legacy": true}],
+                            ["@babel/plugin-proposal-class-properties", {"loose": false}],
                         ]
                     }
                 }

@@ -1,12 +1,17 @@
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 
 export const RMWCTheme = {
-  primary: '#2196F3',
-  secondary: '#0069B5',
-  error: '#ff0000',
+  primary: "#2196F3",
+  secondary: "#0069B5",
+  error: "#ff0000",
 };
 
 export const Theme = createMuiTheme({
+  palette: {
+    primary: {main: "#2196F3"},
+    secondary: {main: "#0069B5"},
+    error: {main: "#ff0000"},
+  },
   typography: {
     "fontFamily": `"Montserrat", "Helvetica", "Arial", sans-serif`,
     "fontSize": 14,
@@ -16,10 +21,15 @@ export const Theme = createMuiTheme({
     "fontWeightBold": 700,
   },
   overrides: {
+    MuiInputLabel: {
+      root: {
+        fontSize: "15px",
+      }
+    },
     MuiTableCell: {
       root: {
-        height: '56px',
-        padding: '4px 16px',
+        height: "56px",
+        padding: "4px 16px",
         fontWeight: 500,
         borderBottom: "none",
       },

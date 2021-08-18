@@ -1,6 +1,5 @@
 import { ThemeProvider as MUIThemeProvider } from "@material-ui/core/styles";
 import { ThemeProvider as RMWCThemeProvider } from "@rmwc/theme";
-import '@rmwc/theme/styles';
 import { RMWCTheme, Theme } from "@watcourses/constants/theme";
 import { Home } from "@watcourses/sections/Home";
 import Welcome from "@watcourses/sections/Welcome";

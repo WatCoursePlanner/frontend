@@ -31,7 +31,7 @@ html {
 }
 
 .mdc-button, .mdc-button__ripple, .mdc-chip, .mdc-chip__ripple {
-  -webkit-mask-image: radial-gradient(white, black);
+  //-webkit-mask-image: radial-gradient(white, black);
 }
 
 .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {

@@ -5,7 +5,6 @@ import {
   CardActions,
   CardProps,
 } from "@rmwc/card";
-import '@rmwc/card/styles';
 import {
   List,
   ListItem,
@@ -14,7 +13,6 @@ import {
   SimpleListItemProps,
 } from "@rmwc/list";
 import { Tooltip } from "@rmwc/tooltip";
-import '@rmwc/tooltip/styles';
 import {
   IRequisite,
   IRequisiteGroup,

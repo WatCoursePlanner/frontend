@@ -20,11 +20,10 @@
     "jsx": "react",
     "rootDirs": ["src"],
     "baseUrl": "./src",
-    // Update mappings in config/alias.js as well.
     "paths": {
       "@watcourses": ["App"],
       "@watcourses/*": ["App/*"]
-    },
+    }
   },
   "include": [
     "src/typings/"

@@ -1,14 +1,12 @@
 import { Avatar } from "@rmwc/avatar";
-import '@rmwc/avatar/styles';
 import { Badge, BadgeAnchor } from "@rmwc/badge";
-import '@rmwc/badge/styles';
+import { Button } from "@rmwc/button";
 import {
   IconButton,
   IconButtonHTMLProps,
   IconButtonProps,
 } from "@rmwc/icon-button";
 import { MenuSurface, MenuSurfaceAnchor } from "@rmwc/menu";
-import '@rmwc/menu/styles';
 import {
   TopAppBar,
   TopAppBarProps,
@@ -16,7 +14,6 @@ import {
   TopAppBarSection,
   TopAppBarTitle,
 } from "@rmwc/top-app-bar";
-import '@rmwc/top-app-bar/styles';
 import {
   AutoCompleteOption,
   AutoCompleteSearchBar,
@@ -26,11 +23,15 @@ import {
   ISearchBarProps,
 } from "@watcourses/components/AutoCompleteSearchBar/SearchBar";
 import { Popup } from "@watcourses/components/Popup";
+import { schedule } from "@watcourses/paths";
 import { CourseInfo } from "@watcourses/proto/courses";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
+import { SignInModalStore } from "@watcourses/stores/SignInModalStore";
+import { UserStore } from "@watcourses/stores/UserStore";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
+import { Else, If, Then } from "react-if";
 import styled from "styled-components";
 
 import DegreeRequirementPopup, {
@@ -127,20 +128,42 @@ export class TopNav extends React.Component<ITopNavProps> {
                          label={issues.length}/> : null}
               </BadgeAnchor>
             </MenuSurfaceAnchor>
-            <MenuSurfaceAnchor>
-              <MenuSurface
-                open={this.accountMenuOpen}
-                anchorCorner={'bottomLeft'}
-                onClose={() => this.setAccountMenuOpen(false)}>
-                <Popup title={'Account'}/>
-              </MenuSurface>
-              <Avatar
-                ripple
-                name="John Doe"
-                size={'large'}
-                style={{backgroundColor: "#32b9c1"}}
-                onClick={() => this.setAccountMenuOpen(!this.accountMenuOpen)}/>
-            </MenuSurfaceAnchor>
+            <If condition={UserStore.get().isLoggedIn}>
+              <Then>
+                <MenuSurfaceAnchor>
+                  <MenuSurface
+                    open={this.accountMenuOpen}
+                    anchorCorner={'bottomLeft'}
+                    onClose={() => this.setAccountMenuOpen(false)}>
+                    <Popup title={'Account'}>
+                      <Button
+                        label="Sign Out"
+                        raised
+                        onClick={async () => {
+                          await UserStore.get().signOut();
+                          window.location.replace(schedule.home());
+                        }}/>
+                    </Popup>
+                  </MenuSurface>
+                  <Avatar
+                    ripple
+                    name="John Doe"
+                    size={'large'}
+                    style={{backgroundColor: "#32b9c1"}}
+                    onClick={() => {
+                      this.setAccountMenuOpen(!this.accountMenuOpen);
+                    }}/>
+                </MenuSurfaceAnchor>
+              </Then>
+              <Else>
+                <Button
+                  label="Sign In"
+                  raised
+                  onClick={() => {
+                    SignInModalStore.get().showSignIn();
+                  }}/>
+              </Else>
+            </If>
           </TopAppBarSection>
         </TopAppBarRow>
       </StyledAppBar>

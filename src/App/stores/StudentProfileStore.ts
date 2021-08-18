@@ -19,6 +19,8 @@ import {
   PENDING,
 } from "mobx-utils";
 
+import { UserStore } from "./UserStore";
+
 interface IAddOrRemoveCourseProps extends ITermOperationProps {
   /**
    * Is the operation adding course to the term (will be deletion if false).
@@ -112,11 +114,6 @@ export class StudentProfileStore {
   private get studentProfile(): StudentProfile | undefined {
     return this.studentProfilePromise?.case({
       fulfilled: (response: StudentProfile) => response,
-      rejected: () => buildProto<StudentProfile>({
-        schedule: {
-          terms: [],
-        },
-      }),
     });
   }
 
@@ -135,8 +132,20 @@ export class StudentProfileStore {
   }
 
   init(): Promise<StudentProfile> {
+    if (this.studentProfile) {
+      // Profile might have been initialized from UserStore
+      // if there is an active user session
+      return Promise.resolve(this.studentProfile)
+    }
     return this.fetchStudentProfile(this.SampleProfileRequest);
   }
+
+  @action
+  setStudentProfile = (profile: StudentProfile): Promise<StudentProfile> => {
+    const promise = Promise.resolve(profile)
+    this.studentProfilePromise = fromPromise(promise);
+    return promise;
+  };
 
   @action
   fetchStudentProfile = (
@@ -167,7 +176,7 @@ export class StudentProfileStore {
       return;
     }
     const isShortList = termName === SHORTLIST_TERM_NAME;
-    const newProfile = buildProto<StudentProfile>({
+    this.workingStudentProfile = buildProto<StudentProfile>({
       ...this.workingStudentProfile,
       schedule: isShortList ? this.workingStudentProfile.schedule : {
         ...this.workingStudentProfile.schedule,
@@ -183,7 +192,7 @@ export class StudentProfileStore {
               : term,
           ),
       },
-      // TODO shortlist change should do API call immediately
+      // TODO shortlist change should invoke API call immediately
       shortList: isShortList
         ? (
           isAdd
@@ -192,10 +201,6 @@ export class StudentProfileStore {
         )
         : this.workingStudentProfile.shortList,
     });
-    this.workingStudentProfile = newProfile;
-    // const promise = Promise.resolve(newProfile);
-    // this.studentProfilePromise = fromPromise(promise);
-    // return promise;
   };
 
   addCourseToTerm = ({code, termName, index}: IAddCourseToTermProps) => {
@@ -265,7 +270,11 @@ export class StudentProfileStore {
   };
 
   @action
-  save() {
-    // TODO save student profile
+  save = () => {
+    const userEmail = UserStore.get().userEmail;
+    if (!userEmail) {
+      // TODO prompt to create account
+      return
+    }
   }
 }
