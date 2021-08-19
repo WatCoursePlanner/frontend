@@ -1,5 +1,4 @@
 import Autocomplete from '@material-ui/lab/Autocomplete';
-
 import { buildProto } from "@watcourses/utils/buildProto";
 import * as Fuzzysort from "fuzzysort";
 import { makeObservable, observable, reaction, toJS } from "mobx";

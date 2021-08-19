@@ -84,10 +84,11 @@ export class CourseList extends React.Component<ICourseListProps> {
                   key={index}
                   shortListOpen={shortListOpen}
                   scheduleListRef={scheduleListRef}
-                  fromTerm={term}
+                  fromTerm={shortlist ? SHORTLIST_TERM_NAME : term?.termName}
+                  displayRequisiteCheck={!shortlist}
                   course={
                     courses[code] ??
-                    CachedCoursesStore.get().getByCode(code)
+                    CachedCoursesStore.get().getByCode(code) // TODO shouldn't rely on fallback here
                   }/>
               ))}
           </Container>

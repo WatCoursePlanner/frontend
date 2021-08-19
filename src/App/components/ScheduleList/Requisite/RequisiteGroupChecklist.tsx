@@ -8,11 +8,13 @@ import { CourseDetailState } from "../CourseDetailState";
 import { IRequisiteGroup, RequisiteChecklist } from "./index";
 
 interface IRequisiteGroupChecklistProps {
+  displayRequisiteCheck: boolean,
   requisiteGroups: IRequisiteGroup[];
   courseDetailState: CourseDetailState;
 }
 
 export const RequisiteGroupChecklist = observer(({
+  displayRequisiteCheck,
   requisiteGroups,
   courseDetailState,
 }: IRequisiteGroupChecklistProps) => {
@@ -20,15 +22,16 @@ export const RequisiteGroupChecklist = observer(({
     <RootContainer>
       {requisiteGroups.map((requisiteGroup, index) =>
         <RequisiteGroupContainer key={index}>
-          <StyledListItemGraphic
+          {displayRequisiteCheck && <StyledListItemGraphic
             met={requisiteGroup.met ? 1 : 0}
             className={'unselectable material-icons-filled'}
-            icon={requisiteGroup.met ? "check_circle" : "cancel"}/>
+            icon={requisiteGroup.met ? "check_circle" : "cancel"}/>}
           <RequisiteChecklistWrapper>
             <RequisiteCount>
               {`${requisiteGroup.requires} of`}
             </RequisiteCount>
             <RequisiteChecklist
+              displayRequisiteCheck={displayRequisiteCheck}
               courseDetailState={courseDetailState}
               requisites={requisiteGroup.requisites}
             />

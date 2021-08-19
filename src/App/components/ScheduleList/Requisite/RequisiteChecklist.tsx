@@ -9,11 +9,13 @@ import { IRequisite } from "./index";
 import { RequisiteChip } from "./RequisiteChip";
 
 interface IRequisiteChecklistProps {
+  displayRequisiteCheck: boolean,
   requisites: IRequisite[];
   courseDetailState: CourseDetailState;
 }
 
 export const RequisiteChecklist = observer(({
+  displayRequisiteCheck,
   requisites,
   courseDetailState,
 }: IRequisiteChecklistProps) => {
@@ -22,6 +24,7 @@ export const RequisiteChecklist = observer(({
       <StyledChipSet>
         {requisites.map((requisite, index) =>
           <RequisiteChip
+            displayRequisiteCheck={displayRequisiteCheck}
             courseDetailState={courseDetailState}
             requisite={requisite}
             key={index}

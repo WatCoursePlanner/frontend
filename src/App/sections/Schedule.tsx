@@ -169,6 +169,7 @@ export class Schedule extends React.Component<IScheduleProps> {
     const profileCourses = ProfileCoursesStore.get().profileCourses.courses;
     const {
       workingStudentProfile,
+      shortList,
       isLoading,
       isDirty,
     } = StudentProfileStore.get();
@@ -222,7 +223,7 @@ export class Schedule extends React.Component<IScheduleProps> {
           {
             !!profileCourses && !!workingStudentProfile &&
             <ScheduleShortList
-                shortlist={workingStudentProfile.shortList ?? []}
+                shortlist={shortList ?? []}
                 courses={profileCourses!}
                 options={{
                   onDragEnd: this.onDragEnd,

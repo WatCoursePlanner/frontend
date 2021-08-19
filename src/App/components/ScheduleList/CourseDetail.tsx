@@ -36,7 +36,8 @@ import { CourseDetailState } from "./CourseDetailState";
 interface ICourseDetailProps {
   courseDetailState: CourseDetailState,
   course?: CourseInfo,
-  fromTerm?: Schedule_TermSchedule,
+  fromTerm?: string,
+  displayRequisiteCheck: boolean,
   onDismiss: () => void,
 }
 
@@ -76,16 +77,16 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
   @action
   private moveOrRemoveCourse(
     course?: CourseInfo,
-    fromTerm?: Schedule_TermSchedule,
-    toTerm?: Schedule_TermSchedule, // when null, the course will be removed.
+    fromTerm?: string,
+    toTerm?: string, // when null, the course will be removed.
   ) {
-    const {removeCourseFromTerm, addCourseToTerm} = StudentProfileStore.get();
+    const {removeCourseFromTerm} = StudentProfileStore.get();
     if (!course || !fromTerm) {
       return;
     }
     if (!toTerm) {
       removeCourseFromTerm({
-        termName: fromTerm.termName,
+        termName: fromTerm,
         indexOrCode: course.code
       });
     } else {
@@ -99,9 +100,8 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
       course,
       onDismiss,
       fromTerm,
+      displayRequisiteCheck,
     } = this.props;
-
-    // this.courseDetailState = new CourseDetailState(course, this.courseDetailState.registeredDescendents);
 
     const {
       moveToMenuOpen,
@@ -132,7 +132,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                 open={moveToMenuOpen}
                 onClose={() => setMoveToMenuOpen(false)}
                 onSelect={(term) => {
-                  this.moveOrRemoveCourse(course, fromTerm, term)
+                  this.moveOrRemoveCourse(course, fromTerm, term.termName)
                   onDismiss();
                 }}
               >
@@ -186,6 +186,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                       {this.formatPrerequisiteString(prerequisites)}
                     </ListContentSubtitle>
                     <RequisiteGroupChecklist
+                      displayRequisiteCheck={displayRequisiteCheck}
                       courseDetailState={this.props.courseDetailState}
                       requisiteGroups={prerequisites}
                     />
@@ -204,6 +205,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                       {this.formatAntirequisiteString(antirequisites)}
                     </ListContentSubtitle>
                     <RequisiteChecklist
+                      displayRequisiteCheck={displayRequisiteCheck}
                       courseDetailState={this.props.courseDetailState}
                       requisites={antirequisites}
                     />

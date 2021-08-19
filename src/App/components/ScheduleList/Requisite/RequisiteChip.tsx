@@ -12,6 +12,7 @@ import { IRequisite, RequisiteContent, REQUISITE_ICONS } from "./index";
 import { RequisiteDetail } from "./RequisiteDetail";
 
 interface IRequisiteChipProps {
+  displayRequisiteCheck: boolean;
   courseDetailState: CourseDetailState;
   requisite: IRequisite;
   id: number | string;
@@ -59,6 +60,7 @@ export class RequisiteChip extends React.Component<IRequisiteChipProps> {
     const {
       id,
       requisite,
+      displayRequisiteCheck,
     } = this.props;
 
     const {
@@ -76,9 +78,12 @@ export class RequisiteChip extends React.Component<IRequisiteChipProps> {
           ref={chipRef}
           className={'unselectable'}
           onClick={toggleActive}
-          icon={requisite.met ? REQUISITE_ICONS.MET : REQUISITE_ICONS.UNMET}
-          met={requisite.met ? 1 : 0}
-          necessary={requisite.necessary ? 1 : 0}
+          icon={displayRequisiteCheck
+            ? (requisite.met ? REQUISITE_ICONS.MET : REQUISITE_ICONS.UNMET)
+            : undefined
+          }
+          met={displayRequisiteCheck && requisite.met ? 1 : 0}
+          necessary={displayRequisiteCheck && requisite.necessary ? 1 : 0}
           label={requisite.code}
           key={id}
         />

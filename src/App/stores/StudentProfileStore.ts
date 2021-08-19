@@ -5,7 +5,7 @@ import getDefaultStudentProfile from "@watcourses/api/StudentProfile/default";
 import {
   CoopStream,
   CourseInfo,
-  CreateStudentProfileRequest,
+  CreateStudentProfileRequest, Schedule,
   Schedule_TermSchedule,
   StudentProfile,
 } from "@watcourses/proto/courses";
@@ -21,6 +21,7 @@ import {
   IPromiseBasedObservable,
   PENDING,
 } from "mobx-utils";
+import { ProfileCoursesStore } from "./ProfileCoursesStore";
 
 import { UserStore } from "./UserStore";
 
@@ -97,13 +98,13 @@ export class StudentProfileStore {
   private studentProfilePromise?: IPromiseBasedObservable<StudentProfile>;
 
   @observable
-  workingStudentProfile: StudentProfile =
-    buildProto<StudentProfile>({
-      schedule: {
-        terms: [],
-      },
-      shortList: [],
+  workingSchedule: Schedule =
+    buildProto<Schedule>({
+      terms: [],
     });
+
+  @observable
+  shortList: string[] = [];
 
   @computed
   get isLoading(): boolean {
@@ -111,10 +112,18 @@ export class StudentProfileStore {
   }
 
   @computed
+  get workingStudentProfile(): StudentProfile {
+    return buildProto<StudentProfile>({
+      ...this.studentProfile,
+      schedule: this.workingSchedule,
+    });
+  }
+
+  @computed
   get isDirty(): boolean {
     return !isEqual(
       this.studentProfile?.schedule,
-      this.workingStudentProfile.schedule,
+      this.workingSchedule,
     );
   }
 
@@ -130,10 +139,13 @@ export class StudentProfileStore {
     when(
       () => this.studentProfilePromise?.state === FULFILLED,
       () => {
-        if (!this.studentProfile) {
+        if (this.studentProfile?.shortList) {
+          this.shortList = this.studentProfile.shortList;
+        }
+        if (!this.studentProfile?.schedule || !this.isDirty) {
           return;
         }
-        this.workingStudentProfile = this.studentProfile;
+        this.workingSchedule = this.studentProfile.schedule;
         saveStudentProfile(this.studentProfile);
       },
     );
@@ -181,7 +193,7 @@ export class StudentProfileStore {
 
   @computed
   get allTerms(): Schedule_TermSchedule[] {
-    return this.workingStudentProfile?.schedule?.terms ?? [];
+    return this.workingSchedule?.terms ?? [];
   }
 
   findTermsWithCourse = (code: string) => {
@@ -195,15 +207,28 @@ export class StudentProfileStore {
     index,
     code,
   }: IAddOrRemoveCourseProps): void => {
-    if (!this.workingStudentProfile.schedule) {
+    if (!this.workingSchedule) {
       return;
     }
     const isShortList = termName === SHORTLIST_TERM_NAME;
-    this.workingStudentProfile = buildProto<StudentProfile>({
-      ...this.workingStudentProfile,
-      schedule: isShortList ? this.workingStudentProfile.schedule : {
-        ...this.workingStudentProfile.schedule,
-        terms: this.workingStudentProfile.schedule.terms
+    if (isShortList) {
+      if (!this.studentProfile?.shortList) {
+        return;
+      }
+      let shortList: string[] = [];
+      if (isAdd) {
+        if (!code) {
+          return;
+        }
+        shortList = insertAt(this.studentProfile.shortList, index, code, false);
+      } else {
+        shortList = removeAt(this.studentProfile.shortList, index);
+      }
+      this.updateShortList(shortList);
+    } else {
+      this.workingSchedule = buildProto<Schedule>({
+        ...this.workingSchedule,
+        terms: this.workingSchedule.terms
           .map((term) =>
             (term.termName === termName)
               ? {
@@ -214,16 +239,8 @@ export class StudentProfileStore {
               }
               : term,
           ),
-      },
-      // TODO shortlist change should invoke API call immediately
-      shortList: isShortList
-        ? (
-          isAdd
-            ? insertAt(this.workingStudentProfile.shortList, index, code)
-            : removeAt(this.workingStudentProfile.shortList, index)
-        )
-        : this.workingStudentProfile.shortList,
-    });
+      });
+    }
   };
 
   addCourseToTerm = ({code, termName, index}: IAddCourseToTermProps) => {
@@ -243,7 +260,7 @@ export class StudentProfileStore {
         ? indexOrCode
         : this.allTerms
         .find(it => it.termName === termName)?.courseCodes
-        .indexOf(indexOrCode) ?? -1,
+        .indexOf(indexOrCode) ?? this.shortList.indexOf(indexOrCode) ?? -1,
     });
   };
 
@@ -267,26 +284,26 @@ export class StudentProfileStore {
       termName: SHORTLIST_TERM_NAME,
       index: typeof indexOrCode === "number"
         ? indexOrCode
-        : this.workingStudentProfile.shortList.indexOf(indexOrCode) ?? -1,
+        : this.studentProfile?.shortList.indexOf(indexOrCode) ?? -1,
     });
   };
 
   isInShortList = (courseCode: string) => {
-    return this.workingStudentProfile.shortList.includes(courseCode);
+    return !!this.studentProfile?.shortList.includes(courseCode);
   };
 
   moveCourse = (
     course: CourseInfo,
-    fromTerm: Schedule_TermSchedule,
-    toTerm: Schedule_TermSchedule,
+    fromTerm: string,
+    toTerm: string,
     index: number = -1,
   ) => {
     this.removeCourseFromTerm({
-      termName: fromTerm.termName,
+      termName: fromTerm,
       indexOrCode: course.code,
     });
     this.addCourseToTerm({
-      termName: toTerm.termName,
+      termName: toTerm,
       code: course.code,
       index,
     });
@@ -306,5 +323,20 @@ export class StudentProfileStore {
           error,
         });
       });
+  };
+
+  @action
+  updateShortList = async (shortList: string[]) => {
+    this.shortList = shortList;
+    await createOrUpdateStudentProfile(buildProto<StudentProfile>({
+      ...this.studentProfile,
+      shortList,
+    }))
+      .then((response) => {
+        this.studentProfilePromise = fromPromise(Promise.resolve(response));
+      }).catch((error) => {
+        // TODO handle error
+      });
+    await ProfileCoursesStore.get().fetchProfileCourses();
   };
 }

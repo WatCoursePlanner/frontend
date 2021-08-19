@@ -102,7 +102,7 @@ const TranscriptReader = () => {
                 terms: schedule
               }
             });
-            await StudentProfileStore.get().fetchStudentProfile(result)
+            await StudentProfileStore.get().createStudentProfile(result)
           });
         }, function (reason: string) {
           console.error(reason);
