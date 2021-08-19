@@ -196,6 +196,10 @@ export interface Sort {
 export enum Sort_SortBy {
   TITLE = 1,
   CODE = 2,
+  LIKED = 3,
+  EASY = 4,
+  USEFUL = 5,
+  RATINGS_COUNT = 6,
   UNRECOGNIZED = -1,
 }
 
@@ -207,6 +211,18 @@ export function sort_SortByFromJSON(object: any): Sort_SortBy {
     case 2:
     case "CODE":
       return Sort_SortBy.CODE;
+    case 3:
+    case "LIKED":
+      return Sort_SortBy.LIKED;
+    case 4:
+    case "EASY":
+      return Sort_SortBy.EASY;
+    case 5:
+    case "USEFUL":
+      return Sort_SortBy.USEFUL;
+    case 6:
+    case "RATINGS_COUNT":
+      return Sort_SortBy.RATINGS_COUNT;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -220,6 +236,14 @@ export function sort_SortByToJSON(object: Sort_SortBy): string {
       return "TITLE";
     case Sort_SortBy.CODE:
       return "CODE";
+    case Sort_SortBy.LIKED:
+      return "LIKED";
+    case Sort_SortBy.EASY:
+      return "EASY";
+    case Sort_SortBy.USEFUL:
+      return "USEFUL";
+    case Sort_SortBy.RATINGS_COUNT:
+      return "RATINGS_COUNT";
     default:
       return "UNKNOWN";
   }

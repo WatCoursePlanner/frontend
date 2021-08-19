@@ -64,8 +64,8 @@ export const StyledIconButton = styled(IconButton)<IconButtonHTMLProps &
 }>`
   color: #5f6368;
   font-family: ${props => props.filled
-          ? "Material Icons"
-          : "Material Icons Outlined"};
+  ? "Material Icons"
+  : "Material Icons Outlined"};
 `;
 
 const PaginationWrapper = styled.div`
@@ -86,6 +86,9 @@ const searchOrderByMap: Map<keyof ICourseDisplayData, Sort_SortBy> =
   new Map<keyof ICourseDisplayData, Sort_SortBy>([
     ["code", Sort_SortBy.CODE],
     ["name", Sort_SortBy.TITLE],
+    ["like", Sort_SortBy.LIKED],
+    ["useful", Sort_SortBy.USEFUL],
+    ["easy", Sort_SortBy.EASY],
   ]);
 
 @observer
