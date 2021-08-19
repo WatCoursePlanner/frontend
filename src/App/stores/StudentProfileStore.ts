@@ -18,7 +18,6 @@ import {
   IPromiseBasedObservable,
   PENDING,
 } from "mobx-utils";
-import { UserStore } from "./UserStore";
 
 import { UserStore } from "./UserStore";
 

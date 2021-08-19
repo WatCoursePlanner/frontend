@@ -16,14 +16,12 @@ import { UserStore } from "@watcourses/stores/UserStore";
 import { action, computed, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { Simulate } from "react-dom/test-utils";
 import styled from "styled-components";
 
 import { Spacer } from "../Spacer";
-import error = Simulate.error;
 
 @observer
-export class SignInModal extends React.Component {
+export class SignUpModal extends React.Component {
 
   @observable
   private showPassword: boolean = false;
@@ -39,6 +37,12 @@ export class SignInModal extends React.Component {
 
   @observable
   private _error: string | null = null;
+
+  @observable
+  private _firstName: string = "";
+
+  @observable
+  private _lastName: string = "";
 
   @computed
   private get password() {
@@ -76,8 +80,28 @@ export class SignInModal extends React.Component {
   }
 
   @action
-  private setError = (e: string | null) => {
-    this._error = e;
+  private setError = (error: string | null) => {
+    this._error = error;
+  };
+
+  @computed
+  private get firstName() {
+    return this._firstName;
+  }
+
+  @action
+  private setFirstName = (firstName: string) => {
+    this._firstName = firstName;
+  };
+
+  @computed
+  private get lastName() {
+    return this._lastName;
+  }
+
+  @action
+  private setLastName = (lastName: string) => {
+    this._lastName = lastName;
   };
 
   @action
@@ -86,10 +110,12 @@ export class SignInModal extends React.Component {
   };
 
   @action
-  private handleSignIn = async () => {
+  private handleSignUp = async () => {
     this.setError(null);
     this.setPending(true);
-    const result = await UserStore.get().login({
+    const result = await UserStore.get().signUp({
+      firstName: this.firstName,
+      lastName: this.lastName,
       email: this.email,
       password: this.password,
     });
@@ -102,7 +128,7 @@ export class SignInModal extends React.Component {
   };
 
   @action
-  private handleGoogleSignIn = async (googleUser: gapi.auth2.GoogleUser) => {
+  private handleGoogleSignIn = async (googleUser: any) => {
     this.setError(null);
     this.setPending(true);
     const result = await UserStore.get().googleSignIn(
@@ -128,17 +154,30 @@ export class SignInModal extends React.Component {
       "height": 50,
       "longtitle": true,
       "theme": "dark",
-      "onsuccess": this.handleGoogleSignIn,
-      "onfailure": (reason: { error: string }) =>
-        this.setError(`Error: ${reason.error}`),
     });
   }
 
   render() {
     return (
       <ContentWrapper>
-        <Title>Sign In</Title>
+        <Title>Sign Up</Title>
         <Spacer height={32}/>
+        <Row>
+          <TextField
+            label="First name"
+            value={this.firstName}
+            onChange={event => this.setFirstName(event.target.value)}
+            variant="outlined"
+          />
+          <Spacer width={16}/>
+          <TextField
+            label="Last name"
+            value={this.lastName}
+            onChange={event => this.setLastName(event.target.value)}
+            variant="outlined"
+          />
+        </Row>
+        <Spacer height={16}/>
         <TextField
           label="Email"
           value={this.email}
@@ -180,25 +219,25 @@ export class SignInModal extends React.Component {
           </>)
           : <Spacer height={24}/>}
         <Row justify={"flex-end"}>
-          <Button raised onClick={this.handleSignIn}>
-            {this.pending ? "LOADING" : "Sign In"}
+          <Button raised onClick={this.handleSignUp}>
+            {this.pending ? "LOADING" : "Create Account"}
           </Button>
         </Row>
         <Spacer height={24}/>
         <Caption>
-          New user?{" "}
+          Already have an account?{" "}
           <span onClick={e => {
             e.preventDefault();
-            SignInModalStore.get().showSignUp();
+            SignInModalStore.get().showSignIn();
           }}>
-            Create an account
+            Sign in
           </span>
           .
         </Caption>
         <Spacer height={24}/>
         <Separator>OR</Separator>
         <Spacer height={24}/>
-        <div id="g-signin2"/>
+        <div id="g-signin2" data-onsuccess={this.handleGoogleSignIn}/>
       </ContentWrapper>
     );
   }

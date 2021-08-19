@@ -9,6 +9,9 @@ export default new Promise<void>(async (resolve, reject) => {
     await UserStore.get().init();
     await StudentProfileStore.get().init();
     ProfileCoursesStore.get().init();
+    gapi.load('auth2', () => {
+      gapi.auth2.init({});
+    });
     resolve();
   } catch (error) {
     reject(error);

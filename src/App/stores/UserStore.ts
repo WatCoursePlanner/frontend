@@ -1,6 +1,11 @@
 import getUserInfo from "@watcourses/api/User/get";
+import googleSignIn from "@watcourses/api/User/googleSignIn";
 import login from "@watcourses/api/User/login";
+import logout from "@watcourses/api/User/logout";
+import signup from "@watcourses/api/User/signup";
 import {
+  GoogleLoginOrRegisterRequest,
+  LoginOrRegisterResponse,
   LoginRequest,
   RegisterRequest,
   UserInfo,
@@ -17,12 +22,16 @@ import { fromPromise, IPromiseBasedObservable, PENDING } from "mobx-utils";
 
 import { StudentProfileStore } from "./StudentProfileStore";
 
+interface IGoogleSignInProps {
+  token: string,
+}
+
 interface ILoginProps {
   email: string,
   password: string,
 }
 
-interface ILoginResult {
+interface ILoginOrSignupResult {
   success: boolean,
   error: string | undefined,
 }
@@ -92,44 +101,51 @@ export class UserStore {
   }
 
   @action
-  login = async (partial: ILoginProps): Promise<ILoginResult> => {
-    return login(buildProto<LoginRequest>(partial))
-      .then(async (response) => {
-        if (response.success) {
-          this.userInfoPromise = fromPromise(Promise.resolve(response.userInfo));
-          await this.maybeSetStudentProfileFrom(response.userInfo);
-        }
-        return buildProto<ILoginResult>({
-          success: response.success,
-          error: response.reason,
-        });
-      })
-      .catch((error) => {
-        return buildProto<ILoginResult>({
-          success: false,
-          error,
-        });
+  login = async (partial: ILoginProps): Promise<ILoginOrSignupResult> => {
+    return this.processLogInOrSignUp(
+      login(buildProto<LoginRequest>(partial)),
+    );
+  };
+
+  @action
+  signUp = (partial: ISignUpProps): Promise<ILoginOrSignupResult> => {
+    return this.processLogInOrSignUp(
+      signup(buildProto<RegisterRequest>(partial)),
+    );
+  };
+
+  @action
+  googleSignIn = (
+    partial: IGoogleSignInProps,
+  ): Promise<ILoginOrSignupResult> => {
+    return this.processLogInOrSignUp(
+      googleSignIn(buildProto<GoogleLoginOrRegisterRequest>(partial)),
+    );
+  };
+
+  private processLogInOrSignUp = (
+    responsePromise: Promise<LoginOrRegisterResponse>,
+  ): Promise<ILoginOrSignupResult> => {
+    return responsePromise.then(async (response) => {
+      if (response.success) {
+        this.userInfoPromise = fromPromise(Promise.resolve(response.userInfo));
+        await this.maybeSetStudentProfileFrom(response.userInfo);
+      }
+      return buildProto<ILoginOrSignupResult>({
+        success: response.success,
+        error: response.reason,
       });
+    }).catch((error) => {
+      return buildProto<ILoginOrSignupResult>({
+        success: false,
+        error,
+      });
+    });
   };
 
   @action
-  signUp = (partial: ISignUpProps) => {
-    this.userInfoPromise = fromPromise(
-      login(buildProto<RegisterRequest>(partial))
-        .then((response) => response.userInfo),
-    );
+  signOut = async () => {
+    await logout();
+    gapi.auth2.getAuthInstance().signOut();
   };
-
-  @action
-  googleSignIn = (partial: ISignUpProps) => {
-    this.userInfoPromise = fromPromise(
-      login(buildProto<RegisterRequest>(partial))
-        .then((response) => response.userInfo),
-    );
-  };
-
-  @action
-  signOut = () => {
-    // TODO
-  }
 }

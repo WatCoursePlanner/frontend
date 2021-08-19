@@ -28,6 +28,7 @@ import { CourseInfo } from "@watcourses/proto/courses";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { SignInModalStore } from "@watcourses/stores/SignInModalStore";
 import { UserStore } from "@watcourses/stores/UserStore";
+import { unset } from "lodash";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
@@ -76,6 +77,9 @@ export class TopNav extends React.Component<ITopNavProps> {
       onAutoCompleteSelect,
       issues,
     } = this.props;
+
+    const user = UserStore.get().user;
+    const fullName = `${user.firstName} ${user.lastName}`;
 
     return (
       <StyledAppBar fixed theme={['surface']}>
@@ -135,7 +139,7 @@ export class TopNav extends React.Component<ITopNavProps> {
                     open={this.accountMenuOpen}
                     anchorCorner={'bottomLeft'}
                     onClose={() => this.setAccountMenuOpen(false)}>
-                    <Popup title={'Account'}>
+                    <Popup title={fullName}>
                       <Button
                         label="Sign Out"
                         raised
@@ -147,9 +151,10 @@ export class TopNav extends React.Component<ITopNavProps> {
                   </MenuSurface>
                   <Avatar
                     ripple
-                    name="John Doe"
+                    name={fullName}
                     size={'large'}
-                    style={{backgroundColor: "#32b9c1"}}
+                    src={user.pictureUrl}
+                    style={{backgroundColor: "#32b9c1", fontFamily: "unset"}}
                     onClick={() => {
                       this.setAccountMenuOpen(!this.accountMenuOpen);
                     }}/>

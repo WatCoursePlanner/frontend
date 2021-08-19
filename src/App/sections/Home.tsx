@@ -2,6 +2,7 @@ import { Dialog } from "@rmwc/dialog";
 import { DrawerAppContent } from '@rmwc/drawer';
 import { Drawer } from "@watcourses/components/Drawer";
 import { SignInModal } from "@watcourses/components/SignIn/SignInModal";
+import { SignUpModal } from "@watcourses/components/SignIn/SignUpModal";
 import { TopNav } from "@watcourses/components/TopNav";
 import { discover, home, schedule } from "@watcourses/paths";
 import { AppHistory } from "@watcourses/services/AppHistory";
@@ -18,7 +19,6 @@ import { Else, If, Then } from "react-if";
 import { Route, Switch } from "react-router";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
-import { SignInModal } from "../components/SignIn/SignInModal";
 
 import { Discover } from "./Discover";
 import { Schedule } from "./Schedule";
@@ -125,6 +125,8 @@ export class Home extends React.Component<IHomeProps> {
           >
             {SignInModalStore.get().currentModal === SignInModalType.SIGNIN &&
             <SignInModal/>}
+            {SignInModalStore.get().currentModal === SignInModalType.SIGNUP &&
+            <SignUpModal/>}
           </Dialog>
         </Else>
       </If>
