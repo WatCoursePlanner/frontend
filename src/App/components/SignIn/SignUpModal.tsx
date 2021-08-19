@@ -128,7 +128,7 @@ export class SignUpModal extends React.Component {
   };
 
   @action
-  private handleGoogleSignIn = async (googleUser: any) => {
+  private handleGoogleSignIn = async (googleUser: gapi.auth2.GoogleUser) => {
     this.setError(null);
     this.setPending(true);
     const result = await UserStore.get().googleSignIn(
@@ -154,6 +154,9 @@ export class SignUpModal extends React.Component {
       "height": 50,
       "longtitle": true,
       "theme": "dark",
+      "onsuccess": this.handleGoogleSignIn,
+      "onfailure": (reason: { error: string }) =>
+        this.setError(`Error: ${reason.error}`),
     });
   }
 
@@ -237,7 +240,7 @@ export class SignUpModal extends React.Component {
         <Spacer height={24}/>
         <Separator>OR</Separator>
         <Spacer height={24}/>
-        <div id="g-signin2" data-onsuccess={this.handleGoogleSignIn}/>
+        <div id="g-signin2"/>
       </ContentWrapper>
     );
   }

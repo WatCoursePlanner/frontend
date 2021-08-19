@@ -8,7 +8,8 @@ export default function login(
 ): Promise<LoginOrRegisterResponse> {
   return post(
     `${URL_BASE}${USER}/login`,
-    LoginRequest,
     data,
+    LoginRequest,
+    LoginOrRegisterResponse,
   );
 };

@@ -8,7 +8,9 @@ import {
 import { Spacer } from "@watcourses/components/Spacer";
 import { CheckResults, FindSlotRequest } from "@watcourses/proto/courses";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
+import { SignInModalStore } from "@watcourses/stores/SignInModalStore";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
+import { UserStore } from "@watcourses/stores/UserStore";
 import { buildProto } from "@watcourses/utils/buildProto";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { observer } from "mobx-react";
@@ -196,7 +198,15 @@ export class Schedule extends React.Component<IScheduleProps> {
             <StyledFab
               icon={isLoading ? "loading" : "save"} // TODO loading animation
               label="Save"
-              exited={!isDirty}
+              exited={!isDirty && UserStore.get().isLoggedIn}
+              onClick={async () => {
+                if (UserStore.get().isLoggedIn) {
+                  // TODO animation?
+                  await StudentProfileStore.get().save();
+                } else {
+                  SignInModalStore.get().showSignUp();
+                }
+              }}
             />
           </ScheduleListContainer>
           <ShortListButton
@@ -289,7 +299,7 @@ const ShortListContainer = styled.div<{ open: boolean }>`
   border-left: 1px solid #e0e0e0;
 `;
 
-const StyledFab = styled(Fab)<FabProps>`
+const StyledFab = styled(Fab)<FabProps & ButtonHTMLProps>`
   letter-spacing: normal !important;
   text-transform: initial;
   position: absolute !important;

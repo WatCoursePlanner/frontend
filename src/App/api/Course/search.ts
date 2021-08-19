@@ -8,7 +8,8 @@ export default function searchCourses(
 ): Promise<SearchCourseResponse> {
   return post(
     `${URL_BASE}${COURSE}/search`,
-    SearchCourseRequest,
     data,
+    SearchCourseRequest,
+    SearchCourseResponse,
   );
 };

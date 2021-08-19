@@ -11,7 +11,8 @@ export default function signup(
 ): Promise<LoginOrRegisterResponse> {
   return post(
     `${URL_BASE}${USER}/register`,
-    RegisterRequest,
     data,
+    RegisterRequest,
+    LoginOrRegisterResponse,
   );
 };

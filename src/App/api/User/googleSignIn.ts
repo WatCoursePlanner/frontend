@@ -11,7 +11,8 @@ export default function googleSignIn(
 ): Promise<LoginOrRegisterResponse> {
   return post(
     `${URL_BASE}${USER}/google`,
-    GoogleLoginOrRegisterRequest,
     data,
+    GoogleLoginOrRegisterRequest,
+    LoginOrRegisterResponse,
   );
 };

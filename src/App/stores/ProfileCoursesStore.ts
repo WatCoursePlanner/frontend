@@ -40,7 +40,7 @@ export class ProfileCoursesStore {
     return this.profileCoursesPromise?.case({
       fulfilled: (response) => {
         const courses: IProfileCoursesMapping = {};
-        for (const course of response.checkedCourses) {
+        for (const course of response.checkedCourses ?? []) {
           courses[course.code] = course;
         }
         return buildProto<IProfileCourses>({

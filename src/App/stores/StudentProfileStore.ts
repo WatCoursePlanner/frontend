@@ -1,4 +1,7 @@
 import createStudentProfile from "@watcourses/api/StudentProfile/create";
+import createOrUpdateStudentProfile
+  from "@watcourses/api/StudentProfile/createOrUpdate";
+import getDefaultStudentProfile from "@watcourses/api/StudentProfile/default";
 import {
   CoopStream,
   CourseInfo,
@@ -66,6 +69,11 @@ interface ITermOperationProps {
   termName: string,
 }
 
+interface ISaveProfileResult {
+  success: boolean,
+  error: string | undefined,
+}
+
 interface IAddCourseToTermProps extends IAddCourseProps, ITermOperationProps {
 }
 
@@ -77,7 +85,7 @@ export const SHORTLIST_TERM_NAME = "shortlist";
 export class StudentProfileStore {
   static get = singletonGetter(StudentProfileStore);
 
-  // TODO implement student profile
+  // TODO implement create student profile
   private readonly SampleProfileRequest =
     buildProto<CreateStudentProfileRequest>({
       degrees: ["Software Engineering"],
@@ -106,7 +114,7 @@ export class StudentProfileStore {
   get isDirty(): boolean {
     return !isEqual(
       this.studentProfile?.schedule,
-      this.workingStudentProfile.schedule
+      this.workingStudentProfile.schedule,
     );
   }
 
@@ -131,27 +139,42 @@ export class StudentProfileStore {
     );
   }
 
-  init(): Promise<StudentProfile> {
+  async init(): Promise<StudentProfile> {
     if (this.studentProfile) {
       // Profile might have been initialized from UserStore
       // if there is an active user session
-      return Promise.resolve(this.studentProfile)
+      return Promise.resolve(this.studentProfile);
     }
-    return this.fetchStudentProfile(this.SampleProfileRequest);
+    if (UserStore.get().isLoggedIn) {
+      // TODO
+      return this.createStudentProfile(this.SampleProfileRequest);
+    } else {
+      // TODO
+      return this.fetchDefaultStudentProfile("Software Engineering");
+    }
   }
 
   @action
   setStudentProfile = (profile: StudentProfile): Promise<StudentProfile> => {
-    const promise = Promise.resolve(profile)
+    const promise = Promise.resolve(profile);
     this.studentProfilePromise = fromPromise(promise);
     return promise;
   };
 
   @action
-  fetchStudentProfile = (
+  createStudentProfile = (
     request: CreateStudentProfileRequest,
   ): Promise<StudentProfile> => {
     const promise = createStudentProfile(request);
+    this.studentProfilePromise = fromPromise(promise);
+    return promise;
+  };
+
+  @action
+  fetchDefaultStudentProfile = (
+    program: string,
+  ): Promise<StudentProfile> => {
+    const promise = getDefaultStudentProfile(program);
     this.studentProfilePromise = fromPromise(promise);
     return promise;
   };
@@ -270,11 +293,18 @@ export class StudentProfileStore {
   };
 
   @action
-  save = () => {
-    const userEmail = UserStore.get().userEmail;
-    if (!userEmail) {
-      // TODO prompt to create account
-      return
-    }
-  }
+  save = (): Promise<ISaveProfileResult> => {
+    return createOrUpdateStudentProfile(this.workingStudentProfile)
+      .then(async (response) => {
+        this.studentProfilePromise = fromPromise(Promise.resolve(response));
+        return buildProto<ISaveProfileResult>({
+          success: true,
+        });
+      }).catch((error) => {
+        return buildProto<ISaveProfileResult>({
+          success: false,
+          error,
+        });
+      });
+  };
 }
