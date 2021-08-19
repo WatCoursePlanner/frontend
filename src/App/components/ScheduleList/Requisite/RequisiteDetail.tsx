@@ -9,12 +9,13 @@ import {
 } from "@rmwc/card";
 import { Tooltip } from "@rmwc/tooltip";
 import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHandler";
-import { CourseInfo } from "@watcourses/proto/courses";
-import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
+import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
+import { ProfileCoursesStore } from "../../../stores/ProfileCoursesStore";
+import { StudentProfileStore } from "../../../stores/StudentProfileStore";
 
 import { AddOrMoveCourseToTermMenu } from "../AddOrMoveCourseToTermMenu";
 
@@ -41,6 +42,20 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
     makeObservable(this);
   }
 
+  @action
+  private removeCourse(course: CourseInfo) {
+    const {removeCourseFromSchedule} = StudentProfileStore.get();
+    removeCourseFromSchedule(course.code);
+    ProfileCoursesStore.get().fetchProfileCourses();
+  }
+
+  @action
+  private addCourse(course: CourseInfo, term: Schedule_TermSchedule) {
+    const {addCourseToTerm} = StudentProfileStore.get();
+    addCourseToTerm({code: course.code, termName: term.termName, index: -1});
+    ProfileCoursesStore.get().fetchProfileCourses();
+  }
+
   private renderRemoveButton = (course: CourseInfo) => {
     const {requisite} = this.props;
     return (
@@ -48,11 +63,12 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
         outlined={!requisite.necessary}
         raised={requisite.necessary}
         danger
+        onClick={() => this.removeCourse(course)}
       >
         Remove
       </CardActionButton>
     );
-  }
+  };
 
   private renderAddButton = (course: CourseInfo) => {
     const {requisite} = this.props;
@@ -66,11 +82,7 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
         open={addCourseMenuOpen}
         onClose={() => setAddCourseMenuOpen(false)}
         onSelect={(term) => {
-          StudentProfileStore.get().addCourseToTerm({
-            code: course.code,
-            termName: term.termName,
-            index: -1,
-          })
+          this.addCourse(course, term);
         }}
       >
         <CardActionButton
@@ -82,7 +94,7 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
         </CardActionButton>
       </AddOrMoveCourseToTermMenu>
     );
-  }
+  };
 
   renderCourse = (course: CourseInfo) => {
     const {requisite} = this.props;

@@ -237,16 +237,16 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
               onMouseLeave={toggleHover}>
               <CardContainer>
                 <CourseCode>
-                  {course?.code ?? ''}
+                  {course.code ?? ''}
                   {!allConditionsMet ? (<Error>error</Error>) : null}
                 </CourseCode>
                 <CourseName>
-                  {course?.name ?? ''}
+                  {course.name ?? ''}
                 </CourseName>
               </CardContainer>
             </StyledCard>
             <Popper
-              id={course?.code}
+              id={course.code}
               open={active}
               anchorEl={cardRef.current}
               placement="left-start"

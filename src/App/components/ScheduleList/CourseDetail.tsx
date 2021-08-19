@@ -19,11 +19,10 @@ import {
   RequisiteChecklist,
   RequisiteGroupChecklist,
 } from "@watcourses/components/ScheduleList/Requisite";
-import {
-  ClickOutsideHandler,
-} from "@watcourses/components/utils/ClickOutsideHandler";
+import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHandler";
 import { cleanScrollBarWithWhiteBorder } from "@watcourses/constants/styles";
 import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
+import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
@@ -45,13 +44,14 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
 
   @observable
   private moveToMenuOpen = false;
+
   @observable
   private courseDetailState = new CourseDetailState(this.props.course);
-  
+
   @action
   private setMoveToMenuOpen = (open: boolean) => {
     this.moveToMenuOpen = open;
-  }
+  };
 
   private formatPrerequisiteString = (prerequisites: IRequisiteGroup[]) => {
     return `${
@@ -75,13 +75,26 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
     makeObservable(this);
   }
 
+  @action
+  private moveOrRemoveCourse(
+    course: CourseInfo,
+    term: Schedule_TermSchedule | null, // when null, the course will be removed.
+  ) {
+    const {removeCourseFromSchedule, addCourseToTerm} = StudentProfileStore.get();
+    removeCourseFromSchedule(course.code);
+    if (term !== null) {
+      addCourseToTerm({code: course.code, termName: term.termName, index: -1});
+    }
+    ProfileCoursesStore.get().fetchProfileCourses();
+  }
+
   render() {
     const {
       course,
       onDismiss,
       fromTerm,
     } = this.props;
-    
+
     const {
       moveToMenuOpen,
       setMoveToMenuOpen,
@@ -111,12 +124,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                 open={moveToMenuOpen}
                 onClose={() => setMoveToMenuOpen(false)}
                 onSelect={(term) => {
-                  if (!course || !fromTerm) {
-                    return;
-                  }
-                  StudentProfileStore.get()
-                    .moveCourse(course, fromTerm, term);
-                  onDismiss();
+                  this.moveOrRemoveCourse(course, term);
                 }}
               >
                 <Tooltip content="Move">
@@ -127,7 +135,9 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                 </Tooltip>
               </AddOrMoveCourseToTermMenu>
               <Tooltip content="Delete">
-                <CardActionIcon icon="delete_outline"/>
+                <CardActionIcon
+                  icon="delete_outline"
+                  onClick={() => this.moveOrRemoveCourse(course, null)}/>
               </Tooltip>
             </CardActionIcons>
             <CardActionIcons style={{flexGrow: 0, marginLeft: 8}}>

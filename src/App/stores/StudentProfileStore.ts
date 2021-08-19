@@ -186,7 +186,7 @@ export class StudentProfileStore {
               ? {
                 ...term,
                 courseCodes: isAdd
-                  ? insertAt(term.courseCodes, index, code)
+                  ? insertAt(term.courseCodes, index, code, false)
                   : removeAt(term.courseCodes, index),
               }
               : term,
