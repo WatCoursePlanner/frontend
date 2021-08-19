@@ -154,7 +154,11 @@ export class TopNav extends React.Component<ITopNavProps> {
                     name={fullName}
                     size={'large'}
                     src={user.pictureUrl}
-                    style={{backgroundColor: "#32b9c1", fontFamily: "unset"}}
+                    style={{
+                      backgroundColor: "#32b9c1",
+                      fontFamily: "unset",
+                      cursor: "pointer",
+                    }}
                     onClick={() => {
                       this.setAccountMenuOpen(!this.accountMenuOpen);
                     }}/>
