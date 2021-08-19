@@ -34,6 +34,7 @@ import { AddOrMoveCourseToTermMenu } from "./AddOrMoveCourseToTermMenu";
 import { CourseDetailState } from "./CourseDetailState";
 
 interface ICourseDetailProps {
+  courseDetailState: CourseDetailState,
   course?: CourseInfo,
   fromTerm?: Schedule_TermSchedule,
   onDismiss: () => void,
@@ -44,9 +45,6 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
 
   @observable
   private moveToMenuOpen = false;
-
-  @observable
-  private courseDetailState = new CourseDetailState(this.props.course);
 
   @action
   private setMoveToMenuOpen = (open: boolean) => {
@@ -77,13 +75,21 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
 
   @action
   private moveOrRemoveCourse(
-    course: CourseInfo,
-    term: Schedule_TermSchedule | null, // when null, the course will be removed.
+    course?: CourseInfo,
+    fromTerm?: Schedule_TermSchedule,
+    toTerm?: Schedule_TermSchedule, // when null, the course will be removed.
   ) {
-    const {removeCourseFromSchedule, addCourseToTerm} = StudentProfileStore.get();
-    removeCourseFromSchedule(course.code);
-    if (term !== null) {
-      addCourseToTerm({code: course.code, termName: term.termName, index: -1});
+    const {removeCourseFromTerm, addCourseToTerm} = StudentProfileStore.get();
+    if (!course || !fromTerm) {
+      return;
+    }
+    if (!toTerm) {
+      removeCourseFromTerm({
+        termName: fromTerm.termName,
+        indexOrCode: course.code
+      });
+    } else {
+      StudentProfileStore.get().moveCourse(course, fromTerm, toTerm);
     }
     ProfileCoursesStore.get().fetchProfileCourses();
   }
@@ -94,6 +100,8 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
       onDismiss,
       fromTerm,
     } = this.props;
+
+    // this.courseDetailState = new CourseDetailState(course, this.courseDetailState.registeredDescendents);
 
     const {
       moveToMenuOpen,
@@ -106,7 +114,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
       handleScroll,
       prerequisites,
       antirequisites,
-    } = this.courseDetailState;
+    } = this.props.courseDetailState;
 
     return (
       <ClickOutsideHandler
@@ -124,7 +132,8 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                 open={moveToMenuOpen}
                 onClose={() => setMoveToMenuOpen(false)}
                 onSelect={(term) => {
-                  this.moveOrRemoveCourse(course, term);
+                  this.moveOrRemoveCourse(course, fromTerm, term)
+                  onDismiss();
                 }}
               >
                 <Tooltip content="Move">
@@ -137,7 +146,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
               <Tooltip content="Delete">
                 <CardActionIcon
                   icon="delete_outline"
-                  onClick={() => this.moveOrRemoveCourse(course, null)}/>
+                  onClick={() => this.moveOrRemoveCourse(course, fromTerm)}/>
               </Tooltip>
             </CardActionIcons>
             <CardActionIcons style={{flexGrow: 0, marginLeft: 8}}>
@@ -177,7 +186,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                       {this.formatPrerequisiteString(prerequisites)}
                     </ListContentSubtitle>
                     <RequisiteGroupChecklist
-                      courseDetailState={this.courseDetailState}
+                      courseDetailState={this.props.courseDetailState}
                       requisiteGroups={prerequisites}
                     />
                   </ListContent>
@@ -195,7 +204,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                       {this.formatAntirequisiteString(antirequisites)}
                     </ListContentSubtitle>
                     <RequisiteChecklist
-                      courseDetailState={this.courseDetailState}
+                      courseDetailState={this.props.courseDetailState}
                       requisites={antirequisites}
                     />
                   </ListContent>

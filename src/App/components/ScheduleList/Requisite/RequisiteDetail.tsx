@@ -10,12 +10,12 @@ import {
 import { Tooltip } from "@rmwc/tooltip";
 import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHandler";
 import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
+import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
+import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
-import { ProfileCoursesStore } from "../../../stores/ProfileCoursesStore";
-import { StudentProfileStore } from "../../../stores/StudentProfileStore";
 
 import { AddOrMoveCourseToTermMenu } from "../AddOrMoveCourseToTermMenu";
 
@@ -47,6 +47,7 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
     const {removeCourseFromSchedule} = StudentProfileStore.get();
     removeCourseFromSchedule(course.code);
     ProfileCoursesStore.get().fetchProfileCourses();
+    this.props.onDismiss();
   }
 
   @action
@@ -54,6 +55,7 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
     const {addCourseToTerm} = StudentProfileStore.get();
     addCourseToTerm({code: course.code, termName: term.termName, index: -1});
     ProfileCoursesStore.get().fetchProfileCourses();
+    this.props.onDismiss();
   }
 
   private renderRemoveButton = (course: CourseInfo) => {

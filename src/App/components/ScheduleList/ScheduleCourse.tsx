@@ -9,6 +9,7 @@ import { Draggable } from 'react-smooth-dnd';
 import styled from "styled-components";
 
 import { CourseDetail } from "./CourseDetail";
+import { CourseDetailState } from "./CourseDetailState";
 
 interface IScheduleCourseProps {
   course?: CourseInfo,
@@ -59,6 +60,12 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
   @action
   private toggleActive = () => {
     this.active = !this.active;
+  };
+
+  private registeredDescendents: Set<React.RefObject<HTMLElement>> = new Set();
+
+  private setRegisterDescendent = (s: Set<React.RefObject<HTMLElement>>) => {
+    this.registeredDescendents = s;
   };
 
   private cardRef: React.RefObject<HTMLDivElement> = React.createRef();
@@ -254,6 +261,11 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
             >
               <div style={{maxHeight: '80vh'}}>
                 <CourseDetail
+                  courseDetailState={new CourseDetailState(
+                    this.registeredDescendents,
+                    this.setRegisterDescendent,
+                    course,
+                  )}
                   course={course}
                   fromTerm={fromTerm}
                   onDismiss={handleCloseDetail}

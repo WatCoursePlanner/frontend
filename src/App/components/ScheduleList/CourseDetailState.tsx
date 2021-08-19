@@ -6,20 +6,22 @@ import React from "react";
 export class CourseDetailState {
 
   @observable
-  private readonly _course?: CourseInfo;
+  private readonly course?: CourseInfo;
 
   @computed
   get prerequisites() {
-    return RequisiteHelper.getPreRequisite(this._course);
+    return RequisiteHelper.getPreRequisite(this.course);
   };
 
   @computed
   get antirequisites() {
-    return RequisiteHelper.getAntiRequisite(this._course);
+    return RequisiteHelper.getAntiRequisite(this.course);
   };
 
   @observable
-  registeredDescendents: Set<React.RefObject<HTMLElement>> = new Set();
+  registeredDescendents: Set<React.RefObject<HTMLElement>>;
+
+  private readonly updateRegisteredDescendents: (a: Set<React.RefObject<HTMLElement>>) => void;
 
   @observable
   scrolled: boolean = false;
@@ -27,11 +29,13 @@ export class CourseDetailState {
   @action
   registerDescendent = (ref: React.RefObject<HTMLElement>) => {
     this.registeredDescendents.add(ref);
+    this.updateRegisteredDescendents(this.registeredDescendents);
   };
 
   @action
   removeDescendent = (ref: React.RefObject<HTMLElement>) => {
     this.registeredDescendents.delete(ref);
+    this.updateRegisteredDescendents(this.registeredDescendents);
   };
 
   @action
@@ -43,8 +47,14 @@ export class CourseDetailState {
     }
   };
 
-  constructor(course?: CourseInfo) {
+  constructor(
+    _registeredDescendents: Set<React.RefObject<HTMLElement>>,
+    _updateRegisteredDescendents: (a: Set<React.RefObject<HTMLElement>>) => void,
+    _course?: CourseInfo,
+  ) {
     makeObservable(this);
-    this._course = course;
+    this.course = _course;
+    this.registeredDescendents = _registeredDescendents ?? new Set();
+    this.updateRegisteredDescendents = _updateRegisteredDescendents;
   }
 }

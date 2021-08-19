@@ -75,7 +75,7 @@ export class RequisiteChip extends React.Component<IRequisiteChipProps> {
         <StyledChip
           ref={chipRef}
           className={'unselectable'}
-          onInteraction={toggleActive}
+          onClick={toggleActive}
           icon={requisite.met ? REQUISITE_ICONS.MET : REQUISITE_ICONS.UNMET}
           met={requisite.met ? 1 : 0}
           necessary={requisite.necessary ? 1 : 0}
@@ -108,14 +108,14 @@ const StyledChip = styled(Chip)<ChipProps & ChipHTMLProps & {
   necessary?: number,
 }>`
   background-color: ${props => props.met
-  ? '#edf7fe'
-  : props.necessary ? '#feeded' : '#f5f5f5'
-};
+          ? '#edf7fe'
+          : props.necessary ? '#feeded' : '#f5f5f5'
+  };
 
   i {
     color: ${props => props.met
-  ? '#2196f3'
-  : props.necessary ? '#ff0000' : '#616161'
-};
+            ? '#2196f3'
+            : props.necessary ? '#ff0000' : '#616161'
+    };
   }
 `;

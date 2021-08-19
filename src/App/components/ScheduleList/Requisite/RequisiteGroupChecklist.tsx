@@ -1,4 +1,5 @@
 import { ListItemGraphic, ListItemGraphicProps } from "@rmwc/list";
+import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
 
@@ -11,7 +12,7 @@ interface IRequisiteGroupChecklistProps {
   courseDetailState: CourseDetailState;
 }
 
-export const RequisiteGroupChecklist = ({
+export const RequisiteGroupChecklist = observer(({
   requisiteGroups,
   courseDetailState,
 }: IRequisiteGroupChecklistProps) => {
@@ -36,7 +37,7 @@ export const RequisiteGroupChecklist = ({
       )}
     </RootContainer>
   );
-};
+});
 
 const RootContainer = styled.div`
   display: flex;

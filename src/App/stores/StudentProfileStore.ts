@@ -158,7 +158,7 @@ export class StudentProfileStore {
 
   @computed
   get allTerms(): Schedule_TermSchedule[] {
-    return this.studentProfile?.schedule?.terms ?? [];
+    return this.workingStudentProfile?.schedule?.terms ?? [];
   }
 
   findTermsWithCourse = (code: string) => {

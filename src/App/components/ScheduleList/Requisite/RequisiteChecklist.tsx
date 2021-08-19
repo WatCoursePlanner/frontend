@@ -1,4 +1,5 @@
 import { ChipSet } from "@rmwc/chip";
+import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
 
@@ -12,7 +13,7 @@ interface IRequisiteChecklistProps {
   courseDetailState: CourseDetailState;
 }
 
-export const RequisiteChecklist = ({
+export const RequisiteChecklist = observer(({
   requisites,
   courseDetailState,
 }: IRequisiteChecklistProps) => {
@@ -30,7 +31,7 @@ export const RequisiteChecklist = ({
       </StyledChipSet>
     </RootContainer>
   );
-};
+});
 
 const RootContainer = styled.div`
   display: flex;
