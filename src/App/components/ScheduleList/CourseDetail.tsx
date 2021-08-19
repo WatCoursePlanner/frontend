@@ -5,7 +5,6 @@ import {
   CardActions,
   CardProps,
 } from "@rmwc/card";
-import '@rmwc/card/styles';
 import {
   List,
   ListItem,
@@ -14,7 +13,6 @@ import {
   SimpleListItemProps,
 } from "@rmwc/list";
 import { Tooltip } from "@rmwc/tooltip";
-import '@rmwc/tooltip/styles';
 import {
   IRequisite,
   IRequisiteGroup,
@@ -24,21 +22,23 @@ import {
 import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHandler";
 import { cleanScrollBarWithWhiteBorder } from "@watcourses/constants/styles";
 import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
+import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
+import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { If, Then } from 'react-if';
 import styled from "styled-components";
 
-import { ProfileCoursesStore } from "../../stores/ProfileCoursesStore";
-import { StudentProfileStore } from "../../stores/StudentProfileStore";
-
 import { AddOrMoveCourseToTermMenu } from "./AddOrMoveCourseToTermMenu";
 import { CourseDetailState } from "./CourseDetailState";
 
 interface ICourseDetailProps {
-  course: CourseInfo,
-  onDismiss: () => void
+  courseDetailState: CourseDetailState,
+  course?: CourseInfo,
+  fromTerm?: string,
+  displayRequisiteCheck: boolean,
+  onDismiss: () => void,
 }
 
 @observer
@@ -46,9 +46,6 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
 
   @observable
   private moveToMenuOpen = false;
-
-  @observable
-  private courseDetailState = new CourseDetailState(this.props.course);
 
   @action
   private setMoveToMenuOpen = (open: boolean) => {
@@ -79,13 +76,21 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
 
   @action
   private moveOrRemoveCourse(
-    course: CourseInfo,
-    term: Schedule_TermSchedule | null, // when null, the course will be removed.
+    course?: CourseInfo,
+    fromTerm?: string,
+    toTerm?: string, // when null, the course will be removed.
   ) {
-    const {removeCourseFromSchedule, addCourseToTerm} = StudentProfileStore.get();
-    removeCourseFromSchedule(course.code);
-    if (term !== null) {
-      addCourseToTerm({code: course.code, termName: term.termName, index: -1});
+    const {removeCourseFromTerm} = StudentProfileStore.get();
+    if (!course || !fromTerm) {
+      return;
+    }
+    if (!toTerm) {
+      removeCourseFromTerm({
+        termName: fromTerm,
+        indexOrCode: course.code
+      });
+    } else {
+      StudentProfileStore.get().moveCourse(course, fromTerm, toTerm);
     }
     ProfileCoursesStore.get().fetchProfileCourses();
   }
@@ -94,6 +99,8 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
     const {
       course,
       onDismiss,
+      fromTerm,
+      displayRequisiteCheck,
     } = this.props;
 
     const {
@@ -107,7 +114,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
       handleScroll,
       prerequisites,
       antirequisites,
-    } = this.courseDetailState;
+    } = this.props.courseDetailState;
 
     return (
       <ClickOutsideHandler
@@ -125,7 +132,8 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                 open={moveToMenuOpen}
                 onClose={() => setMoveToMenuOpen(false)}
                 onSelect={(term) => {
-                  this.moveOrRemoveCourse(course, term);
+                  this.moveOrRemoveCourse(course, fromTerm, term.termName)
+                  onDismiss();
                 }}
               >
                 <Tooltip content="Move">
@@ -138,7 +146,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
               <Tooltip content="Delete">
                 <CardActionIcon
                   icon="delete_outline"
-                  onClick={() => this.moveOrRemoveCourse(course, null)}/>
+                  onClick={() => this.moveOrRemoveCourse(course, fromTerm)}/>
               </Tooltip>
             </CardActionIcons>
             <CardActionIcons style={{flexGrow: 0, marginLeft: 8}}>
@@ -178,7 +186,8 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                       {this.formatPrerequisiteString(prerequisites)}
                     </ListContentSubtitle>
                     <RequisiteGroupChecklist
-                      courseDetailState={this.courseDetailState}
+                      displayRequisiteCheck={displayRequisiteCheck}
+                      courseDetailState={this.props.courseDetailState}
                       requisiteGroups={prerequisites}
                     />
                   </ListContent>
@@ -196,7 +205,8 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                       {this.formatAntirequisiteString(antirequisites)}
                     </ListContentSubtitle>
                     <RequisiteChecklist
-                      courseDetailState={this.courseDetailState}
+                      displayRequisiteCheck={displayRequisiteCheck}
+                      courseDetailState={this.props.courseDetailState}
                       requisites={antirequisites}
                     />
                   </ListContent>

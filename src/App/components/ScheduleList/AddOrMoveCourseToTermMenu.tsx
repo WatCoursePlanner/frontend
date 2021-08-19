@@ -3,7 +3,7 @@ import { ListDivider } from "@rmwc/list";
 import { Menu, MenuProps, MenuSurfaceAnchor } from "@rmwc/menu";
 import "@rmwc/menu/styles";
 import { cleanScrollBarWithWhiteBorder } from "@watcourses/constants/styles";
-import { Schedule_TermSchedule } from "@watcourses/proto/courses";
+import { Schedule_TermSchedule, termToJSON } from "@watcourses/proto/courses";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
 import { capitalize } from "@watcourses/utils/helpers";
 import { observer } from "mobx-react";
@@ -28,7 +28,7 @@ export class AddOrMoveCourseToTermMenu extends React.Component<IAddOrMoveCourseT
       children,
     } = this.props;
 
-    const studentProfile = StudentProfileStore.get().studentProfile;
+    const studentProfile = StudentProfileStore.get().workingStudentProfile;
 
     const terms = studentProfile.schedule?.terms;
 
@@ -82,7 +82,7 @@ const MenuTerm = ({term, showYear, onSelect}: IMenuTermProps) => {
       <Year>{term.year}</Year>
     </>)}
     <MenuItem onClick={onSelect}>
-      {capitalize(term.term.toString())} ({term.termName})
+      {capitalize(termToJSON(term.term))} ({term.termName})
     </MenuItem>
   </>);
 };

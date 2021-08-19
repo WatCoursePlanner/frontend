@@ -8,7 +8,8 @@ export default function createStudentProfile(
 ): Promise<StudentProfile> {
   return post(
     `${URL_BASE}${STUDENT_PROFILE}/create`,
-    CreateStudentProfileRequest,
     data,
+    CreateStudentProfileRequest,
+    StudentProfile
   );
 };

@@ -38,11 +38,21 @@ export const UwFlowCourseRating = {
     message: UwFlowCourseRating,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(9).double(message.liked);
-    writer.uint32(17).double(message.easy);
-    writer.uint32(25).double(message.useful);
-    writer.uint32(32).int32(message.filledCount);
-    writer.uint32(40).int32(message.commentCount);
+    if (message.liked !== 0) {
+      writer.uint32(9).double(message.liked);
+    }
+    if (message.easy !== 0) {
+      writer.uint32(17).double(message.easy);
+    }
+    if (message.useful !== 0) {
+      writer.uint32(25).double(message.useful);
+    }
+    if (message.filledCount !== 0) {
+      writer.uint32(32).int32(message.filledCount);
+    }
+    if (message.commentCount !== 0) {
+      writer.uint32(40).int32(message.commentCount);
+    }
     return writer;
   },
 
@@ -106,6 +116,18 @@ export const UwFlowCourseRating = {
     return message;
   },
 
+  toJSON(message: UwFlowCourseRating): unknown {
+    const obj: any = {};
+    message.liked !== undefined && (obj.liked = message.liked);
+    message.easy !== undefined && (obj.easy = message.easy);
+    message.useful !== undefined && (obj.useful = message.useful);
+    message.filledCount !== undefined &&
+      (obj.filledCount = message.filledCount);
+    message.commentCount !== undefined &&
+      (obj.commentCount = message.commentCount);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<UwFlowCourseRating>): UwFlowCourseRating {
     const message = { ...baseUwFlowCourseRating } as UwFlowCourseRating;
     if (object.liked !== undefined && object.liked !== null) {
@@ -135,27 +157,19 @@ export const UwFlowCourseRating = {
     }
     return message;
   },
-
-  toJSON(message: UwFlowCourseRating): unknown {
-    const obj: any = {};
-    message.liked !== undefined && (obj.liked = message.liked);
-    message.easy !== undefined && (obj.easy = message.easy);
-    message.useful !== undefined && (obj.useful = message.useful);
-    message.filledCount !== undefined &&
-      (obj.filledCount = message.filledCount);
-    message.commentCount !== undefined &&
-      (obj.commentCount = message.commentCount);
-    return obj;
-  },
 };
 
 const baseUwFlowCourse: object = { id: 0, code: "" };
 
 export const UwFlowCourse = {
   encode(message: UwFlowCourse, writer: Writer = Writer.create()): Writer {
-    writer.uint32(8).int32(message.id);
-    writer.uint32(18).string(message.code);
-    if (message.rating !== undefined && message.rating !== undefined) {
+    if (message.id !== 0) {
+      writer.uint32(8).int32(message.id);
+    }
+    if (message.code !== "") {
+      writer.uint32(18).string(message.code);
+    }
+    if (message.rating !== undefined) {
       UwFlowCourseRating.encode(
         message.rating,
         writer.uint32(26).fork()
@@ -208,6 +222,17 @@ export const UwFlowCourse = {
     return message;
   },
 
+  toJSON(message: UwFlowCourse): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    message.code !== undefined && (obj.code = message.code);
+    message.rating !== undefined &&
+      (obj.rating = message.rating
+        ? UwFlowCourseRating.toJSON(message.rating)
+        : undefined);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<UwFlowCourse>): UwFlowCourse {
     const message = { ...baseUwFlowCourse } as UwFlowCourse;
     if (object.id !== undefined && object.id !== null) {
@@ -226,17 +251,6 @@ export const UwFlowCourse = {
       message.rating = undefined;
     }
     return message;
-  },
-
-  toJSON(message: UwFlowCourse): unknown {
-    const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.code !== undefined && (obj.code = message.code);
-    message.rating !== undefined &&
-      (obj.rating = message.rating
-        ? UwFlowCourseRating.toJSON(message.rating)
-        : undefined);
-    return obj;
   },
 };
 
@@ -283,17 +297,6 @@ export const CoursesResponseData = {
     return message;
   },
 
-  fromPartial(object: DeepPartial<CoursesResponseData>): CoursesResponseData {
-    const message = { ...baseCoursesResponseData } as CoursesResponseData;
-    message.course = [];
-    if (object.course !== undefined && object.course !== null) {
-      for (const e of object.course) {
-        message.course.push(UwFlowCourse.fromPartial(e));
-      }
-    }
-    return message;
-  },
-
   toJSON(message: CoursesResponseData): unknown {
     const obj: any = {};
     if (message.course) {
@@ -305,13 +308,24 @@ export const CoursesResponseData = {
     }
     return obj;
   },
+
+  fromPartial(object: DeepPartial<CoursesResponseData>): CoursesResponseData {
+    const message = { ...baseCoursesResponseData } as CoursesResponseData;
+    message.course = [];
+    if (object.course !== undefined && object.course !== null) {
+      for (const e of object.course) {
+        message.course.push(UwFlowCourse.fromPartial(e));
+      }
+    }
+    return message;
+  },
 };
 
 const baseCoursesResponse: object = {};
 
 export const CoursesResponse = {
   encode(message: CoursesResponse, writer: Writer = Writer.create()): Writer {
-    if (message.data !== undefined && message.data !== undefined) {
+    if (message.data !== undefined) {
       CoursesResponseData.encode(
         message.data,
         writer.uint32(10).fork()
@@ -348,6 +362,15 @@ export const CoursesResponse = {
     return message;
   },
 
+  toJSON(message: CoursesResponse): unknown {
+    const obj: any = {};
+    message.data !== undefined &&
+      (obj.data = message.data
+        ? CoursesResponseData.toJSON(message.data)
+        : undefined);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<CoursesResponse>): CoursesResponse {
     const message = { ...baseCoursesResponse } as CoursesResponse;
     if (object.data !== undefined && object.data !== null) {
@@ -356,15 +379,6 @@ export const CoursesResponse = {
       message.data = undefined;
     }
     return message;
-  },
-
-  toJSON(message: CoursesResponse): unknown {
-    const obj: any = {};
-    message.data !== undefined &&
-      (obj.data = message.data
-        ? CoursesResponseData.toJSON(message.data)
-        : undefined);
-    return obj;
   },
 };
 

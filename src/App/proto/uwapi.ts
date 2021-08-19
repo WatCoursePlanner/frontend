@@ -105,9 +105,15 @@ const baseReserve: object = {
 
 export const Reserve = {
   encode(message: Reserve, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.reserveGroup);
-    writer.uint32(16).int32(message.enrollmentCapacity);
-    writer.uint32(24).int32(message.enrollmentTotal);
+    if (message.reserveGroup !== "") {
+      writer.uint32(10).string(message.reserveGroup);
+    }
+    if (message.enrollmentCapacity !== 0) {
+      writer.uint32(16).int32(message.enrollmentCapacity);
+    }
+    if (message.enrollmentTotal !== 0) {
+      writer.uint32(24).int32(message.enrollmentTotal);
+    }
     return writer;
   },
 
@@ -161,6 +167,17 @@ export const Reserve = {
     return message;
   },
 
+  toJSON(message: Reserve): unknown {
+    const obj: any = {};
+    message.reserveGroup !== undefined &&
+      (obj.reserveGroup = message.reserveGroup);
+    message.enrollmentCapacity !== undefined &&
+      (obj.enrollmentCapacity = message.enrollmentCapacity);
+    message.enrollmentTotal !== undefined &&
+      (obj.enrollmentTotal = message.enrollmentTotal);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<Reserve>): Reserve {
     const message = { ...baseReserve } as Reserve;
     if (object.reserveGroup !== undefined && object.reserveGroup !== null) {
@@ -186,17 +203,6 @@ export const Reserve = {
     }
     return message;
   },
-
-  toJSON(message: Reserve): unknown {
-    const obj: any = {};
-    message.reserveGroup !== undefined &&
-      (obj.reserveGroup = message.reserveGroup);
-    message.enrollmentCapacity !== undefined &&
-      (obj.enrollmentCapacity = message.enrollmentCapacity);
-    message.enrollmentTotal !== undefined &&
-      (obj.enrollmentTotal = message.enrollmentTotal);
-    return obj;
-  },
 };
 
 const baseClassDate: object = {
@@ -212,14 +218,30 @@ const baseClassDate: object = {
 
 export const ClassDate = {
   encode(message: ClassDate, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.startTime);
-    writer.uint32(18).string(message.endTime);
-    writer.uint32(26).string(message.weekdays);
-    writer.uint32(34).string(message.startDate);
-    writer.uint32(42).string(message.endDate);
-    writer.uint32(48).bool(message.isTba);
-    writer.uint32(56).bool(message.isCancelled);
-    writer.uint32(64).bool(message.isClosed);
+    if (message.startTime !== "") {
+      writer.uint32(10).string(message.startTime);
+    }
+    if (message.endTime !== "") {
+      writer.uint32(18).string(message.endTime);
+    }
+    if (message.weekdays !== "") {
+      writer.uint32(26).string(message.weekdays);
+    }
+    if (message.startDate !== "") {
+      writer.uint32(34).string(message.startDate);
+    }
+    if (message.endDate !== "") {
+      writer.uint32(42).string(message.endDate);
+    }
+    if (message.isTba === true) {
+      writer.uint32(48).bool(message.isTba);
+    }
+    if (message.isCancelled === true) {
+      writer.uint32(56).bool(message.isCancelled);
+    }
+    if (message.isClosed === true) {
+      writer.uint32(64).bool(message.isClosed);
+    }
     return writer;
   },
 
@@ -307,6 +329,20 @@ export const ClassDate = {
     return message;
   },
 
+  toJSON(message: ClassDate): unknown {
+    const obj: any = {};
+    message.startTime !== undefined && (obj.startTime = message.startTime);
+    message.endTime !== undefined && (obj.endTime = message.endTime);
+    message.weekdays !== undefined && (obj.weekdays = message.weekdays);
+    message.startDate !== undefined && (obj.startDate = message.startDate);
+    message.endDate !== undefined && (obj.endDate = message.endDate);
+    message.isTba !== undefined && (obj.isTba = message.isTba);
+    message.isCancelled !== undefined &&
+      (obj.isCancelled = message.isCancelled);
+    message.isClosed !== undefined && (obj.isClosed = message.isClosed);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<ClassDate>): ClassDate {
     const message = { ...baseClassDate } as ClassDate;
     if (object.startTime !== undefined && object.startTime !== null) {
@@ -351,28 +387,18 @@ export const ClassDate = {
     }
     return message;
   },
-
-  toJSON(message: ClassDate): unknown {
-    const obj: any = {};
-    message.startTime !== undefined && (obj.startTime = message.startTime);
-    message.endTime !== undefined && (obj.endTime = message.endTime);
-    message.weekdays !== undefined && (obj.weekdays = message.weekdays);
-    message.startDate !== undefined && (obj.startDate = message.startDate);
-    message.endDate !== undefined && (obj.endDate = message.endDate);
-    message.isTba !== undefined && (obj.isTba = message.isTba);
-    message.isCancelled !== undefined &&
-      (obj.isCancelled = message.isCancelled);
-    message.isClosed !== undefined && (obj.isClosed = message.isClosed);
-    return obj;
-  },
 };
 
 const baseClassLocation: object = { building: "", room: "" };
 
 export const ClassLocation = {
   encode(message: ClassLocation, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.building);
-    writer.uint32(18).string(message.room);
+    if (message.building !== "") {
+      writer.uint32(10).string(message.building);
+    }
+    if (message.room !== "") {
+      writer.uint32(18).string(message.room);
+    }
     return writer;
   },
 
@@ -412,6 +438,13 @@ export const ClassLocation = {
     return message;
   },
 
+  toJSON(message: ClassLocation): unknown {
+    const obj: any = {};
+    message.building !== undefined && (obj.building = message.building);
+    message.room !== undefined && (obj.room = message.room);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<ClassLocation>): ClassLocation {
     const message = { ...baseClassLocation } as ClassLocation;
     if (object.building !== undefined && object.building !== null) {
@@ -426,23 +459,16 @@ export const ClassLocation = {
     }
     return message;
   },
-
-  toJSON(message: ClassLocation): unknown {
-    const obj: any = {};
-    message.building !== undefined && (obj.building = message.building);
-    message.room !== undefined && (obj.room = message.room);
-    return obj;
-  },
 };
 
 const baseClass: object = { instructors: "" };
 
 export const Class = {
   encode(message: Class, writer: Writer = Writer.create()): Writer {
-    if (message.date !== undefined && message.date !== undefined) {
+    if (message.date !== undefined) {
       ClassDate.encode(message.date, writer.uint32(10).fork()).ldelim();
     }
-    if (message.location !== undefined && message.location !== undefined) {
+    if (message.location !== undefined) {
       ClassLocation.encode(message.location, writer.uint32(18).fork()).ldelim();
     }
     for (const v of message.instructors) {
@@ -497,6 +523,22 @@ export const Class = {
     return message;
   },
 
+  toJSON(message: Class): unknown {
+    const obj: any = {};
+    message.date !== undefined &&
+      (obj.date = message.date ? ClassDate.toJSON(message.date) : undefined);
+    message.location !== undefined &&
+      (obj.location = message.location
+        ? ClassLocation.toJSON(message.location)
+        : undefined);
+    if (message.instructors) {
+      obj.instructors = message.instructors.map((e) => e);
+    } else {
+      obj.instructors = [];
+    }
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<Class>): Class {
     const message = { ...baseClass } as Class;
     message.instructors = [];
@@ -516,22 +558,6 @@ export const Class = {
       }
     }
     return message;
-  },
-
-  toJSON(message: Class): unknown {
-    const obj: any = {};
-    message.date !== undefined &&
-      (obj.date = message.date ? ClassDate.toJSON(message.date) : undefined);
-    message.location !== undefined &&
-      (obj.location = message.location
-        ? ClassLocation.toJSON(message.location)
-        : undefined);
-    if (message.instructors) {
-      obj.instructors = message.instructors.map((e) => e);
-    } else {
-      obj.instructors = [];
-    }
-    return obj;
   },
 };
 
@@ -559,22 +585,54 @@ const baseCourseSchedule: object = {
 
 export const CourseSchedule = {
   encode(message: CourseSchedule, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.subject);
-    writer.uint32(18).string(message.catalogNumber);
-    writer.uint32(29).float(message.units);
-    writer.uint32(34).string(message.title);
-    writer.uint32(42).string(message.note);
-    writer.uint32(48).int32(message.classNumber);
-    writer.uint32(58).string(message.section);
-    writer.uint32(66).string(message.campus);
-    writer.uint32(72).int32(message.associatedClass);
-    writer.uint32(82).string(message.relatedComponent1);
-    writer.uint32(90).string(message.relatedComponent2);
-    writer.uint32(96).int32(message.enrollmentCapacity);
-    writer.uint32(104).int32(message.enrollmentTotal);
-    writer.uint32(112).int32(message.waitingCapacity);
-    writer.uint32(120).int32(message.waitingTotal);
-    writer.uint32(130).string(message.topic);
+    if (message.subject !== "") {
+      writer.uint32(10).string(message.subject);
+    }
+    if (message.catalogNumber !== "") {
+      writer.uint32(18).string(message.catalogNumber);
+    }
+    if (message.units !== 0) {
+      writer.uint32(29).float(message.units);
+    }
+    if (message.title !== "") {
+      writer.uint32(34).string(message.title);
+    }
+    if (message.note !== "") {
+      writer.uint32(42).string(message.note);
+    }
+    if (message.classNumber !== 0) {
+      writer.uint32(48).int32(message.classNumber);
+    }
+    if (message.section !== "") {
+      writer.uint32(58).string(message.section);
+    }
+    if (message.campus !== "") {
+      writer.uint32(66).string(message.campus);
+    }
+    if (message.associatedClass !== 0) {
+      writer.uint32(72).int32(message.associatedClass);
+    }
+    if (message.relatedComponent1 !== "") {
+      writer.uint32(82).string(message.relatedComponent1);
+    }
+    if (message.relatedComponent2 !== "") {
+      writer.uint32(90).string(message.relatedComponent2);
+    }
+    if (message.enrollmentCapacity !== 0) {
+      writer.uint32(96).int32(message.enrollmentCapacity);
+    }
+    if (message.enrollmentTotal !== 0) {
+      writer.uint32(104).int32(message.enrollmentTotal);
+    }
+    if (message.waitingCapacity !== 0) {
+      writer.uint32(112).int32(message.waitingCapacity);
+    }
+    if (message.waitingTotal !== 0) {
+      writer.uint32(120).int32(message.waitingTotal);
+    }
+    if (message.topic !== "") {
+      writer.uint32(130).string(message.topic);
+    }
     for (const v of message.reserves) {
       Reserve.encode(v!, writer.uint32(138).fork()).ldelim();
     }
@@ -584,8 +642,12 @@ export const CourseSchedule = {
     for (const v of message.heldWith) {
       writer.uint32(154).string(v!);
     }
-    writer.uint32(160).int32(message.term);
-    writer.uint32(170).string(message.academicLevel);
+    if (message.term !== 0) {
+      writer.uint32(160).int32(message.term);
+    }
+    if (message.academicLevel !== "") {
+      writer.uint32(170).string(message.academicLevel);
+    }
     return writer;
   },
 
@@ -801,6 +863,58 @@ export const CourseSchedule = {
     return message;
   },
 
+  toJSON(message: CourseSchedule): unknown {
+    const obj: any = {};
+    message.subject !== undefined && (obj.subject = message.subject);
+    message.catalogNumber !== undefined &&
+      (obj.catalogNumber = message.catalogNumber);
+    message.units !== undefined && (obj.units = message.units);
+    message.title !== undefined && (obj.title = message.title);
+    message.note !== undefined && (obj.note = message.note);
+    message.classNumber !== undefined &&
+      (obj.classNumber = message.classNumber);
+    message.section !== undefined && (obj.section = message.section);
+    message.campus !== undefined && (obj.campus = message.campus);
+    message.associatedClass !== undefined &&
+      (obj.associatedClass = message.associatedClass);
+    message.relatedComponent1 !== undefined &&
+      (obj.relatedComponent1 = message.relatedComponent1);
+    message.relatedComponent2 !== undefined &&
+      (obj.relatedComponent2 = message.relatedComponent2);
+    message.enrollmentCapacity !== undefined &&
+      (obj.enrollmentCapacity = message.enrollmentCapacity);
+    message.enrollmentTotal !== undefined &&
+      (obj.enrollmentTotal = message.enrollmentTotal);
+    message.waitingCapacity !== undefined &&
+      (obj.waitingCapacity = message.waitingCapacity);
+    message.waitingTotal !== undefined &&
+      (obj.waitingTotal = message.waitingTotal);
+    message.topic !== undefined && (obj.topic = message.topic);
+    if (message.reserves) {
+      obj.reserves = message.reserves.map((e) =>
+        e ? Reserve.toJSON(e) : undefined
+      );
+    } else {
+      obj.reserves = [];
+    }
+    if (message.classes) {
+      obj.classes = message.classes.map((e) =>
+        e ? Class.toJSON(e) : undefined
+      );
+    } else {
+      obj.classes = [];
+    }
+    if (message.heldWith) {
+      obj.heldWith = message.heldWith.map((e) => e);
+    } else {
+      obj.heldWith = [];
+    }
+    message.term !== undefined && (obj.term = message.term);
+    message.academicLevel !== undefined &&
+      (obj.academicLevel = message.academicLevel);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<CourseSchedule>): CourseSchedule {
     const message = { ...baseCourseSchedule } as CourseSchedule;
     message.reserves = [];
@@ -931,58 +1045,6 @@ export const CourseSchedule = {
     }
     return message;
   },
-
-  toJSON(message: CourseSchedule): unknown {
-    const obj: any = {};
-    message.subject !== undefined && (obj.subject = message.subject);
-    message.catalogNumber !== undefined &&
-      (obj.catalogNumber = message.catalogNumber);
-    message.units !== undefined && (obj.units = message.units);
-    message.title !== undefined && (obj.title = message.title);
-    message.note !== undefined && (obj.note = message.note);
-    message.classNumber !== undefined &&
-      (obj.classNumber = message.classNumber);
-    message.section !== undefined && (obj.section = message.section);
-    message.campus !== undefined && (obj.campus = message.campus);
-    message.associatedClass !== undefined &&
-      (obj.associatedClass = message.associatedClass);
-    message.relatedComponent1 !== undefined &&
-      (obj.relatedComponent1 = message.relatedComponent1);
-    message.relatedComponent2 !== undefined &&
-      (obj.relatedComponent2 = message.relatedComponent2);
-    message.enrollmentCapacity !== undefined &&
-      (obj.enrollmentCapacity = message.enrollmentCapacity);
-    message.enrollmentTotal !== undefined &&
-      (obj.enrollmentTotal = message.enrollmentTotal);
-    message.waitingCapacity !== undefined &&
-      (obj.waitingCapacity = message.waitingCapacity);
-    message.waitingTotal !== undefined &&
-      (obj.waitingTotal = message.waitingTotal);
-    message.topic !== undefined && (obj.topic = message.topic);
-    if (message.reserves) {
-      obj.reserves = message.reserves.map((e) =>
-        e ? Reserve.toJSON(e) : undefined
-      );
-    } else {
-      obj.reserves = [];
-    }
-    if (message.classes) {
-      obj.classes = message.classes.map((e) =>
-        e ? Class.toJSON(e) : undefined
-      );
-    } else {
-      obj.classes = [];
-    }
-    if (message.heldWith) {
-      obj.heldWith = message.heldWith.map((e) => e);
-    } else {
-      obj.heldWith = [];
-    }
-    message.term !== undefined && (obj.term = message.term);
-    message.academicLevel !== undefined &&
-      (obj.academicLevel = message.academicLevel);
-    return obj;
-  },
 };
 
 const baseCourseScheduleResponse: object = {};
@@ -1028,6 +1090,18 @@ export const CourseScheduleResponse = {
     return message;
   },
 
+  toJSON(message: CourseScheduleResponse): unknown {
+    const obj: any = {};
+    if (message.data) {
+      obj.data = message.data.map((e) =>
+        e ? CourseSchedule.toJSON(e) : undefined
+      );
+    } else {
+      obj.data = [];
+    }
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<CourseScheduleResponse>
   ): CourseScheduleResponse {
@@ -1039,18 +1113,6 @@ export const CourseScheduleResponse = {
       }
     }
     return message;
-  },
-
-  toJSON(message: CourseScheduleResponse): unknown {
-    const obj: any = {};
-    if (message.data) {
-      obj.data = message.data.map((e) =>
-        e ? CourseSchedule.toJSON(e) : undefined
-      );
-    } else {
-      obj.data = [];
-    }
-    return obj;
   },
 };
 

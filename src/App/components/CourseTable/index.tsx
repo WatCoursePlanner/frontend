@@ -2,7 +2,7 @@ import { TablePagination } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
-import '@rmwc/circular-progress/styles';
+
 import {
   IconButton,
   IconButtonHTMLProps,

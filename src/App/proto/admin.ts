@@ -64,8 +64,12 @@ export const ReParseConditionsResponse = {
     message: ReParseConditionsResponse,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(8).int32(message.total);
-    writer.uint32(16).int32(message.success);
+    if (message.total !== 0) {
+      writer.uint32(8).int32(message.total);
+    }
+    if (message.success !== 0) {
+      writer.uint32(16).int32(message.success);
+    }
     Object.entries(message.succeedResults).forEach(([key, value]) => {
       ReParseConditionsResponse_SucceedResultsEntry.encode(
         { key: key as any, value },
@@ -78,7 +82,9 @@ export const ReParseConditionsResponse = {
         writer.uint32(34).fork()
       ).ldelim();
     });
-    writer.uint32(40).bool(message.dryRun);
+    if (message.dryRun === true) {
+      writer.uint32(40).bool(message.dryRun);
+    }
     return writer;
   },
 
@@ -165,6 +171,26 @@ export const ReParseConditionsResponse = {
     return message;
   },
 
+  toJSON(message: ReParseConditionsResponse): unknown {
+    const obj: any = {};
+    message.total !== undefined && (obj.total = message.total);
+    message.success !== undefined && (obj.success = message.success);
+    obj.succeedResults = {};
+    if (message.succeedResults) {
+      Object.entries(message.succeedResults).forEach(([k, v]) => {
+        obj.succeedResults[k] = v;
+      });
+    }
+    obj.failedResults = {};
+    if (message.failedResults) {
+      Object.entries(message.failedResults).forEach(([k, v]) => {
+        obj.failedResults[k] = v;
+      });
+    }
+    message.dryRun !== undefined && (obj.dryRun = message.dryRun);
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<ReParseConditionsResponse>
   ): ReParseConditionsResponse {
@@ -204,26 +230,6 @@ export const ReParseConditionsResponse = {
     }
     return message;
   },
-
-  toJSON(message: ReParseConditionsResponse): unknown {
-    const obj: any = {};
-    message.total !== undefined && (obj.total = message.total);
-    message.success !== undefined && (obj.success = message.success);
-    obj.succeedResults = {};
-    if (message.succeedResults) {
-      Object.entries(message.succeedResults).forEach(([k, v]) => {
-        obj.succeedResults[k] = v;
-      });
-    }
-    obj.failedResults = {};
-    if (message.failedResults) {
-      Object.entries(message.failedResults).forEach(([k, v]) => {
-        obj.failedResults[k] = v;
-      });
-    }
-    message.dryRun !== undefined && (obj.dryRun = message.dryRun);
-    return obj;
-  },
 };
 
 const baseReParseConditionsResponse_SucceedResultsEntry: object = {
@@ -236,8 +242,12 @@ export const ReParseConditionsResponse_SucceedResultsEntry = {
     message: ReParseConditionsResponse_SucceedResultsEntry,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(10).string(message.key);
-    writer.uint32(18).string(message.value);
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
     return writer;
   },
 
@@ -284,6 +294,13 @@ export const ReParseConditionsResponse_SucceedResultsEntry = {
     return message;
   },
 
+  toJSON(message: ReParseConditionsResponse_SucceedResultsEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined && (obj.value = message.value);
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<ReParseConditionsResponse_SucceedResultsEntry>
   ): ReParseConditionsResponse_SucceedResultsEntry {
@@ -302,13 +319,6 @@ export const ReParseConditionsResponse_SucceedResultsEntry = {
     }
     return message;
   },
-
-  toJSON(message: ReParseConditionsResponse_SucceedResultsEntry): unknown {
-    const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
-    return obj;
-  },
 };
 
 const baseReParseConditionsResponse_FailedResultsEntry: object = {
@@ -321,8 +331,12 @@ export const ReParseConditionsResponse_FailedResultsEntry = {
     message: ReParseConditionsResponse_FailedResultsEntry,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(10).string(message.key);
-    writer.uint32(18).string(message.value);
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
     return writer;
   },
 
@@ -369,6 +383,13 @@ export const ReParseConditionsResponse_FailedResultsEntry = {
     return message;
   },
 
+  toJSON(message: ReParseConditionsResponse_FailedResultsEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined && (obj.value = message.value);
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<ReParseConditionsResponse_FailedResultsEntry>
   ): ReParseConditionsResponse_FailedResultsEntry {
@@ -387,13 +408,6 @@ export const ReParseConditionsResponse_FailedResultsEntry = {
     }
     return message;
   },
-
-  toJSON(message: ReParseConditionsResponse_FailedResultsEntry): unknown {
-    const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
-    return obj;
-  },
 };
 
 const baseReParseRegressionTestResponse: object = {
@@ -406,8 +420,12 @@ export const ReParseRegressionTestResponse = {
     message: ReParseRegressionTestResponse,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(8).int32(message.total);
-    writer.uint32(16).int32(message.regressionNum);
+    if (message.total !== 0) {
+      writer.uint32(8).int32(message.total);
+    }
+    if (message.regressionNum !== 0) {
+      writer.uint32(16).int32(message.regressionNum);
+    }
     for (const v of message.results) {
       ReParseRegressionTestResponse_Result.encode(
         v!,
@@ -472,6 +490,21 @@ export const ReParseRegressionTestResponse = {
     return message;
   },
 
+  toJSON(message: ReParseRegressionTestResponse): unknown {
+    const obj: any = {};
+    message.total !== undefined && (obj.total = message.total);
+    message.regressionNum !== undefined &&
+      (obj.regressionNum = message.regressionNum);
+    if (message.results) {
+      obj.results = message.results.map((e) =>
+        e ? ReParseRegressionTestResponse_Result.toJSON(e) : undefined
+      );
+    } else {
+      obj.results = [];
+    }
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<ReParseRegressionTestResponse>
   ): ReParseRegressionTestResponse {
@@ -498,21 +531,6 @@ export const ReParseRegressionTestResponse = {
     }
     return message;
   },
-
-  toJSON(message: ReParseRegressionTestResponse): unknown {
-    const obj: any = {};
-    message.total !== undefined && (obj.total = message.total);
-    message.regressionNum !== undefined &&
-      (obj.regressionNum = message.regressionNum);
-    if (message.results) {
-      obj.results = message.results.map((e) =>
-        e ? ReParseRegressionTestResponse_Result.toJSON(e) : undefined
-      );
-    } else {
-      obj.results = [];
-    }
-    return obj;
-  },
 };
 
 const baseReParseRegressionTestResponse_Result: object = {
@@ -527,10 +545,18 @@ export const ReParseRegressionTestResponse_Result = {
     message: ReParseRegressionTestResponse_Result,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(10).string(message.rawRule);
-    writer.uint32(18).string(message.old);
-    writer.uint32(26).string(message.new);
-    writer.uint32(34).string(message.error);
+    if (message.rawRule !== "") {
+      writer.uint32(10).string(message.rawRule);
+    }
+    if (message.old !== "") {
+      writer.uint32(18).string(message.old);
+    }
+    if (message.new !== "") {
+      writer.uint32(26).string(message.new);
+    }
+    if (message.error !== "") {
+      writer.uint32(34).string(message.error);
+    }
     return writer;
   },
 
@@ -593,6 +619,15 @@ export const ReParseRegressionTestResponse_Result = {
     return message;
   },
 
+  toJSON(message: ReParseRegressionTestResponse_Result): unknown {
+    const obj: any = {};
+    message.rawRule !== undefined && (obj.rawRule = message.rawRule);
+    message.old !== undefined && (obj.old = message.old);
+    message.new !== undefined && (obj.new = message.new);
+    message.error !== undefined && (obj.error = message.error);
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<ReParseRegressionTestResponse_Result>
   ): ReParseRegressionTestResponse_Result {
@@ -621,15 +656,6 @@ export const ReParseRegressionTestResponse_Result = {
     }
     return message;
   },
-
-  toJSON(message: ReParseRegressionTestResponse_Result): unknown {
-    const obj: any = {};
-    message.rawRule !== undefined && (obj.rawRule = message.rawRule);
-    message.old !== undefined && (obj.old = message.old);
-    message.new !== undefined && (obj.new = message.new);
-    message.error !== undefined && (obj.error = message.error);
-    return obj;
-  },
 };
 
 const baseRuleImportItem: object = {
@@ -640,9 +666,15 @@ const baseRuleImportItem: object = {
 
 export const RuleImportItem = {
   encode(message: RuleImportItem, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.rawRule);
-    writer.uint32(18).string(message.condition);
-    writer.uint32(24).bool(message.completelyParsed);
+    if (message.rawRule !== "") {
+      writer.uint32(10).string(message.rawRule);
+    }
+    if (message.condition !== "") {
+      writer.uint32(18).string(message.condition);
+    }
+    if (message.completelyParsed === true) {
+      writer.uint32(24).bool(message.completelyParsed);
+    }
     return writer;
   },
 
@@ -693,6 +725,15 @@ export const RuleImportItem = {
     return message;
   },
 
+  toJSON(message: RuleImportItem): unknown {
+    const obj: any = {};
+    message.rawRule !== undefined && (obj.rawRule = message.rawRule);
+    message.condition !== undefined && (obj.condition = message.condition);
+    message.completelyParsed !== undefined &&
+      (obj.completelyParsed = message.completelyParsed);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<RuleImportItem>): RuleImportItem {
     const message = { ...baseRuleImportItem } as RuleImportItem;
     if (object.rawRule !== undefined && object.rawRule !== null) {
@@ -714,15 +755,6 @@ export const RuleImportItem = {
       message.completelyParsed = false;
     }
     return message;
-  },
-
-  toJSON(message: RuleImportItem): unknown {
-    const obj: any = {};
-    message.rawRule !== undefined && (obj.rawRule = message.rawRule);
-    message.condition !== undefined && (obj.condition = message.condition);
-    message.completelyParsed !== undefined &&
-      (obj.completelyParsed = message.completelyParsed);
-    return obj;
   },
 };
 
@@ -766,17 +798,6 @@ export const RuleImportRequest = {
     return message;
   },
 
-  fromPartial(object: DeepPartial<RuleImportRequest>): RuleImportRequest {
-    const message = { ...baseRuleImportRequest } as RuleImportRequest;
-    message.items = [];
-    if (object.items !== undefined && object.items !== null) {
-      for (const e of object.items) {
-        message.items.push(RuleImportItem.fromPartial(e));
-      }
-    }
-    return message;
-  },
-
   toJSON(message: RuleImportRequest): unknown {
     const obj: any = {};
     if (message.items) {
@@ -787,6 +808,17 @@ export const RuleImportRequest = {
       obj.items = [];
     }
     return obj;
+  },
+
+  fromPartial(object: DeepPartial<RuleImportRequest>): RuleImportRequest {
+    const message = { ...baseRuleImportRequest } as RuleImportRequest;
+    message.items = [];
+    if (object.items !== undefined && object.items !== null) {
+      for (const e of object.items) {
+        message.items.push(RuleImportItem.fromPartial(e));
+      }
+    }
+    return message;
   },
 };
 
@@ -842,6 +874,17 @@ export const RuleImportResponse = {
     return message;
   },
 
+  toJSON(message: RuleImportResponse): unknown {
+    const obj: any = {};
+    obj.result = {};
+    if (message.result) {
+      Object.entries(message.result).forEach(([k, v]) => {
+        obj.result[k] = v;
+      });
+    }
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<RuleImportResponse>): RuleImportResponse {
     const message = { ...baseRuleImportResponse } as RuleImportResponse;
     message.result = {};
@@ -854,17 +897,6 @@ export const RuleImportResponse = {
     }
     return message;
   },
-
-  toJSON(message: RuleImportResponse): unknown {
-    const obj: any = {};
-    obj.result = {};
-    if (message.result) {
-      Object.entries(message.result).forEach(([k, v]) => {
-        obj.result[k] = v;
-      });
-    }
-    return obj;
-  },
 };
 
 const baseRuleImportResponse_ResultEntry: object = { key: "", value: "" };
@@ -874,8 +906,12 @@ export const RuleImportResponse_ResultEntry = {
     message: RuleImportResponse_ResultEntry,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(10).string(message.key);
-    writer.uint32(18).string(message.value);
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
     return writer;
   },
 
@@ -922,6 +958,13 @@ export const RuleImportResponse_ResultEntry = {
     return message;
   },
 
+  toJSON(message: RuleImportResponse_ResultEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined && (obj.value = message.value);
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<RuleImportResponse_ResultEntry>
   ): RuleImportResponse_ResultEntry {
@@ -939,13 +982,6 @@ export const RuleImportResponse_ResultEntry = {
       message.value = "";
     }
     return message;
-  },
-
-  toJSON(message: RuleImportResponse_ResultEntry): unknown {
-    const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
-    return obj;
   },
 };
 

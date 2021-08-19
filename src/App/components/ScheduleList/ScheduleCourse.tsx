@@ -1,9 +1,6 @@
-import { Fade } from "@material-ui/core";
 import { Card, CardProps } from "@rmwc/card";
-import '@rmwc/card/styles';
-import '@rmwc/ripple/styles';
 import { Popper } from "@watcourses/components/Popper/Popper";
-import { CourseInfo } from "@watcourses/proto/courses";
+import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
 import { RequisiteHelper } from "@watcourses/utils/RequisiteHelper";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
@@ -12,9 +9,12 @@ import { Draggable } from 'react-smooth-dnd';
 import styled from "styled-components";
 
 import { CourseDetail } from "./CourseDetail";
+import { CourseDetailState } from "./CourseDetailState";
 
 interface IScheduleCourseProps {
-  course: CourseInfo | undefined,
+  course?: CourseInfo,
+  fromTerm?: string,
+  displayRequisiteCheck: boolean,
   shortListOpen: boolean,
   scheduleListRef: React.RefObject<HTMLDivElement>,
 }
@@ -61,6 +61,12 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
   @action
   private toggleActive = () => {
     this.active = !this.active;
+  };
+
+  private registeredDescendents: Set<React.RefObject<HTMLElement>> = new Set();
+
+  private setRegisterDescendent = (s: Set<React.RefObject<HTMLElement>>) => {
+    this.registeredDescendents = s;
   };
 
   private cardRef: React.RefObject<HTMLDivElement> = React.createRef();
@@ -196,6 +202,8 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
 
     const {
       course,
+      fromTerm,
+      displayRequisiteCheck,
     } = this.props;
 
     if (!course) {
@@ -205,7 +213,7 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
     const prerequisites = RequisiteHelper.getPreRequisite(course);
     const antirequisites = RequisiteHelper.getAntiRequisite(course);
 
-    const allConditionsMet =
+    const allConditionsMet = !displayRequisiteCheck ||
       prerequisites.every((r) => r.met) &&
       antirequisites.every((r) => r.met);
 
@@ -255,7 +263,14 @@ export class ScheduleCourse extends React.Component<IScheduleCourseProps> {
             >
               <div style={{maxHeight: '80vh'}}>
                 <CourseDetail
+                  displayRequisiteCheck={displayRequisiteCheck}
+                  courseDetailState={new CourseDetailState(
+                    this.registeredDescendents,
+                    this.setRegisterDescendent,
+                    course,
+                  )}
                   course={course}
+                  fromTerm={fromTerm}
                   onDismiss={handleCloseDetail}
                 />
               </div>

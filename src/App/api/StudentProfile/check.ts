@@ -8,7 +8,8 @@ export default function checkStudentProfile(
 ): Promise<CheckResults> {
   return post(
     `${URL_BASE}${STUDENT_PROFILE}/check`,
-    StudentProfile,
     data,
+    StudentProfile,
+    CheckResults,
   );
 };

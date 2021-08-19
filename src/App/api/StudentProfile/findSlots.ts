@@ -8,7 +8,8 @@ export default function findSlots(
 ): Promise<FindSlotResponse> {
   return post(
     `${URL_BASE}${STUDENT_PROFILE}/find_slots`,
-    FindSlotRequest,
     data,
+    FindSlotRequest,
+    FindSlotResponse,
   );
 };

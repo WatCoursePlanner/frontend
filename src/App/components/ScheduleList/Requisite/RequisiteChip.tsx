@@ -1,5 +1,4 @@
 import { Chip, ChipHTMLProps, ChipProps } from "@rmwc/chip";
-import '@rmwc/chip/styles';
 import { Popper } from "@watcourses/components/Popper/Popper";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { action, makeObservable, observable } from "mobx";
@@ -13,6 +12,7 @@ import { IRequisite, RequisiteContent, REQUISITE_ICONS } from "./index";
 import { RequisiteDetail } from "./RequisiteDetail";
 
 interface IRequisiteChipProps {
+  displayRequisiteCheck: boolean;
   courseDetailState: CourseDetailState;
   requisite: IRequisite;
   id: number | string;
@@ -60,6 +60,7 @@ export class RequisiteChip extends React.Component<IRequisiteChipProps> {
     const {
       id,
       requisite,
+      displayRequisiteCheck,
     } = this.props;
 
     const {
@@ -76,10 +77,13 @@ export class RequisiteChip extends React.Component<IRequisiteChipProps> {
         <StyledChip
           ref={chipRef}
           className={'unselectable'}
-          onInteraction={toggleActive}
-          icon={requisite.met ? REQUISITE_ICONS.MET : REQUISITE_ICONS.UNMET}
-          met={requisite.met ? 1 : 0}
-          necessary={requisite.necessary ? 1 : 0}
+          onClick={toggleActive}
+          icon={displayRequisiteCheck
+            ? (requisite.met ? REQUISITE_ICONS.MET : REQUISITE_ICONS.UNMET)
+            : undefined
+          }
+          met={displayRequisiteCheck && requisite.met ? 1 : 0}
+          necessary={displayRequisiteCheck && requisite.necessary ? 1 : 0}
           label={requisite.code}
           key={id}
         />
@@ -109,14 +113,14 @@ const StyledChip = styled(Chip)<ChipProps & ChipHTMLProps & {
   necessary?: number,
 }>`
   background-color: ${props => props.met
-  ? '#edf7fe'
-  : props.necessary ? '#feeded' : '#f5f5f5'
-};
+          ? '#edf7fe'
+          : props.necessary ? '#feeded' : '#f5f5f5'
+  };
 
   i {
     color: ${props => props.met
-  ? '#2196f3'
-  : props.necessary ? '#ff0000' : '#616161'
-};
+            ? '#2196f3'
+            : props.necessary ? '#ff0000' : '#616161'
+    };
   }
 `;

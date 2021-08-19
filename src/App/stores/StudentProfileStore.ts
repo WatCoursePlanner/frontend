@@ -1,13 +1,19 @@
 import createStudentProfile from "@watcourses/api/StudentProfile/create";
+import createOrUpdateStudentProfile
+  from "@watcourses/api/StudentProfile/createOrUpdate";
+import getDefaultStudentProfile from "@watcourses/api/StudentProfile/default";
 import {
   CoopStream,
-  CreateStudentProfileRequest,
+  CourseInfo,
+  CreateStudentProfileRequest, Schedule,
+  Schedule_TermSchedule,
   StudentProfile,
 } from "@watcourses/proto/courses";
 import { buildProto } from "@watcourses/utils/buildProto";
 import { insertAt, removeAt } from "@watcourses/utils/helpers";
 import { saveStudentProfile } from "@watcourses/utils/LocalStorage";
 import { singletonGetter } from "@watcourses/utils/SingletonGetter";
+import { isEqual } from "lodash";
 import { action, computed, makeAutoObservable, observable, when } from "mobx";
 import {
   fromPromise,
@@ -15,30 +21,64 @@ import {
   IPromiseBasedObservable,
   PENDING,
 } from "mobx-utils";
+import { ProfileCoursesStore } from "./ProfileCoursesStore";
 
-interface IAddOrRemoveCourseProps {
+import { UserStore } from "./UserStore";
+
+interface IAddOrRemoveCourseProps extends ITermOperationProps {
+  /**
+   * Is the operation adding course to the term (will be deletion if false).
+   */
   isAdd: boolean,
-  termName: string,
+  /**
+   * Index for insertion/deletion.
+   * A negative index on insertion means inserting at the end.
+   * A negative index performs no operation.
+   */
   index: number,
+  /**
+   * Course code of the course to add, optional if removing.
+   */
   code?: string,
 }
 
-export interface IAddCourseProps {
+interface IAddCourseProps {
+  /**
+   * Index for insertion.
+   * A negative index means inserting at the end.
+   */
   index: number,
-  code?: string,
+  /**
+   * Course code of the course to add / delete.
+   */
+  code: string,
 }
 
-export interface IRemoveCourseProps {
+interface IRemoveCourseProps {
+  /**
+   * Index or code of the code to remove.
+   * A negative index performs no operation.
+   */
   indexOrCode: number | string,
 }
 
-export interface IAddCourseToTermProps extends IAddCourseProps {
+interface ITermOperationProps {
+  /**
+   * Term name for the term to operate on.
+   * termName === SHORTLIST_TERM_NAME means to operate on the shortlist.
+   */
   termName: string,
 }
 
-export interface IRemoveCourseFromTermProps {
-  termName: string,
-  index: number,
+interface ISaveProfileResult {
+  success: boolean,
+  error: string | undefined,
+}
+
+interface IAddCourseToTermProps extends IAddCourseProps, ITermOperationProps {
+}
+
+interface IRemoveCourseFromTermProps extends IRemoveCourseProps, ITermOperationProps {
 }
 
 export const SHORTLIST_TERM_NAME = "shortlist";
@@ -46,7 +86,7 @@ export const SHORTLIST_TERM_NAME = "shortlist";
 export class StudentProfileStore {
   static get = singletonGetter(StudentProfileStore);
 
-  // TODO implement student profile
+  // TODO implement create student profile
   private readonly SampleProfileRequest =
     buildProto<CreateStudentProfileRequest>({
       degrees: ["Software Engineering"],
@@ -57,28 +97,41 @@ export class StudentProfileStore {
   @observable
   private studentProfilePromise?: IPromiseBasedObservable<StudentProfile>;
 
+  @observable
+  workingSchedule: Schedule =
+    buildProto<Schedule>({
+      terms: [],
+    });
+
+  @observable
+  shortList: string[] = [];
+
   @computed
   get isLoading(): boolean {
     return this.studentProfilePromise?.state === PENDING;
   }
 
-  private cachedStudentProfile: StudentProfile =
-    buildProto<StudentProfile>({
-      schedule: {
-        terms: [],
-      },
+  @computed
+  get workingStudentProfile(): StudentProfile {
+    return buildProto<StudentProfile>({
+      ...this.studentProfile,
+      schedule: this.workingSchedule,
     });
+  }
 
   @computed
-  get studentProfile(): StudentProfile {
+  get isDirty(): boolean {
+    return !isEqual(
+      this.studentProfile?.schedule,
+      this.workingSchedule,
+    );
+  }
+
+  @computed
+  private get studentProfile(): StudentProfile | undefined {
     return this.studentProfilePromise?.case({
       fulfilled: (response: StudentProfile) => response,
-      rejected: () => buildProto<StudentProfile>({
-        schedule: {
-          terms: [],
-        },
-      }),
-    }) ?? this.cachedStudentProfile;
+    });
   }
 
   constructor() {
@@ -86,18 +139,42 @@ export class StudentProfileStore {
     when(
       () => this.studentProfilePromise?.state === FULFILLED,
       () => {
-        this.cachedStudentProfile = this.studentProfile;
+        if (this.studentProfile?.shortList) {
+          this.shortList = this.studentProfile.shortList;
+        }
+        if (!this.studentProfile?.schedule || !this.isDirty) {
+          return;
+        }
+        this.workingSchedule = this.studentProfile.schedule;
         saveStudentProfile(this.studentProfile);
       },
     );
   }
 
-  init(): Promise<StudentProfile> {
-    return this.fetchStudentProfile(this.SampleProfileRequest);
+  async init(): Promise<StudentProfile> {
+    if (this.studentProfile) {
+      // Profile might have been initialized from UserStore
+      // if there is an active user session
+      return Promise.resolve(this.studentProfile);
+    }
+    if (UserStore.get().isLoggedIn) {
+      // TODO
+      return this.createStudentProfile(this.SampleProfileRequest);
+    } else {
+      // TODO
+      return this.fetchDefaultStudentProfile("Software Engineering");
+    }
   }
 
   @action
-  fetchStudentProfile = (
+  setStudentProfile = (profile: StudentProfile): Promise<StudentProfile> => {
+    const promise = Promise.resolve(profile);
+    this.studentProfilePromise = fromPromise(promise);
+    return promise;
+  };
+
+  @action
+  createStudentProfile = (
     request: CreateStudentProfileRequest,
   ): Promise<StudentProfile> => {
     const promise = createStudentProfile(request);
@@ -106,21 +183,52 @@ export class StudentProfileStore {
   };
 
   @action
+  fetchDefaultStudentProfile = (
+    program: string,
+  ): Promise<StudentProfile> => {
+    const promise = getDefaultStudentProfile(program);
+    this.studentProfilePromise = fromPromise(promise);
+    return promise;
+  };
+
+  @computed
+  get allTerms(): Schedule_TermSchedule[] {
+    return this.workingSchedule?.terms ?? [];
+  }
+
+  findTermsWithCourse = (code: string) => {
+    return this.allTerms.filter(term => term.courseCodes.includes(code));
+  };
+
+  @action
   private addOrRemoveFromTermOrShortlist = ({
     isAdd,
     termName,
     index,
-    code, // only for insertion
-  }: IAddOrRemoveCourseProps) => {
-    if (!this.studentProfile.schedule) {
+    code,
+  }: IAddOrRemoveCourseProps): void => {
+    if (!this.workingSchedule) {
       return;
     }
     const isShortList = termName === SHORTLIST_TERM_NAME;
-    const newProfile = buildProto<StudentProfile>({
-      ...this.studentProfile,
-      schedule: isShortList ? this.studentProfile.schedule : {
-        ...this.studentProfile.schedule,
-        terms: this.studentProfile.schedule.terms
+    if (isShortList) {
+      if (!this.studentProfile?.shortList) {
+        return;
+      }
+      let shortList: string[] = [];
+      if (isAdd) {
+        if (!code) {
+          return;
+        }
+        shortList = insertAt(this.studentProfile.shortList, index, code, false);
+      } else {
+        shortList = removeAt(this.studentProfile.shortList, index);
+      }
+      this.updateShortList(shortList);
+    } else {
+      this.workingSchedule = buildProto<Schedule>({
+        ...this.workingSchedule,
+        terms: this.workingSchedule.terms
           .map((term) =>
             (term.termName === termName)
               ? {
@@ -131,69 +239,104 @@ export class StudentProfileStore {
               }
               : term,
           ),
-      },
-      shortList: isShortList
-        ? (
-          isAdd
-            ? insertAt(this.studentProfile.shortList, index, code, false)
-            : removeAt(this.studentProfile.shortList, index)
-        )
-        : this.studentProfile.shortList,
-    });
-    this.cachedStudentProfile = newProfile;
-    this.studentProfilePromise = fromPromise(Promise.resolve(newProfile));
+      });
+    }
   };
 
-  @action
   addCourseToTerm = ({code, termName, index}: IAddCourseToTermProps) => {
-    this.addOrRemoveFromTermOrShortlist({
+    return this.addOrRemoveFromTermOrShortlist({
       isAdd: true, code, termName, index,
     });
   };
 
-  @action
-  removeCourseFromTerm = ({termName, index}: IRemoveCourseFromTermProps) => {
-    this.addOrRemoveFromTermOrShortlist({
-      isAdd: false, termName, index,
-    });
-  };
-
-  @action
-  removeCourseFromSchedule = (courseCode: string) => {
-    const term = this.studentProfile.schedule?.terms.find(
-      (t) => t.courseCodes.includes(courseCode)
-    );
-
-    if (!term) {
-      return;
-    }
-
-    this.addOrRemoveFromTermOrShortlist({
+  removeCourseFromTerm = ({
+    termName,
+    indexOrCode,
+  }: IRemoveCourseFromTermProps) => {
+    return this.addOrRemoveFromTermOrShortlist({
       isAdd: false,
-      termName: term.termName,
-      index: term.courseCodes.indexOf(courseCode),
+      termName,
+      index: typeof indexOrCode === "number"
+        ? indexOrCode
+        : this.allTerms
+        .find(it => it.termName === termName)?.courseCodes
+        .indexOf(indexOrCode) ?? this.shortList.indexOf(indexOrCode) ?? -1,
     });
   };
 
-  @action
+  removeCourseFromSchedule = (code: string) => {
+    return this.allTerms
+      .forEach(term => this.removeCourseFromTerm({
+        termName: term.termName,
+        indexOrCode: code,
+      }));
+  };
+
   addCourseToShortList = ({code, index}: IAddCourseProps) => {
-    this.addOrRemoveFromTermOrShortlist({
+    return this.addOrRemoveFromTermOrShortlist({
       isAdd: true, termName: SHORTLIST_TERM_NAME, code, index,
     });
   };
 
-  @action
   removeCourseFromShortlist = ({indexOrCode}: IRemoveCourseProps) => {
-    this.addOrRemoveFromTermOrShortlist({
+    return this.addOrRemoveFromTermOrShortlist({
       isAdd: false,
       termName: SHORTLIST_TERM_NAME,
       index: typeof indexOrCode === "number"
         ? indexOrCode
-        : this.studentProfile.shortList.findIndex(code => code === indexOrCode),
+        : this.studentProfile?.shortList.indexOf(indexOrCode) ?? -1,
     });
   };
 
   isInShortList = (courseCode: string) => {
-    return this.studentProfile.shortList.includes(courseCode);
+    return !!this.studentProfile?.shortList.includes(courseCode);
+  };
+
+  moveCourse = (
+    course: CourseInfo,
+    fromTerm: string,
+    toTerm: string,
+    index: number = -1,
+  ) => {
+    this.removeCourseFromTerm({
+      termName: fromTerm,
+      indexOrCode: course.code,
+    });
+    this.addCourseToTerm({
+      termName: toTerm,
+      code: course.code,
+      index,
+    });
+  };
+
+  @action
+  save = (): Promise<ISaveProfileResult> => {
+    return createOrUpdateStudentProfile(this.workingStudentProfile)
+      .then(async (response) => {
+        this.studentProfilePromise = fromPromise(Promise.resolve(response));
+        return buildProto<ISaveProfileResult>({
+          success: true,
+        });
+      }).catch((error) => {
+        return buildProto<ISaveProfileResult>({
+          success: false,
+          error,
+        });
+      });
+  };
+
+  @action
+  updateShortList = async (shortList: string[]) => {
+    this.shortList = shortList;
+    await createOrUpdateStudentProfile(buildProto<StudentProfile>({
+      ...this.studentProfile,
+      shortList,
+    }))
+      .then((response) => {
+        this.studentProfilePromise = fromPromise(Promise.resolve(response));
+      }).catch((error) => {
+        // TODO handle error
+      });
+    await ProfileCoursesStore.get().fetchProfileCourses();
   };
 }

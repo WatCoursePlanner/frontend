@@ -1,10 +1,17 @@
+import { Dialog } from "@rmwc/dialog";
 import { DrawerAppContent } from '@rmwc/drawer';
 import { Drawer } from "@watcourses/components/Drawer";
+import { SignInModal } from "@watcourses/components/SignIn/SignInModal";
+import { SignUpModal } from "@watcourses/components/SignIn/SignUpModal";
 import { TopNav } from "@watcourses/components/TopNav";
 import { discover, home, schedule } from "@watcourses/paths";
 import { AppHistory } from "@watcourses/services/AppHistory";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
+import {
+  SignInModalStore,
+  SignInModalType,
+} from "@watcourses/stores/SignInModalStore";
 import { action, computed, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
@@ -105,11 +112,22 @@ export class Home extends React.Component<IHomeProps> {
                   <Discover searchQuery={this.searchQuery}/>
                 </Route>
                 <Route path={home()} exact>
-                  <Redirect to={discover.home()}/>
+                  <Redirect to={schedule.home()}/>
                 </Route>
               </Switch>
             </AppContainer>
           </Container>
+          <Dialog
+            open={SignInModalStore.get().currentModal !== SignInModalType.NONE}
+            onClose={async _ => {
+              await SignInModalStore.get().dismiss();
+            }}
+          >
+            {SignInModalStore.get().currentModal === SignInModalType.SIGNIN &&
+            <SignInModal/>}
+            {SignInModalStore.get().currentModal === SignInModalType.SIGNUP &&
+            <SignUpModal/>}
+          </Dialog>
         </Else>
       </If>
     );

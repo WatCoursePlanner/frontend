@@ -1,5 +1,5 @@
 import { ChipSet } from "@rmwc/chip";
-import '@rmwc/chip/styles';
+import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
 
@@ -9,11 +9,13 @@ import { IRequisite } from "./index";
 import { RequisiteChip } from "./RequisiteChip";
 
 interface IRequisiteChecklistProps {
+  displayRequisiteCheck: boolean,
   requisites: IRequisite[];
   courseDetailState: CourseDetailState;
 }
 
-export const RequisiteChecklist = ({
+export const RequisiteChecklist = observer(({
+  displayRequisiteCheck,
   requisites,
   courseDetailState,
 }: IRequisiteChecklistProps) => {
@@ -22,6 +24,7 @@ export const RequisiteChecklist = ({
       <StyledChipSet>
         {requisites.map((requisite, index) =>
           <RequisiteChip
+            displayRequisiteCheck={displayRequisiteCheck}
             courseDetailState={courseDetailState}
             requisite={requisite}
             key={index}
@@ -31,7 +34,7 @@ export const RequisiteChecklist = ({
       </StyledChipSet>
     </RootContainer>
   );
-};
+});
 
 const RootContainer = styled.div`
   display: flex;

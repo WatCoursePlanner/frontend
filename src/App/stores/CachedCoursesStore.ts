@@ -98,7 +98,7 @@ export class CachedCoursesStore {
         .then(res => {
           const courseStorage = buildProto<ICachedCoursesStorage>({
             lastUpdatedAt: CachedCoursesStore.getCurrentTimestamp(),
-            courses: SearchCourseResponse.fromJSON(res).results,
+            courses: res.results,
           });
           localStorage.setItem(
             LOCAL_STORAGE_COURSES_KEY,

@@ -429,10 +429,18 @@ const baseRuleInfo: object = {
 
 export const RuleInfo = {
   encode(message: RuleInfo, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.rawString);
-    writer.uint32(18).string(message.logicString);
-    writer.uint32(24).bool(message.fullyResolved);
-    writer.uint32(34).string(message.json);
+    if (message.rawString !== "") {
+      writer.uint32(10).string(message.rawString);
+    }
+    if (message.logicString !== "") {
+      writer.uint32(18).string(message.logicString);
+    }
+    if (message.fullyResolved === true) {
+      writer.uint32(24).bool(message.fullyResolved);
+    }
+    if (message.json !== "") {
+      writer.uint32(34).string(message.json);
+    }
     return writer;
   },
 
@@ -488,6 +496,17 @@ export const RuleInfo = {
     return message;
   },
 
+  toJSON(message: RuleInfo): unknown {
+    const obj: any = {};
+    message.rawString !== undefined && (obj.rawString = message.rawString);
+    message.logicString !== undefined &&
+      (obj.logicString = message.logicString);
+    message.fullyResolved !== undefined &&
+      (obj.fullyResolved = message.fullyResolved);
+    message.json !== undefined && (obj.json = message.json);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<RuleInfo>): RuleInfo {
     const message = { ...baseRuleInfo } as RuleInfo;
     if (object.rawString !== undefined && object.rawString !== null) {
@@ -512,17 +531,6 @@ export const RuleInfo = {
     }
     return message;
   },
-
-  toJSON(message: RuleInfo): unknown {
-    const obj: any = {};
-    message.rawString !== undefined && (obj.rawString = message.rawString);
-    message.logicString !== undefined &&
-      (obj.logicString = message.logicString);
-    message.fullyResolved !== undefined &&
-      (obj.fullyResolved = message.fullyResolved);
-    message.json !== undefined && (obj.json = message.json);
-    return obj;
-  },
 };
 
 const baseCourseInfo: object = {
@@ -541,39 +549,50 @@ const baseCourseInfo: object = {
 
 export const CourseInfo = {
   encode(message: CourseInfo, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.name);
-    writer.uint32(18).string(message.code);
-    writer.uint32(26).string(message.description);
-    writer.uint32(34).string(message.faculty);
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
+    }
+    if (message.code !== "") {
+      writer.uint32(18).string(message.code);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    if (message.faculty !== "") {
+      writer.uint32(34).string(message.faculty);
+    }
     writer.uint32(42).fork();
     for (const v of message.offeringTerms) {
       writer.int32(v);
     }
     writer.ldelim();
-    writer.uint32(50).string(message.id);
-    if (
-      message.preRequisite !== undefined &&
-      message.preRequisite !== undefined
-    ) {
+    if (message.id !== "") {
+      writer.uint32(50).string(message.id);
+    }
+    if (message.preRequisite !== undefined) {
       RuleInfo.encode(message.preRequisite, writer.uint32(58).fork()).ldelim();
     }
-    if (
-      message.coRequisite !== undefined &&
-      message.coRequisite !== undefined
-    ) {
+    if (message.coRequisite !== undefined) {
       RuleInfo.encode(message.coRequisite, writer.uint32(66).fork()).ldelim();
     }
-    if (
-      message.antiRequisite !== undefined &&
-      message.antiRequisite !== undefined
-    ) {
+    if (message.antiRequisite !== undefined) {
       RuleInfo.encode(message.antiRequisite, writer.uint32(74).fork()).ldelim();
     }
-    writer.uint32(81).double(message.liked);
-    writer.uint32(89).double(message.useful);
-    writer.uint32(97).double(message.easy);
-    writer.uint32(104).int32(message.commentsCount);
-    writer.uint32(112).int32(message.ratingsCount);
+    if (message.liked !== 0) {
+      writer.uint32(81).double(message.liked);
+    }
+    if (message.useful !== 0) {
+      writer.uint32(89).double(message.useful);
+    }
+    if (message.easy !== 0) {
+      writer.uint32(97).double(message.easy);
+    }
+    if (message.commentsCount !== 0) {
+      writer.uint32(104).int32(message.commentsCount);
+    }
+    if (message.ratingsCount !== 0) {
+      writer.uint32(112).int32(message.ratingsCount);
+    }
     return writer;
   },
 
@@ -718,6 +737,41 @@ export const CourseInfo = {
     return message;
   },
 
+  toJSON(message: CourseInfo): unknown {
+    const obj: any = {};
+    message.name !== undefined && (obj.name = message.name);
+    message.code !== undefined && (obj.code = message.code);
+    message.description !== undefined &&
+      (obj.description = message.description);
+    message.faculty !== undefined && (obj.faculty = message.faculty);
+    if (message.offeringTerms) {
+      obj.offeringTerms = message.offeringTerms.map((e) => termToJSON(e));
+    } else {
+      obj.offeringTerms = [];
+    }
+    message.id !== undefined && (obj.id = message.id);
+    message.preRequisite !== undefined &&
+      (obj.preRequisite = message.preRequisite
+        ? RuleInfo.toJSON(message.preRequisite)
+        : undefined);
+    message.coRequisite !== undefined &&
+      (obj.coRequisite = message.coRequisite
+        ? RuleInfo.toJSON(message.coRequisite)
+        : undefined);
+    message.antiRequisite !== undefined &&
+      (obj.antiRequisite = message.antiRequisite
+        ? RuleInfo.toJSON(message.antiRequisite)
+        : undefined);
+    message.liked !== undefined && (obj.liked = message.liked);
+    message.useful !== undefined && (obj.useful = message.useful);
+    message.easy !== undefined && (obj.easy = message.easy);
+    message.commentsCount !== undefined &&
+      (obj.commentsCount = message.commentsCount);
+    message.ratingsCount !== undefined &&
+      (obj.ratingsCount = message.ratingsCount);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<CourseInfo>): CourseInfo {
     const message = { ...baseCourseInfo } as CourseInfo;
     message.offeringTerms = [];
@@ -793,48 +847,15 @@ export const CourseInfo = {
     }
     return message;
   },
-
-  toJSON(message: CourseInfo): unknown {
-    const obj: any = {};
-    message.name !== undefined && (obj.name = message.name);
-    message.code !== undefined && (obj.code = message.code);
-    message.description !== undefined &&
-      (obj.description = message.description);
-    message.faculty !== undefined && (obj.faculty = message.faculty);
-    if (message.offeringTerms) {
-      obj.offeringTerms = message.offeringTerms.map((e) => termToJSON(e));
-    } else {
-      obj.offeringTerms = [];
-    }
-    message.id !== undefined && (obj.id = message.id);
-    message.preRequisite !== undefined &&
-      (obj.preRequisite = message.preRequisite
-        ? RuleInfo.toJSON(message.preRequisite)
-        : undefined);
-    message.coRequisite !== undefined &&
-      (obj.coRequisite = message.coRequisite
-        ? RuleInfo.toJSON(message.coRequisite)
-        : undefined);
-    message.antiRequisite !== undefined &&
-      (obj.antiRequisite = message.antiRequisite
-        ? RuleInfo.toJSON(message.antiRequisite)
-        : undefined);
-    message.liked !== undefined && (obj.liked = message.liked);
-    message.useful !== undefined && (obj.useful = message.useful);
-    message.easy !== undefined && (obj.easy = message.easy);
-    message.commentsCount !== undefined &&
-      (obj.commentsCount = message.commentsCount);
-    message.ratingsCount !== undefined &&
-      (obj.ratingsCount = message.ratingsCount);
-    return obj;
-  },
 };
 
 const baseCourseList: object = { name: "", courses: "" };
 
 export const CourseList = {
   encode(message: CourseList, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.name);
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
+    }
     for (const v of message.courses) {
       writer.uint32(18).string(v!);
     }
@@ -879,6 +900,17 @@ export const CourseList = {
     return message;
   },
 
+  toJSON(message: CourseList): unknown {
+    const obj: any = {};
+    message.name !== undefined && (obj.name = message.name);
+    if (message.courses) {
+      obj.courses = message.courses.map((e) => e);
+    } else {
+      obj.courses = [];
+    }
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<CourseList>): CourseList {
     const message = { ...baseCourseList } as CourseList;
     message.courses = [];
@@ -894,17 +926,6 @@ export const CourseList = {
     }
     return message;
   },
-
-  toJSON(message: CourseList): unknown {
-    const obj: any = {};
-    message.name !== undefined && (obj.name = message.name);
-    if (message.courses) {
-      obj.courses = message.courses.map((e) => e);
-    } else {
-      obj.courses = [];
-    }
-    return obj;
-  },
 };
 
 const basePaginationInfoRequest: object = { zeroBasedPage: 0, limit: 0 };
@@ -914,8 +935,12 @@ export const PaginationInfoRequest = {
     message: PaginationInfoRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(8).int32(message.zeroBasedPage);
-    writer.uint32(16).int32(message.limit);
+    if (message.zeroBasedPage !== 0) {
+      writer.uint32(8).int32(message.zeroBasedPage);
+    }
+    if (message.limit !== 0) {
+      writer.uint32(16).int32(message.limit);
+    }
     return writer;
   },
 
@@ -955,6 +980,14 @@ export const PaginationInfoRequest = {
     return message;
   },
 
+  toJSON(message: PaginationInfoRequest): unknown {
+    const obj: any = {};
+    message.zeroBasedPage !== undefined &&
+      (obj.zeroBasedPage = message.zeroBasedPage);
+    message.limit !== undefined && (obj.limit = message.limit);
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<PaginationInfoRequest>
   ): PaginationInfoRequest {
@@ -971,14 +1004,6 @@ export const PaginationInfoRequest = {
     }
     return message;
   },
-
-  toJSON(message: PaginationInfoRequest): unknown {
-    const obj: any = {};
-    message.zeroBasedPage !== undefined &&
-      (obj.zeroBasedPage = message.zeroBasedPage);
-    message.limit !== undefined && (obj.limit = message.limit);
-    return obj;
-  },
 };
 
 const basePaginationInfoResponse: object = {
@@ -993,10 +1018,18 @@ export const PaginationInfoResponse = {
     message: PaginationInfoResponse,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(8).int32(message.totalPages);
-    writer.uint32(16).int32(message.currentPage);
-    writer.uint32(24).int32(message.limit);
-    writer.uint32(32).int32(message.totalResults);
+    if (message.totalPages !== 0) {
+      writer.uint32(8).int32(message.totalPages);
+    }
+    if (message.currentPage !== 0) {
+      writer.uint32(16).int32(message.currentPage);
+    }
+    if (message.limit !== 0) {
+      writer.uint32(24).int32(message.limit);
+    }
+    if (message.totalResults !== 0) {
+      writer.uint32(32).int32(message.totalResults);
+    }
     return writer;
   },
 
@@ -1052,6 +1085,17 @@ export const PaginationInfoResponse = {
     return message;
   },
 
+  toJSON(message: PaginationInfoResponse): unknown {
+    const obj: any = {};
+    message.totalPages !== undefined && (obj.totalPages = message.totalPages);
+    message.currentPage !== undefined &&
+      (obj.currentPage = message.currentPage);
+    message.limit !== undefined && (obj.limit = message.limit);
+    message.totalResults !== undefined &&
+      (obj.totalResults = message.totalResults);
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<PaginationInfoResponse>
   ): PaginationInfoResponse {
@@ -1078,25 +1122,18 @@ export const PaginationInfoResponse = {
     }
     return message;
   },
-
-  toJSON(message: PaginationInfoResponse): unknown {
-    const obj: any = {};
-    message.totalPages !== undefined && (obj.totalPages = message.totalPages);
-    message.currentPage !== undefined &&
-      (obj.currentPage = message.currentPage);
-    message.limit !== undefined && (obj.limit = message.limit);
-    message.totalResults !== undefined &&
-      (obj.totalResults = message.totalResults);
-    return obj;
-  },
 };
 
 const baseSort: object = { sortBy: 1, order: 1 };
 
 export const Sort = {
   encode(message: Sort, writer: Writer = Writer.create()): Writer {
-    writer.uint32(8).int32(message.sortBy);
-    writer.uint32(16).int32(message.order);
+    if (message.sortBy !== 1) {
+      writer.uint32(8).int32(message.sortBy);
+    }
+    if (message.order !== 1) {
+      writer.uint32(16).int32(message.order);
+    }
     return writer;
   },
 
@@ -1136,6 +1173,15 @@ export const Sort = {
     return message;
   },
 
+  toJSON(message: Sort): unknown {
+    const obj: any = {};
+    message.sortBy !== undefined &&
+      (obj.sortBy = sort_SortByToJSON(message.sortBy));
+    message.order !== undefined &&
+      (obj.order = sort_OrderToJSON(message.order));
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<Sort>): Sort {
     const message = { ...baseSort } as Sort;
     if (object.sortBy !== undefined && object.sortBy !== null) {
@@ -1150,15 +1196,6 @@ export const Sort = {
     }
     return message;
   },
-
-  toJSON(message: Sort): unknown {
-    const obj: any = {};
-    message.sortBy !== undefined &&
-      (obj.sortBy = sort_SortByToJSON(message.sortBy));
-    message.order !== undefined &&
-      (obj.order = sort_OrderToJSON(message.order));
-    return obj;
-  },
 };
 
 const baseSearchCourseRequest: object = {
@@ -1171,15 +1208,19 @@ export const SearchCourseRequest = {
     message: SearchCourseRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.pagination !== undefined && message.pagination !== undefined) {
+    if (message.pagination !== undefined) {
       PaginationInfoRequest.encode(
         message.pagination,
         writer.uint32(10).fork()
       ).ldelim();
     }
-    writer.uint32(16).bool(message.basicInfoOnly);
-    writer.uint32(26).string(message.searchQuery);
-    if (message.sort !== undefined && message.sort !== undefined) {
+    if (message.basicInfoOnly === true) {
+      writer.uint32(16).bool(message.basicInfoOnly);
+    }
+    if (message.searchQuery !== "") {
+      writer.uint32(26).string(message.searchQuery);
+    }
+    if (message.sort !== undefined) {
       Sort.encode(message.sort, writer.uint32(34).fork()).ldelim();
     }
     return writer;
@@ -1240,6 +1281,21 @@ export const SearchCourseRequest = {
     return message;
   },
 
+  toJSON(message: SearchCourseRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PaginationInfoRequest.toJSON(message.pagination)
+        : undefined);
+    message.basicInfoOnly !== undefined &&
+      (obj.basicInfoOnly = message.basicInfoOnly);
+    message.searchQuery !== undefined &&
+      (obj.searchQuery = message.searchQuery);
+    message.sort !== undefined &&
+      (obj.sort = message.sort ? Sort.toJSON(message.sort) : undefined);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<SearchCourseRequest>): SearchCourseRequest {
     const message = { ...baseSearchCourseRequest } as SearchCourseRequest;
     if (object.pagination !== undefined && object.pagination !== null) {
@@ -1264,21 +1320,6 @@ export const SearchCourseRequest = {
     }
     return message;
   },
-
-  toJSON(message: SearchCourseRequest): unknown {
-    const obj: any = {};
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PaginationInfoRequest.toJSON(message.pagination)
-        : undefined);
-    message.basicInfoOnly !== undefined &&
-      (obj.basicInfoOnly = message.basicInfoOnly);
-    message.searchQuery !== undefined &&
-      (obj.searchQuery = message.searchQuery);
-    message.sort !== undefined &&
-      (obj.sort = message.sort ? Sort.toJSON(message.sort) : undefined);
-    return obj;
-  },
 };
 
 const baseSearchCourseResponse: object = {};
@@ -1288,7 +1329,7 @@ export const SearchCourseResponse = {
     message: SearchCourseResponse,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.pagination !== undefined && message.pagination !== undefined) {
+    if (message.pagination !== undefined) {
       PaginationInfoResponse.encode(
         message.pagination,
         writer.uint32(10).fork()
@@ -1341,6 +1382,22 @@ export const SearchCourseResponse = {
     return message;
   },
 
+  toJSON(message: SearchCourseResponse): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PaginationInfoResponse.toJSON(message.pagination)
+        : undefined);
+    if (message.results) {
+      obj.results = message.results.map((e) =>
+        e ? CourseInfo.toJSON(e) : undefined
+      );
+    } else {
+      obj.results = [];
+    }
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<SearchCourseResponse>): SearchCourseResponse {
     const message = { ...baseSearchCourseResponse } as SearchCourseResponse;
     message.results = [];
@@ -1357,22 +1414,6 @@ export const SearchCourseResponse = {
       }
     }
     return message;
-  },
-
-  toJSON(message: SearchCourseResponse): unknown {
-    const obj: any = {};
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PaginationInfoResponse.toJSON(message.pagination)
-        : undefined);
-    if (message.results) {
-      obj.results = message.results.map((e) =>
-        e ? CourseInfo.toJSON(e) : undefined
-      );
-    } else {
-      obj.results = [];
-    }
-    return obj;
   },
 };
 
@@ -1418,17 +1459,6 @@ export const Schedule = {
     return message;
   },
 
-  fromPartial(object: DeepPartial<Schedule>): Schedule {
-    const message = { ...baseSchedule } as Schedule;
-    message.terms = [];
-    if (object.terms !== undefined && object.terms !== null) {
-      for (const e of object.terms) {
-        message.terms.push(Schedule_TermSchedule.fromPartial(e));
-      }
-    }
-    return message;
-  },
-
   toJSON(message: Schedule): unknown {
     const obj: any = {};
     if (message.terms) {
@@ -1439,6 +1469,17 @@ export const Schedule = {
       obj.terms = [];
     }
     return obj;
+  },
+
+  fromPartial(object: DeepPartial<Schedule>): Schedule {
+    const message = { ...baseSchedule } as Schedule;
+    message.terms = [];
+    if (object.terms !== undefined && object.terms !== null) {
+      for (const e of object.terms) {
+        message.terms.push(Schedule_TermSchedule.fromPartial(e));
+      }
+    }
+    return message;
   },
 };
 
@@ -1457,9 +1498,15 @@ export const Schedule_TermSchedule = {
     for (const v of message.courseCodes) {
       writer.uint32(10).string(v!);
     }
-    writer.uint32(18).string(message.termName);
-    writer.uint32(24).int32(message.year);
-    writer.uint32(32).int32(message.term);
+    if (message.termName !== "") {
+      writer.uint32(18).string(message.termName);
+    }
+    if (message.year !== 0) {
+      writer.uint32(24).int32(message.year);
+    }
+    if (message.term !== 0) {
+      writer.uint32(32).int32(message.term);
+    }
     return writer;
   },
 
@@ -1517,6 +1564,19 @@ export const Schedule_TermSchedule = {
     return message;
   },
 
+  toJSON(message: Schedule_TermSchedule): unknown {
+    const obj: any = {};
+    if (message.courseCodes) {
+      obj.courseCodes = message.courseCodes.map((e) => e);
+    } else {
+      obj.courseCodes = [];
+    }
+    message.termName !== undefined && (obj.termName = message.termName);
+    message.year !== undefined && (obj.year = message.year);
+    message.term !== undefined && (obj.term = termToJSON(message.term));
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<Schedule_TermSchedule>
   ): Schedule_TermSchedule {
@@ -1544,19 +1604,6 @@ export const Schedule_TermSchedule = {
     }
     return message;
   },
-
-  toJSON(message: Schedule_TermSchedule): unknown {
-    const obj: any = {};
-    if (message.courseCodes) {
-      obj.courseCodes = message.courseCodes.map((e) => e);
-    } else {
-      obj.courseCodes = [];
-    }
-    message.termName !== undefined && (obj.termName = message.termName);
-    message.year !== undefined && (obj.year = message.year);
-    message.term !== undefined && (obj.term = termToJSON(message.term));
-    return obj;
-  },
 };
 
 const baseStudentProfile: object = {
@@ -1568,7 +1615,7 @@ const baseStudentProfile: object = {
 
 export const StudentProfile = {
   encode(message: StudentProfile, writer: Writer = Writer.create()): Writer {
-    if (message.schedule !== undefined && message.schedule !== undefined) {
+    if (message.schedule !== undefined) {
       Schedule.encode(message.schedule, writer.uint32(10).fork()).ldelim();
     }
     for (const v of message.labels) {
@@ -1580,7 +1627,9 @@ export const StudentProfile = {
     for (const v of message.shortList) {
       writer.uint32(34).string(v!);
     }
-    writer.uint32(42).string(message.ownerEmail);
+    if (message.ownerEmail !== "") {
+      writer.uint32(42).string(message.ownerEmail);
+    }
     return writer;
   },
 
@@ -1650,6 +1699,31 @@ export const StudentProfile = {
     return message;
   },
 
+  toJSON(message: StudentProfile): unknown {
+    const obj: any = {};
+    message.schedule !== undefined &&
+      (obj.schedule = message.schedule
+        ? Schedule.toJSON(message.schedule)
+        : undefined);
+    if (message.labels) {
+      obj.labels = message.labels.map((e) => e);
+    } else {
+      obj.labels = [];
+    }
+    if (message.degrees) {
+      obj.degrees = message.degrees.map((e) => e);
+    } else {
+      obj.degrees = [];
+    }
+    if (message.shortList) {
+      obj.shortList = message.shortList.map((e) => e);
+    } else {
+      obj.shortList = [];
+    }
+    message.ownerEmail !== undefined && (obj.ownerEmail = message.ownerEmail);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<StudentProfile>): StudentProfile {
     const message = { ...baseStudentProfile } as StudentProfile;
     message.labels = [];
@@ -1682,31 +1756,6 @@ export const StudentProfile = {
     }
     return message;
   },
-
-  toJSON(message: StudentProfile): unknown {
-    const obj: any = {};
-    message.schedule !== undefined &&
-      (obj.schedule = message.schedule
-        ? Schedule.toJSON(message.schedule)
-        : undefined);
-    if (message.labels) {
-      obj.labels = message.labels.map((e) => e);
-    } else {
-      obj.labels = [];
-    }
-    if (message.degrees) {
-      obj.degrees = message.degrees.map((e) => e);
-    } else {
-      obj.degrees = [];
-    }
-    if (message.shortList) {
-      obj.shortList = message.shortList.map((e) => e);
-    } else {
-      obj.shortList = [];
-    }
-    message.ownerEmail !== undefined && (obj.ownerEmail = message.ownerEmail);
-    return obj;
-  },
 };
 
 const baseCreateStudentProfileRequest: object = {
@@ -1723,9 +1772,13 @@ export const CreateStudentProfileRequest = {
     for (const v of message.degrees) {
       writer.uint32(10).string(v!);
     }
-    writer.uint32(16).int32(message.startingYear);
-    writer.uint32(24).int32(message.coopStream);
-    if (message.schedule !== undefined && message.schedule !== undefined) {
+    if (message.startingYear !== 0) {
+      writer.uint32(16).int32(message.startingYear);
+    }
+    if (message.coopStream !== 0) {
+      writer.uint32(24).int32(message.coopStream);
+    }
+    if (message.schedule !== undefined) {
       Schedule.encode(message.schedule, writer.uint32(34).fork()).ldelim();
     }
     return writer;
@@ -1792,6 +1845,24 @@ export const CreateStudentProfileRequest = {
     return message;
   },
 
+  toJSON(message: CreateStudentProfileRequest): unknown {
+    const obj: any = {};
+    if (message.degrees) {
+      obj.degrees = message.degrees.map((e) => e);
+    } else {
+      obj.degrees = [];
+    }
+    message.startingYear !== undefined &&
+      (obj.startingYear = message.startingYear);
+    message.coopStream !== undefined &&
+      (obj.coopStream = coopStreamToJSON(message.coopStream));
+    message.schedule !== undefined &&
+      (obj.schedule = message.schedule
+        ? Schedule.toJSON(message.schedule)
+        : undefined);
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<CreateStudentProfileRequest>
   ): CreateStudentProfileRequest {
@@ -1820,24 +1891,6 @@ export const CreateStudentProfileRequest = {
       message.schedule = undefined;
     }
     return message;
-  },
-
-  toJSON(message: CreateStudentProfileRequest): unknown {
-    const obj: any = {};
-    if (message.degrees) {
-      obj.degrees = message.degrees.map((e) => e);
-    } else {
-      obj.degrees = [];
-    }
-    message.startingYear !== undefined &&
-      (obj.startingYear = message.startingYear);
-    message.coopStream !== undefined &&
-      (obj.coopStream = coopStreamToJSON(message.coopStream));
-    message.schedule !== undefined &&
-      (obj.schedule = message.schedule
-        ? Schedule.toJSON(message.schedule)
-        : undefined);
-    return obj;
   },
 };
 
@@ -1898,23 +1951,6 @@ export const CheckResults = {
     return message;
   },
 
-  fromPartial(object: DeepPartial<CheckResults>): CheckResults {
-    const message = { ...baseCheckResults } as CheckResults;
-    message.issues = [];
-    message.checkedCourses = [];
-    if (object.issues !== undefined && object.issues !== null) {
-      for (const e of object.issues) {
-        message.issues.push(CheckResults_Issue.fromPartial(e));
-      }
-    }
-    if (object.checkedCourses !== undefined && object.checkedCourses !== null) {
-      for (const e of object.checkedCourses) {
-        message.checkedCourses.push(CourseInfo.fromPartial(e));
-      }
-    }
-    return message;
-  },
-
   toJSON(message: CheckResults): unknown {
     const obj: any = {};
     if (message.issues) {
@@ -1933,6 +1969,23 @@ export const CheckResults = {
     }
     return obj;
   },
+
+  fromPartial(object: DeepPartial<CheckResults>): CheckResults {
+    const message = { ...baseCheckResults } as CheckResults;
+    message.issues = [];
+    message.checkedCourses = [];
+    if (object.issues !== undefined && object.issues !== null) {
+      for (const e of object.issues) {
+        message.issues.push(CheckResults_Issue.fromPartial(e));
+      }
+    }
+    if (object.checkedCourses !== undefined && object.checkedCourses !== null) {
+      for (const e of object.checkedCourses) {
+        message.checkedCourses.push(CourseInfo.fromPartial(e));
+      }
+    }
+    return message;
+  },
 };
 
 const baseCheckResults_Issue: object = {
@@ -1949,10 +2002,18 @@ export const CheckResults_Issue = {
     message: CheckResults_Issue,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(8).int32(message.type);
-    writer.uint32(18).string(message.subjectName);
-    writer.uint32(26).string(message.relatedCond);
-    writer.uint32(34).string(message.relatedCondRaw);
+    if (message.type !== 1) {
+      writer.uint32(8).int32(message.type);
+    }
+    if (message.subjectName !== "") {
+      writer.uint32(18).string(message.subjectName);
+    }
+    if (message.relatedCond !== "") {
+      writer.uint32(26).string(message.relatedCond);
+    }
+    if (message.relatedCondRaw !== "") {
+      writer.uint32(34).string(message.relatedCondRaw);
+    }
     for (const v of message.relatedCourse) {
       writer.uint32(42).string(v!);
     }
@@ -2037,6 +2098,29 @@ export const CheckResults_Issue = {
     return message;
   },
 
+  toJSON(message: CheckResults_Issue): unknown {
+    const obj: any = {};
+    message.type !== undefined &&
+      (obj.type = checkResults_Issue_TypeToJSON(message.type));
+    message.subjectName !== undefined &&
+      (obj.subjectName = message.subjectName);
+    message.relatedCond !== undefined &&
+      (obj.relatedCond = message.relatedCond);
+    message.relatedCondRaw !== undefined &&
+      (obj.relatedCondRaw = message.relatedCondRaw);
+    if (message.relatedCourse) {
+      obj.relatedCourse = message.relatedCourse.map((e) => e);
+    } else {
+      obj.relatedCourse = [];
+    }
+    if (message.relatedCourseList) {
+      obj.relatedCourseList = message.relatedCourseList.map((e) => e);
+    } else {
+      obj.relatedCourseList = [];
+    }
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<CheckResults_Issue>): CheckResults_Issue {
     const message = { ...baseCheckResults_Issue } as CheckResults_Issue;
     message.relatedCourse = [];
@@ -2076,39 +2160,18 @@ export const CheckResults_Issue = {
     }
     return message;
   },
-
-  toJSON(message: CheckResults_Issue): unknown {
-    const obj: any = {};
-    message.type !== undefined &&
-      (obj.type = checkResults_Issue_TypeToJSON(message.type));
-    message.subjectName !== undefined &&
-      (obj.subjectName = message.subjectName);
-    message.relatedCond !== undefined &&
-      (obj.relatedCond = message.relatedCond);
-    message.relatedCondRaw !== undefined &&
-      (obj.relatedCondRaw = message.relatedCondRaw);
-    if (message.relatedCourse) {
-      obj.relatedCourse = message.relatedCourse.map((e) => e);
-    } else {
-      obj.relatedCourse = [];
-    }
-    if (message.relatedCourseList) {
-      obj.relatedCourseList = message.relatedCourseList.map((e) => e);
-    } else {
-      obj.relatedCourseList = [];
-    }
-    return obj;
-  },
 };
 
 const baseFindSlotRequest: object = { courseCode: "" };
 
 export const FindSlotRequest = {
   encode(message: FindSlotRequest, writer: Writer = Writer.create()): Writer {
-    if (message.profile !== undefined && message.profile !== undefined) {
+    if (message.profile !== undefined) {
       StudentProfile.encode(message.profile, writer.uint32(10).fork()).ldelim();
     }
-    writer.uint32(18).string(message.courseCode);
+    if (message.courseCode !== "") {
+      writer.uint32(18).string(message.courseCode);
+    }
     return writer;
   },
 
@@ -2148,6 +2211,16 @@ export const FindSlotRequest = {
     return message;
   },
 
+  toJSON(message: FindSlotRequest): unknown {
+    const obj: any = {};
+    message.profile !== undefined &&
+      (obj.profile = message.profile
+        ? StudentProfile.toJSON(message.profile)
+        : undefined);
+    message.courseCode !== undefined && (obj.courseCode = message.courseCode);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<FindSlotRequest>): FindSlotRequest {
     const message = { ...baseFindSlotRequest } as FindSlotRequest;
     if (object.profile !== undefined && object.profile !== null) {
@@ -2161,16 +2234,6 @@ export const FindSlotRequest = {
       message.courseCode = "";
     }
     return message;
-  },
-
-  toJSON(message: FindSlotRequest): unknown {
-    const obj: any = {};
-    message.profile !== undefined &&
-      (obj.profile = message.profile
-        ? StudentProfile.toJSON(message.profile)
-        : undefined);
-    message.courseCode !== undefined && (obj.courseCode = message.courseCode);
-    return obj;
   },
 };
 
@@ -2223,6 +2286,17 @@ export const FindSlotResponse = {
     return message;
   },
 
+  toJSON(message: FindSlotResponse): unknown {
+    const obj: any = {};
+    obj.slot = {};
+    if (message.slot) {
+      Object.entries(message.slot).forEach(([k, v]) => {
+        obj.slot[k] = CheckResults.toJSON(v);
+      });
+    }
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<FindSlotResponse>): FindSlotResponse {
     const message = { ...baseFindSlotResponse } as FindSlotResponse;
     message.slot = {};
@@ -2235,17 +2309,6 @@ export const FindSlotResponse = {
     }
     return message;
   },
-
-  toJSON(message: FindSlotResponse): unknown {
-    const obj: any = {};
-    obj.slot = {};
-    if (message.slot) {
-      Object.entries(message.slot).forEach(([k, v]) => {
-        obj.slot[k] = CheckResults.toJSON(v);
-      });
-    }
-    return obj;
-  },
 };
 
 const baseFindSlotResponse_SlotEntry: object = { key: "" };
@@ -2255,8 +2318,10 @@ export const FindSlotResponse_SlotEntry = {
     message: FindSlotResponse_SlotEntry,
     writer: Writer = Writer.create()
   ): Writer {
-    writer.uint32(10).string(message.key);
-    if (message.value !== undefined && message.value !== undefined) {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== undefined) {
       CheckResults.encode(message.value, writer.uint32(18).fork()).ldelim();
     }
     return writer;
@@ -2305,6 +2370,16 @@ export const FindSlotResponse_SlotEntry = {
     return message;
   },
 
+  toJSON(message: FindSlotResponse_SlotEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined &&
+      (obj.value = message.value
+        ? CheckResults.toJSON(message.value)
+        : undefined);
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<FindSlotResponse_SlotEntry>
   ): FindSlotResponse_SlotEntry {
@@ -2322,16 +2397,6 @@ export const FindSlotResponse_SlotEntry = {
       message.value = undefined;
     }
     return message;
-  },
-
-  toJSON(message: FindSlotResponse_SlotEntry): unknown {
-    const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined &&
-      (obj.value = message.value
-        ? CheckResults.toJSON(message.value)
-        : undefined);
-    return obj;
   },
 };
 
@@ -2378,6 +2443,16 @@ export const BatchGetCourseRequest = {
     return message;
   },
 
+  toJSON(message: BatchGetCourseRequest): unknown {
+    const obj: any = {};
+    if (message.courseCodes) {
+      obj.courseCodes = message.courseCodes.map((e) => e);
+    } else {
+      obj.courseCodes = [];
+    }
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<BatchGetCourseRequest>
   ): BatchGetCourseRequest {
@@ -2389,16 +2464,6 @@ export const BatchGetCourseRequest = {
       }
     }
     return message;
-  },
-
-  toJSON(message: BatchGetCourseRequest): unknown {
-    const obj: any = {};
-    if (message.courseCodes) {
-      obj.courseCodes = message.courseCodes.map((e) => e);
-    } else {
-      obj.courseCodes = [];
-    }
-    return obj;
   },
 };
 
@@ -2445,6 +2510,18 @@ export const BatchGetCourseResponse = {
     return message;
   },
 
+  toJSON(message: BatchGetCourseResponse): unknown {
+    const obj: any = {};
+    if (message.results) {
+      obj.results = message.results.map((e) =>
+        e ? CourseInfo.toJSON(e) : undefined
+      );
+    } else {
+      obj.results = [];
+    }
+    return obj;
+  },
+
   fromPartial(
     object: DeepPartial<BatchGetCourseResponse>
   ): BatchGetCourseResponse {
@@ -2457,27 +2534,21 @@ export const BatchGetCourseResponse = {
     }
     return message;
   },
-
-  toJSON(message: BatchGetCourseResponse): unknown {
-    const obj: any = {};
-    if (message.results) {
-      obj.results = message.results.map((e) =>
-        e ? CourseInfo.toJSON(e) : undefined
-      );
-    } else {
-      obj.results = [];
-    }
-    return obj;
-  },
 };
 
 const baseEventRequest: object = { type: "", subject: "", data: "" };
 
 export const EventRequest = {
   encode(message: EventRequest, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.type);
-    writer.uint32(18).string(message.subject);
-    writer.uint32(26).string(message.data);
+    if (message.type !== "") {
+      writer.uint32(10).string(message.type);
+    }
+    if (message.subject !== "") {
+      writer.uint32(18).string(message.subject);
+    }
+    if (message.data !== "") {
+      writer.uint32(26).string(message.data);
+    }
     return writer;
   },
 
@@ -2525,6 +2596,14 @@ export const EventRequest = {
     return message;
   },
 
+  toJSON(message: EventRequest): unknown {
+    const obj: any = {};
+    message.type !== undefined && (obj.type = message.type);
+    message.subject !== undefined && (obj.subject = message.subject);
+    message.data !== undefined && (obj.data = message.data);
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<EventRequest>): EventRequest {
     const message = { ...baseEventRequest } as EventRequest;
     if (object.type !== undefined && object.type !== null) {
@@ -2543,14 +2622,6 @@ export const EventRequest = {
       message.data = "";
     }
     return message;
-  },
-
-  toJSON(message: EventRequest): unknown {
-    const obj: any = {};
-    message.type !== undefined && (obj.type = message.type);
-    message.subject !== undefined && (obj.subject = message.subject);
-    message.data !== undefined && (obj.data = message.data);
-    return obj;
   },
 };
 

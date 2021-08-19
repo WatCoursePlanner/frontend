@@ -1,4 +1,5 @@
 import { ListItemGraphic, ListItemGraphicProps } from "@rmwc/list";
+import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
 
@@ -7,11 +8,13 @@ import { CourseDetailState } from "../CourseDetailState";
 import { IRequisiteGroup, RequisiteChecklist } from "./index";
 
 interface IRequisiteGroupChecklistProps {
+  displayRequisiteCheck: boolean,
   requisiteGroups: IRequisiteGroup[];
   courseDetailState: CourseDetailState;
 }
 
-export const RequisiteGroupChecklist = ({
+export const RequisiteGroupChecklist = observer(({
+  displayRequisiteCheck,
   requisiteGroups,
   courseDetailState,
 }: IRequisiteGroupChecklistProps) => {
@@ -19,15 +22,16 @@ export const RequisiteGroupChecklist = ({
     <RootContainer>
       {requisiteGroups.map((requisiteGroup, index) =>
         <RequisiteGroupContainer key={index}>
-          <StyledListItemGraphic
+          {displayRequisiteCheck && <StyledListItemGraphic
             met={requisiteGroup.met ? 1 : 0}
             className={'unselectable material-icons-filled'}
-            icon={requisiteGroup.met ? "check_circle" : "cancel"}/>
+            icon={requisiteGroup.met ? "check_circle" : "cancel"}/>}
           <RequisiteChecklistWrapper>
             <RequisiteCount>
               {`${requisiteGroup.requires} of`}
             </RequisiteCount>
             <RequisiteChecklist
+              displayRequisiteCheck={displayRequisiteCheck}
               courseDetailState={courseDetailState}
               requisites={requisiteGroup.requisites}
             />
@@ -36,7 +40,7 @@ export const RequisiteGroupChecklist = ({
       )}
     </RootContainer>
   );
-};
+});
 
 const RootContainer = styled.div`
   display: flex;

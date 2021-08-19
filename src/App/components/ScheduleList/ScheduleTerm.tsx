@@ -1,4 +1,4 @@
-import { Schedule_TermSchedule } from "@watcourses/proto/courses";
+import { Schedule_TermSchedule, termToJSON } from "@watcourses/proto/courses";
 import React from "react";
 import styled from "styled-components";
 
@@ -25,7 +25,7 @@ export class ScheduleTerm extends React.Component<IScheduleTermProps> {
       <RootContainer>
         <Year> {showYear ? term.year : ''}</Year>
         <Row>
-          <TermName>{term.term.toString().toLowerCase()}</TermName>
+          <TermName>{termToJSON(term.term).toLowerCase()}</TermName>
           <TermCode>{term.termName}</TermCode>
         </Row>
         <CourseList

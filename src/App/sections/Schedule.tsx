@@ -1,8 +1,5 @@
 import { Button, ButtonHTMLProps, ButtonProps } from "@rmwc/button";
-import '@rmwc/button/styles';
 import { Fab, FabProps } from "@rmwc/fab";
-import '@rmwc/fab/styles';
-import '@rmwc/tooltip/styles';
 import findSlots from "@watcourses/api/StudentProfile/findSlots";
 import {
   ScheduleShortList,
@@ -11,12 +8,13 @@ import {
 import { Spacer } from "@watcourses/components/Spacer";
 import { CheckResults, FindSlotRequest } from "@watcourses/proto/courses";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
+import { SignInModalStore } from "@watcourses/stores/SignInModalStore";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
+import { UserStore } from "@watcourses/stores/UserStore";
 import { buildProto } from "@watcourses/utils/buildProto";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { observer } from "mobx-react";
 import React from 'react';
-import { If, Then } from "react-if";
 import { DropResult } from "react-smooth-dnd";
 import {
   DragEndParams,
@@ -132,7 +130,7 @@ export class Schedule extends React.Component<IScheduleProps> {
     if (dropResult.removedIndex !== null) {
       removeCourseFromTerm({
         termName,
-        index: dropResult.removedIndex,
+        indexOrCode: dropResult.removedIndex,
       });
     }
     if (dropResult.addedIndex !== null) {
@@ -145,12 +143,12 @@ export class Schedule extends React.Component<IScheduleProps> {
     // Don't update if both are not null, i.e. move to the same column
     if (dropResult.removedIndex === null || dropResult.addedIndex === null) {
       // Update on the second drop callback (i.e. when firstDrop === true)
-      if (!this.firstDrop) {
-        this.firstDrop = true;
-      } else {
-        ProfileCoursesStore.get().fetchProfileCourses();
-        this.firstDrop = false;
-      }
+      // if (!this.firstDrop) {
+      //   this.firstDrop = true;
+      // } else {
+      ProfileCoursesStore.get().fetchProfileCourses();
+      //   this.firstDrop = false;
+      // }
     }
   };
 
@@ -160,7 +158,7 @@ export class Schedule extends React.Component<IScheduleProps> {
     }
     // only need to do this once
     findSlots(buildProto<FindSlotRequest>({
-      profile: StudentProfileStore.get().studentProfile,
+      profile: StudentProfileStore.get().workingStudentProfile,
       courseCode: dragStart.payload!!,
     })).then((response) => runInAction(() => {
       this.issues = response.slot;
@@ -169,19 +167,24 @@ export class Schedule extends React.Component<IScheduleProps> {
 
   render() {
     const profileCourses = ProfileCoursesStore.get().profileCourses.courses;
-    const studentProfile = StudentProfileStore.get().studentProfile;
+    const {
+      workingStudentProfile,
+      shortList,
+      isLoading,
+      isDirty,
+    } = StudentProfileStore.get();
     return (
       <OuterContainer>
         <ScheduleContainer>
           <ScheduleListContainer
             ref={this.scheduleListRef}
             onScroll={this.handleScroll}>
-            <Spacer minWidth={'16px'} minHeight={'100%'}/>
-            <If condition={!!profileCourses && !!studentProfile}>
-              <Then>
-                <ScheduleTermList
-                  profileCourses={profileCourses!}
-                  studentProfile={studentProfile}
+            <Spacer width={'16px'} height={'100%'}/>
+            {
+              !!profileCourses && !!workingStudentProfile &&
+              <ScheduleTermList
+                  profileCourses={profileCourses}
+                  studentProfile={workingStudentProfile}
                   issues={this.issues}
                   options={{
                     onDragEnd: this.onDragEnd,
@@ -190,11 +193,22 @@ export class Schedule extends React.Component<IScheduleProps> {
                   onDropWithTerm={this.onDropWithTerm}
                   shortListOpen={this.shortListOpen}
                   scheduleListRef={this.scheduleListRef}
-                />
-              </Then>
-            </If>
-            <Spacer minWidth={'240px'} minHeight={'100%'}/>
-            <StyledFab icon="add" label="Add Term"/>
+              />
+            }
+            <Spacer width={'240px'} height={'100%'}/>
+            <StyledFab
+              icon={isLoading ? "loading" : "save"} // TODO loading animation
+              label="Save"
+              exited={!isDirty && UserStore.get().isLoggedIn}
+              onClick={async () => {
+                if (UserStore.get().isLoggedIn) {
+                  // TODO animation?
+                  await StudentProfileStore.get().save();
+                } else {
+                  SignInModalStore.get().showSignUp();
+                }
+              }}
+            />
           </ScheduleListContainer>
           <ShortListButton
             unelevated
@@ -206,10 +220,10 @@ export class Schedule extends React.Component<IScheduleProps> {
           />
         </ScheduleContainer>
         <ShortListContainer open={this.shortListOpen}>
-          <If condition={!!profileCourses && !!studentProfile}>
-            <Then>
-              <ScheduleShortList
-                shortlist={studentProfile?.shortList ?? []}
+          {
+            !!profileCourses && !!workingStudentProfile &&
+            <ScheduleShortList
+                shortlist={shortList ?? []}
                 courses={profileCourses!}
                 options={{
                   onDragEnd: this.onDragEnd,
@@ -218,9 +232,8 @@ export class Schedule extends React.Component<IScheduleProps> {
                 onDropWithTerm={this.onDropWithTerm}
                 shortListOpen={this.shortListOpen}
                 scheduleListRef={this.scheduleListRef}
-              />
-            </Then>
-          </If>
+            />
+          }
         </ShortListContainer>
       </OuterContainer>
     );
@@ -287,7 +300,7 @@ const ShortListContainer = styled.div<{ open: boolean }>`
   border-left: 1px solid #e0e0e0;
 `;
 
-const StyledFab = styled(Fab)<FabProps>`
+const StyledFab = styled(Fab)<FabProps & ButtonHTMLProps>`
   letter-spacing: normal !important;
   text-transform: initial;
   position: absolute !important;
