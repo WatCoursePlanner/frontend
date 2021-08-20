@@ -13,7 +13,7 @@ import { RequisiteDetail } from "./RequisiteDetail";
 
 interface IRequisiteChipProps {
   displayRequisiteCheck: boolean;
-  courseDetailState: CourseDetailState;
+  courseDetailState?: CourseDetailState;
   requisite: IRequisite;
   id: number | string;
 }
@@ -36,13 +36,14 @@ export class RequisiteChip extends React.Component<IRequisiteChipProps> {
       return;
     }
     if (_active) {
-      this.props.courseDetailState.registerDescendent(this.wrapperRef);
+      this.props.courseDetailState?.registerDescendent(this.wrapperRef);
     } else {
-      this.props.courseDetailState.removeDescendent(this.wrapperRef);
+      this.props.courseDetailState?.removeDescendent(this.wrapperRef);
     }
   }
 
   private toggleActive = () => {
+    (document.activeElement as HTMLElement).blur();
     this.setActive(!this.active);
   };
 
@@ -96,6 +97,7 @@ export class RequisiteChip extends React.Component<IRequisiteChipProps> {
           >
             <div ref={this.wrapperRef}>
               <RequisiteDetail
+                displayRequisiteCheck={displayRequisiteCheck}
                 onDismiss={onDismiss}
                 requisite={requisite}
                 course={course}

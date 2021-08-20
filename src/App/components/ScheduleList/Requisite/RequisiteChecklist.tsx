@@ -11,7 +11,7 @@ import { RequisiteChip } from "./RequisiteChip";
 interface IRequisiteChecklistProps {
   displayRequisiteCheck: boolean,
   requisites: IRequisite[];
-  courseDetailState: CourseDetailState;
+  courseDetailState?: CourseDetailState;
 }
 
 export const RequisiteChecklist = observer(({

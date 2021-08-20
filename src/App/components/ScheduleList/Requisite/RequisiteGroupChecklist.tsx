@@ -10,7 +10,7 @@ import { IRequisiteGroup, RequisiteChecklist } from "./index";
 interface IRequisiteGroupChecklistProps {
   displayRequisiteCheck: boolean,
   requisiteGroups: IRequisiteGroup[];
-  courseDetailState: CourseDetailState;
+  courseDetailState?: CourseDetailState;
 }
 
 export const RequisiteGroupChecklist = observer(({

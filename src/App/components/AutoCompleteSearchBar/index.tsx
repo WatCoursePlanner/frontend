@@ -3,7 +3,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { buildProto } from "@watcourses/utils/buildProto";
 import * as Fuzzysort from "fuzzysort";
 import { action, makeObservable, observable, reaction, toJS } from "mobx";
-import { disposeOnUnmount, observer } from "mobx-react";
+import { observer } from "mobx-react";
 import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 

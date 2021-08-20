@@ -51,6 +51,7 @@ export class SearchBar extends React.Component<ISearchBarProps> {
                 icon={'close'}
                 onClick={() => {
                   setSearchText('');
+                  onSearch('');
                 }}/>
             </Tooltip>
           </Then>
