@@ -1,3 +1,4 @@
+import { AutocompleteRenderInputParams } from "@material-ui/lab";
 import { Avatar } from "@rmwc/avatar";
 import { Badge, BadgeAnchor } from "@rmwc/badge";
 import { Button } from "@rmwc/button";
@@ -19,9 +20,6 @@ import {
   AutoCompleteSearchBar,
   IAutoCompleteCallbackProps,
 } from "@watcourses/components/AutoCompleteSearchBar";
-import {
-  ISearchBarProps,
-} from "@watcourses/components/AutoCompleteSearchBar/SearchBar";
 import { Popup } from "@watcourses/components/Popup";
 import { schedule } from "@watcourses/paths";
 import { CourseInfo } from "@watcourses/proto/courses";
@@ -40,9 +38,10 @@ import DegreeRequirementPopup, {
 } from "./DegreeRequirementPopup";
 
 interface ITopNavProps extends IAutoCompleteCallbackProps,
-  ISearchBarProps,
   IDegreeRequirementPopupProps {
   toggleDrawer: () => void,
+  autoCompleteRenderProps?: AutocompleteRenderInputParams,
+  onSearch: ((query: string) => void),
 }
 
 @observer
@@ -71,8 +70,6 @@ export class TopNav extends React.Component<ITopNavProps> {
   render() {
     const {
       toggleDrawer,
-      searchText,
-      setSearchText,
       onSearch,
       onAutoCompleteSelect,
       issues,
@@ -99,8 +96,6 @@ export class TopNav extends React.Component<ITopNavProps> {
             <AutoCompleteSearchBar
               onAutoCompleteSelect={onAutoCompleteSelect}
               onSearch={onSearch}
-              searchText={searchText}
-              setSearchText={setSearchText}
               options={
                 CachedCoursesStore.get().courses.map(
                   (course: CourseInfo): AutoCompleteOption => {

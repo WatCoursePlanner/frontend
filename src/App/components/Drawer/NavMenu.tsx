@@ -45,7 +45,6 @@ class NavMenuItemBase extends React.Component<INavMenuItemPropTypes> {
       icon,
       location,
     } = this.props;
-
     return (
       <If condition={!!to}>
         <Then>
@@ -56,7 +55,7 @@ class NavMenuItemBase extends React.Component<INavMenuItemPropTypes> {
             exact={exact}
           >
             <StyledListItem
-              activated={location.pathname === to}>
+              activated={location.pathname.startsWith(to!)}>
               <ListItemGraphic
                 className={"material-icons-outlined"}
                 style={{marginRight: 24}}

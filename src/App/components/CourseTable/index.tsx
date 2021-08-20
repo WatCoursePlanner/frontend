@@ -2,7 +2,6 @@ import { TablePagination } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
-
 import {
   IconButton,
   IconButtonHTMLProps,
@@ -40,38 +39,6 @@ import { CourseTableRow } from "./CourseTableRow";
 import { CourseTableRowPlaceholder } from "./CourseTableRowPlaceholder";
 import { ICourseDisplayData, Order } from "./CourseTableUtils";
 import { EnhancedTableHead } from "./EnhancedTableHead";
-
-const Root = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledTableContainer = styled(TableContainer)`
-  flex-grow: 1;
-  width: auto !important;
-  padding-right: 48px;
-`;
-
-/**
- * `filled` needs to be a number instead of boolean
- * see https://github.com/styled-components/styled-components/issues/1198#issuecomment-336628848
- */
-export const StyledIconButton = styled(IconButton)<IconButtonHTMLProps &
-  IconButtonProps & {
-  filled?: number
-}>`
-  color: #5f6368;
-  font-family: ${props => props.filled
-  ? "Material Icons"
-  : "Material Icons Outlined"};
-`;
-
-const PaginationWrapper = styled.div`
-  min-height: 52px;
-  padding-right: 48px;
-`;
 
 interface ICourseTableProps {
   searchQuery: string;
@@ -270,3 +237,36 @@ export class CourseTable extends React.Component<ICourseTableProps> {
     );
   }
 }
+
+const Root = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledTableContainer = styled(TableContainer)`
+  flex-grow: 1;
+  width: auto !important;
+  padding-right: 48px;
+`;
+
+/**
+ * `filled` needs to be a number instead of boolean
+ * see https://github.com/styled-components/styled-components/issues/1198#issuecomment-336628848
+ */
+export const StyledIconButton = styled(IconButton)<IconButtonHTMLProps &
+  IconButtonProps & {
+  filled?: number
+}>`
+  color: #5f6368;
+  font-family: ${props => props.filled
+  ? "Material Icons"
+  : "Material Icons Outlined"};
+`;
+
+const PaginationWrapper = styled.div`
+  min-height: 52px;
+  padding-right: 48px;
+`;
+

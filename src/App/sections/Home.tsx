@@ -17,7 +17,12 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Else, If, Then } from "react-if";
 import { Route, Switch } from "react-router";
-import { Redirect } from "react-router-dom";
+import {
+  Redirect, RouteComponentProps,
+  RouteProps,
+  RouterProps,
+  withRouter,
+} from "react-router-dom";
 import styled from "styled-components";
 
 import { Discover } from "./Discover";
@@ -27,29 +32,18 @@ interface IHomeProps {
 }
 
 @observer
-export class Home extends React.Component<IHomeProps> {
+class HomeBase extends React.Component<IHomeProps & RouteComponentProps> {
 
   @observable
   drawerShadow: boolean = false;
 
   @observable
-  searchQuery: string = "";
-
-  @observable
   drawerOpen: boolean = true;
-
-  @observable
-  searchText: string = "";
 
   @computed
   private get isLoading() {
     return CachedCoursesStore.get().isLoading;
   }
-
-  @action
-  setSearchText = (text?: string) => {
-    this.searchText = text ?? "";
-  };
 
   @action
   setDrawerOpen = (open: boolean) => {
@@ -63,19 +57,14 @@ export class Home extends React.Component<IHomeProps> {
 
   @action
   search = (query: string) => {
-    this.searchQuery = query;
-    AppHistory.get().goTo(discover.home());
-  };
-
-  searchCurrentInput = () => {
-    this.search(this.searchText);
+    AppHistory.get().goTo(`${discover.home()}/?query=${query}`);
   };
 
   onAutoCompleteSelect = (code: string) => {
     this.search(code);
   };
 
-  constructor(props: IHomeProps) {
+  constructor(props: IHomeProps & RouteComponentProps) {
     super(props);
     makeObservable(this);
   }
@@ -89,11 +78,9 @@ export class Home extends React.Component<IHomeProps> {
         <Else>
           <Container>
             <TopNav
-              onSearch={this.searchCurrentInput}
+              onSearch={this.search}
               onAutoCompleteSelect={this.onAutoCompleteSelect}
               toggleDrawer={() => this.setDrawerOpen(!this.drawerOpen)}
-              searchText={this.searchText}
-              setSearchText={this.setSearchText}
               issues={ProfileCoursesStore.get().profileCourses.issues ?? []}
             />
             <Drawer
@@ -108,9 +95,15 @@ export class Home extends React.Component<IHomeProps> {
                     setDrawerShadow={this.setDrawerShadow}
                   />
                 </Route>
-                <Route path={discover.home()} exact>
-                  <Discover searchQuery={this.searchQuery}/>
-                </Route>
+                <Route
+                  exact
+                  path={`${discover.home()}`}
+                  render={({location}) => {
+                    const query = (new URLSearchParams(location.search))
+                      .get("query") ?? "";
+                    return <Discover searchQuery={query}/>;
+                  }}
+                />
                 <Route path={home()} exact>
                   <Redirect to={schedule.home()}/>
                 </Route>
@@ -133,6 +126,8 @@ export class Home extends React.Component<IHomeProps> {
     );
   }
 }
+
+export const Home = withRouter(HomeBase);
 
 const Container = styled.div`
   height: 100%;

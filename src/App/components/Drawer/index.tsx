@@ -11,7 +11,6 @@ import {
   DrawerContent,
   DrawerProps,
 } from "@rmwc/drawer";
-
 import { List, ListDivider } from "@rmwc/list";
 import { discover, schedule } from "@watcourses/paths";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
@@ -113,7 +112,8 @@ class DrawerBase extends React.Component<IDrawerProps> {
       location,
     } = this.props;
 
-    const shouldShowShadow = shadow && location.pathname === schedule.home();
+    const shouldShowShadow = shadow && 
+      location.pathname.startsWith(schedule.home());
 
     return (
       <StyledDrawer
