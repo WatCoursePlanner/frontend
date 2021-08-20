@@ -4,7 +4,7 @@ import { Drawer } from "@watcourses/components/Drawer";
 import { SignInModal } from "@watcourses/components/SignIn/SignInModal";
 import { SignUpModal } from "@watcourses/components/SignIn/SignUpModal";
 import { TopNav } from "@watcourses/components/TopNav";
-import { discover, home, schedule } from "@watcourses/paths";
+import { course, discover, home, schedule } from "@watcourses/paths";
 import { AppHistory } from "@watcourses/services/AppHistory";
 import { CachedCoursesStore } from "@watcourses/stores/CachedCoursesStore";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
@@ -19,12 +19,11 @@ import { Else, If, Then } from "react-if";
 import { Route, Switch } from "react-router";
 import {
   Redirect, RouteComponentProps,
-  RouteProps,
-  RouterProps,
   withRouter,
 } from "react-router-dom";
 import styled from "styled-components";
 
+import { CoursePage } from "./CoursePage";
 import { Discover } from "./Discover";
 import { Schedule } from "./Schedule";
 
@@ -61,7 +60,7 @@ class HomeBase extends React.Component<IHomeProps & RouteComponentProps> {
   };
 
   onAutoCompleteSelect = (code: string) => {
-    this.search(code);
+    AppHistory.get().goTo(`${course.home()}/${code}`);
   };
 
   constructor(props: IHomeProps & RouteComponentProps) {
@@ -102,6 +101,13 @@ class HomeBase extends React.Component<IHomeProps & RouteComponentProps> {
                     const query = (new URLSearchParams(location.search))
                       .get("query") ?? "";
                     return <Discover searchQuery={query}/>;
+                  }}
+                />
+                <Route
+                  exact
+                  path={`${course.home()}/:code`}
+                  render={({match}) => {
+                    return <CoursePage code={match.params.code}/>;
                   }}
                 />
                 <Route path={home()} exact>

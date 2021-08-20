@@ -44,7 +44,6 @@ const sortByWeight = (options: AutoCompleteOption[]) => {
 
 @observer
 class AutoCompleteSearchBarBase extends React.Component<IAutoCompleteProps & RouteComponentProps> {
-
   @observable
   private displayOptions: AutoCompleteOption[] = [];
 
@@ -113,6 +112,7 @@ class AutoCompleteSearchBarBase extends React.Component<IAutoCompleteProps & Rou
           if (!newValue || typeof newValue === "string") {
             return;
           }
+          (document.activeElement as HTMLElement).blur();
           onAutoCompleteSelect(newValue.title);
         }}
         inputValue={this.searchText}
@@ -123,7 +123,10 @@ class AutoCompleteSearchBarBase extends React.Component<IAutoCompleteProps & Rou
         renderOption={(option) => <Option option={option}/>}
         renderInput={(props) =>
           <SearchBar
-            onSearch={onSearch}
+            onSearch={(query: string) => {
+              onSearch(query);
+              (document.activeElement as HTMLElement).blur();
+            }}
             autoCompleteRenderProps={props}
             searchText={this.searchText}
             setSearchText={this.setSearchText}

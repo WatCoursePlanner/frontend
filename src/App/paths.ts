@@ -8,3 +8,7 @@ export const schedule = {
 export const discover = {
   home: () => `${home()}/discover`,
 };
+
+export const course = {
+  home: () => `${home()}/course`,
+};

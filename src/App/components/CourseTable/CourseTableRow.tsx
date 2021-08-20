@@ -1,6 +1,8 @@
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
+import { course } from "@watcourses/paths";
 import { CourseInfo } from "@watcourses/proto/courses";
+import { AppHistory } from "@watcourses/services/AppHistory";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React  from "react";
@@ -52,6 +54,12 @@ export class CourseTableRow extends React.Component<ICourseTableRowProps> {
         }}
         onMouseEnter={toggleHover}
         onMouseLeave={toggleHover}
+        onClick={() => {
+          AppHistory.get().goTo(`${course.home()}/${row.code}`);
+        }}
+        style={{
+          cursor: "pointer"
+        }}
       >
         <CodeCell align="left">{row.code}</CodeCell>
         <TableCell align="left">{row.name}</TableCell>
