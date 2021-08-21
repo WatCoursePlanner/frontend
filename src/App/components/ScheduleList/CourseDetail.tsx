@@ -13,21 +13,18 @@ import {
   SimpleListItemProps,
 } from "@rmwc/list";
 import { Tooltip } from "@rmwc/tooltip";
-import {
-  IRequisite,
-  IRequisiteGroup,
-  RequisiteChecklist,
-  RequisiteGroupChecklist,
-} from "@watcourses/components/ScheduleList/Requisite";
 import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHandler";
 import { cleanScrollBarWithWhiteBorder } from "@watcourses/constants/styles";
-import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
+import { course as coursePath } from "@watcourses/paths";
+import { CourseInfo } from "@watcourses/proto/courses";
+import { AppHistory } from "@watcourses/services/AppHistory";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
+import { CourseRequisites } from "App/components/ScheduleList/CourseRequisites";
+import { Spacer } from "App/components/Spacer";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { If, Then } from 'react-if';
 import styled from "styled-components";
 
 import { AddOrMoveCourseToTermMenu } from "./AddOrMoveCourseToTermMenu";
@@ -52,23 +49,6 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
     this.moveToMenuOpen = open;
   };
 
-  private formatPrerequisiteString = (prerequisites: IRequisiteGroup[]) => {
-    return `${
-      prerequisites.filter((t: IRequisiteGroup) => t.met).length
-    } met, ${
-      prerequisites.length -
-      prerequisites.filter((t: IRequisiteGroup) => t.met).length
-    } not met`;
-  };
-
-  private formatAntirequisiteString = (antirequisites: IRequisite[]) => {
-    return `has ${
-      antirequisites.filter((t: IRequisite) => !t.met).length === 0
-        ? 'none'
-        : antirequisites.filter((t: IRequisite) => !t.met).length
-    }`;
-  };
-
   constructor(props: ICourseDetailProps) {
     super(props);
     makeObservable(this);
@@ -87,7 +67,7 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
     if (!toTerm) {
       removeCourseFromTerm({
         termName: fromTerm,
-        indexOrCode: course.code
+        indexOrCode: course.code,
       });
     } else {
       StudentProfileStore.get().moveCourse(course, fromTerm, toTerm);
@@ -125,14 +105,22 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
           <CardActions>
             <CardActionIcons>
               <Tooltip content="Open">
-                <CardActionIcon icon="open_in_new"/>
+                <CardActionIcon
+                  onClick={() => {
+                    if (course) {
+                      AppHistory.get()
+                        .goTo(`${coursePath.home()}/${course.code}`);
+                    }
+                  }}
+                  icon="open_in_new"
+                />
               </Tooltip>
               <AddOrMoveCourseToTermMenu
                 title={"Move to"}
                 open={moveToMenuOpen}
                 onClose={() => setMoveToMenuOpen(false)}
                 onSelect={(term) => {
-                  this.moveOrRemoveCourse(course, fromTerm, term.termName)
+                  this.moveOrRemoveCourse(course, fromTerm, term.termName);
                   onDismiss();
                 }}
               >
@@ -174,44 +162,14 @@ export class CourseDetail extends React.Component<ICourseDetailProps> {
                   {course?.description ?? ''}
                 </ListContentTitle>
               </StyledListItem>
-              <If condition={prerequisites.length > 0}><Then>
-                <StyledListItem ripple={false}>
-                  <StyledListItemGraphic
-                    className={'unselectable'} icon="check_circle_outline"/>
-                  <ListContent>
-                    <ListContentTitle>
-                      {prerequisites.length} Prerequisites
-                    </ListContentTitle>
-                    <ListContentSubtitle>
-                      {this.formatPrerequisiteString(prerequisites)}
-                    </ListContentSubtitle>
-                    <RequisiteGroupChecklist
-                      displayRequisiteCheck={displayRequisiteCheck}
-                      courseDetailState={this.props.courseDetailState}
-                      requisiteGroups={prerequisites}
-                    />
-                  </ListContent>
-                </StyledListItem>
-              </Then></If>
-              <If condition={antirequisites.length > 0}><Then>
-                <StyledListItem ripple={false}>
-                  <StyledListItemGraphic
-                    className={'unselectable'} icon="block"/>
-                  <ListContent>
-                    <ListContentTitle>
-                      {antirequisites.length} Antirequisites
-                    </ListContentTitle>
-                    <ListContentSubtitle>
-                      {this.formatAntirequisiteString(antirequisites)}
-                    </ListContentSubtitle>
-                    <RequisiteChecklist
-                      displayRequisiteCheck={displayRequisiteCheck}
-                      courseDetailState={this.props.courseDetailState}
-                      requisites={antirequisites}
-                    />
-                  </ListContent>
-                </StyledListItem>
-              </Then></If>
+              <Spacer height={32}/>
+              <CourseRequisites
+                hasPadding
+                courseDetailState={this.props.courseDetailState}
+                displayRequisiteCheck={displayRequisiteCheck}
+                prerequisites={prerequisites}
+                antirequisites={antirequisites}
+              />
             </List>
           </CardContainer>
         </StyledCard>
@@ -279,22 +237,10 @@ const StyledListItemGraphic = styled(ListItemGraphic)<ListItemGraphicProps &
   margin-right: 16px;
 `;
 
-const ListContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-`;
-
 const ListContentTitle = styled.span`
   font-size: 14px;
   white-space: pre-wrap;
   line-height: 18px;
-`;
-
-const ListContentSubtitle = styled(ListContentTitle)`
-  margin: 4px 0;
-  font-size: 12px;
-  opacity: .8;
 `;
 
 const StyledListItem = styled(ListItem)<SimpleListItemProps>`

@@ -21,8 +21,8 @@ import {
   IPromiseBasedObservable,
   PENDING,
 } from "mobx-utils";
-import { ProfileCoursesStore } from "./ProfileCoursesStore";
 
+import { ProfileCoursesStore } from "./ProfileCoursesStore";
 import { UserStore } from "./UserStore";
 
 interface IAddOrRemoveCourseProps extends ITermOperationProps {

@@ -5,6 +5,7 @@ describe("helpers", () => {
     expect(insertAt([1, 2, 4], 2, 3)).toEqual([1, 2, 3, 4]);
     expect(insertAt([], 0, 3)).toEqual([3]);
     expect(insertAt([5, 6, 7], -1, 8)).toEqual([5, 6, 7, 8]);
+    expect(insertAt([5, 6, 7], -1, 6, false)).toEqual([5, 6, 7]);
   });
   it("removeAt", () => {
     expect(removeAt([1, 2, 4], 2)).toEqual([1, 2]);

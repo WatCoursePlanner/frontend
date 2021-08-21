@@ -16,7 +16,7 @@ export interface ISearchBarProps {
   autoCompleteRenderProps?: AutocompleteRenderInputParams,
   searchText: string,
   setSearchText: ((text: string) => void),
-  onSearch: (() => void),
+  onSearch: ((query: string) => void),
 }
 
 @observer
@@ -32,14 +32,14 @@ export class SearchBar extends React.Component<ISearchBarProps> {
       <StyledSearchBar
         ref={autoCompleteRenderProps?.InputProps.ref} elevation={0}>
         <Tooltip title={'Search'}>
-          <AppBarButton icon={'search'} onClick={onSearch}/>
+          <AppBarButton icon={'search'} onClick={() => onSearch(searchText)}/>
         </Tooltip>
         <StyledInputBase
           inputProps={autoCompleteRenderProps?.inputProps ?? {}}
           placeholder="Search for Courses"
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              onSearch();
+              onSearch(searchText);
             }
           }}
         />
@@ -51,6 +51,7 @@ export class SearchBar extends React.Component<ISearchBarProps> {
                 icon={'close'}
                 onClick={() => {
                   setSearchText('');
+                  onSearch('');
                 }}/>
             </Tooltip>
           </Then>

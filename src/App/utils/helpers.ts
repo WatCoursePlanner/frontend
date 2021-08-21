@@ -6,10 +6,10 @@ export function insertAt<T>(
   element: T,
   allowDuplications: boolean = true, // when false, do not insert if element already exists
 ): Array<T> {
-  if (!allowDuplications && arr.includes(element)) {
-    return arr;
-  }
   const ret = cloneDeep(arr);
+  if (!allowDuplications && arr.includes(element)) {
+    return ret;
+  }
   if (index < 0) {
     ret.push(element);
   } else {

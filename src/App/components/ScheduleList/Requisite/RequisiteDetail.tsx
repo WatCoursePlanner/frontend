@@ -12,6 +12,8 @@ import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHa
 import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
+import { course as coursePath } from "App/paths";
+import { AppHistory } from "App/services/AppHistory";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
@@ -22,6 +24,7 @@ import { AddOrMoveCourseToTermMenu } from "../AddOrMoveCourseToTermMenu";
 import { IRequisite, RequisiteType } from "./index";
 
 interface IRequisiteDetailProps {
+  displayRequisiteCheck: boolean;
   onDismiss: () => void,
   course?: CourseInfo,
   requisite: IRequisite,
@@ -120,20 +123,26 @@ export class RequisiteDetail extends React.Component<IRequisiteDetailProps> {
           </CourseName>
         </TitleContainer>
         <CardActions>
-          <CardActionButtons>
-            {isInSchedule
-              ? renderRemoveButton(course)
-              : renderAddButton(course)}
-          </CardActionButtons>
+          {this.props.displayRequisiteCheck && (
+            <CardActionButtons>
+              {isInSchedule
+                ? renderRemoveButton(course)
+                : renderAddButton(course)}
+            </CardActionButtons>
+          )}
           <CardActionIcons>
             <Tooltip content="Open">
-              <CardActionIcon icon="open_in_new"/>
+              <CardActionIcon
+                icon="open_in_new"
+                onClick={() => AppHistory.get()
+                  .goTo(`${coursePath.home()}/${course.code}`)}
+              />
             </Tooltip>
           </CardActionIcons>
         </CardActions>
       </>
     );
-  }
+  };
 
   render() {
     const {
