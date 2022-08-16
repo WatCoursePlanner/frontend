@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "lib": [
       "es2019",
@@ -21,8 +21,8 @@
     "rootDirs": ["src"],
     "baseUrl": "./src",
     "paths": {
-      "@watcourses": ["src/App"],
-      "@watcourses/*": ["src/App/*"]
+      "@watcourses": ["App"],
+      "@watcourses/*": ["App/*"]
     }
   },
   "include": [
