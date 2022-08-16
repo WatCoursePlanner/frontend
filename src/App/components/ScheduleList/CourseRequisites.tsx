@@ -11,7 +11,7 @@ import {
   RequisiteGroupChecklist,
 } from "@watcourses/components/ScheduleList/Requisite";
 import { CourseDetailState } from "App/components/ScheduleList/CourseDetailState";
-import { Row } from "App/constants/layout";
+import { Row } from "@watcourses/constants/layout";
 import { observer } from "mobx-react";
 import React from "react";
 import { If, Then } from 'react-if';

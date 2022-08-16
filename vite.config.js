@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { ViteAliases } from 'vite-aliases'
+const path = require('path')
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig({
     root: '.',
@@ -10,12 +11,18 @@ export default defineConfig({
         // Relative to the root
         outDir: '../dist',
     },
+    resolve:{
+        alias:{
+            '@watcourses' : path.resolve(__dirname, './src/App')
+        },
+    },
     plugins: [
-        ViteAliases(),
         react({
             include: '**/*.{jsx,tsx}',
             babel: {
-                plugins: ['@babel/plugin-proposal-decorators', {"decoratorsBeforeExport": true}],
+                parserOpts: {
+                    plugins: ['decorators-legacy', 'classProperties']
+                }
             },
         }),
     ]

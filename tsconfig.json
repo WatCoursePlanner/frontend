@@ -21,8 +21,8 @@
     "rootDirs": ["src"],
     "baseUrl": "./src",
     "paths": {
-      "@watcourses": ["App"],
-      "@watcourses/*": ["App/*"]
+      "@watcourses": ["src/App"],
+      "@watcourses/*": ["src/App/*"]
     }
   },
   "include": [

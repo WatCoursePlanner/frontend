@@ -12,8 +12,8 @@ import { ClickOutsideHandler } from "@watcourses/components/utils/ClickOutsideHa
 import { CourseInfo, Schedule_TermSchedule } from "@watcourses/proto/courses";
 import { ProfileCoursesStore } from "@watcourses/stores/ProfileCoursesStore";
 import { StudentProfileStore } from "@watcourses/stores/StudentProfileStore";
-import { course as coursePath } from "App/paths";
-import { AppHistory } from "App/services/AppHistory";
+import { course as coursePath } from "@watcourses/paths";
+import { AppHistory } from "@watcourses/services/AppHistory";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
