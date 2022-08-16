@@ -16,6 +16,15 @@ export default defineConfig({
             '@watcourses' : path.resolve(__dirname, './src/App')
         },
     },
+    server: {
+        proxy: {
+            '/api': {
+                target: 'https://watcourses.com',
+                changeOrigin: true,
+                headers: {"Origin": "https://watcourses.com" }
+            },
+        }
+    },
     plugins: [
         react({
             include: '**/*.{jsx,tsx}',
