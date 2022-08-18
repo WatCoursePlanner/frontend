@@ -229,8 +229,8 @@ export class CourseTable extends React.Component<ICourseTableProps> {
             count={this.searchResult.pagination?.totalResults ?? 0}
             rowsPerPage={this.rowsPerPage}
             page={this.page}
-            onChangePage={this.handleChangePage}
-            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            onPageChange={this.handleChangePage}
+            onRowsPerPageChange={this.handleChangeRowsPerPage}
           />
         </PaginationWrapper>
       </Root>
