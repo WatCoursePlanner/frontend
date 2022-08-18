@@ -13,13 +13,13 @@ import {
   IconButtonProps,
 } from "@rmwc/icon-button";
 import { Spacer } from "@watcourses/components/Spacer";
-import getCourse from "App/api/Course/get";
-import { CourseRequisites } from "App/components/ScheduleList/CourseRequisites";
-import { Column, HorizontalLine, Row } from "App/constants/layout";
-import { CourseInfo } from "App/proto/courses";
-import { AppHistory } from "App/services/AppHistory";
-import { capitalize } from "App/utils/helpers";
-import { RequisiteHelper } from "App/utils/RequisiteHelper";
+import getCourse from "@watcourses/api/Course/get";
+import { CourseRequisites } from "@watcourses/components/ScheduleList/CourseRequisites";
+import { Column, HorizontalLine, Row } from "@watcourses/constants/layout";
+import { CourseInfo } from "@watcourses/proto/courses";
+import { AppHistory } from "@watcourses/services/AppHistory";
+import { capitalize } from "@watcourses/utils/helpers";
+import { RequisiteHelper } from "@watcourses/utils/RequisiteHelper";
 import { action, computed, makeObservable, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { fromPromise, IPromiseBasedObservable, PENDING } from "mobx-utils";

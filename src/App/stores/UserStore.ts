@@ -44,7 +44,12 @@ interface ISignUpProps {
 }
 
 export class UserStore {
-  static get = singletonGetter(UserStore);
+
+  private static _instance: UserStore;
+  public static get(): UserStore {
+    return this._instance ||
+      (this._instance = new this());
+  }
 
   @observable
   private userInfoPromise?: IPromiseBasedObservable<UserInfo | undefined>;
@@ -75,7 +80,7 @@ export class UserStore {
     return this.fetchUserInfo();
   }
 
-  constructor() {
+  private constructor() {
     makeObservable(this);
   }
 

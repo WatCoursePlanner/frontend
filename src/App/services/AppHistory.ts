@@ -11,7 +11,10 @@ import { action, IObservableArray, observable } from "mobx";
 import { stringify } from "query-string";
 
 export class AppHistory {
-  static get = singletonGetter(AppHistory);
+  private static _instance: AppHistory;
+  public static get(): AppHistory {
+    return this._instance || (this._instance = new this());
+  }
 
   private pastLocations: IObservableArray<Location> = observable.array();
 

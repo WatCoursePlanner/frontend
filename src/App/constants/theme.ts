@@ -1,4 +1,4 @@
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+import createTheme from "@material-ui/core/styles/createTheme";
 
 export const RMWCTheme = {
   primary: "#2196F3",
@@ -6,7 +6,7 @@ export const RMWCTheme = {
   error: "#ff0000",
 };
 
-export const Theme = createMuiTheme({
+export const Theme = createTheme({
   palette: {
     primary: {main: "#2196F3"},
     secondary: {main: "#0069B5"},

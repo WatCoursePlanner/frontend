@@ -25,8 +25,11 @@ interface IProfileCourses {
 }
 
 export class ProfileCoursesStore {
-  static get = singletonGetter(ProfileCoursesStore);
-
+  private static _instance: ProfileCoursesStore;
+  public static get(): ProfileCoursesStore {
+    return this._instance ||
+      (this._instance = new this());
+  }
   @observable
   private profileCoursesPromise?: IPromiseBasedObservable<CheckResults>;
 
@@ -59,7 +62,7 @@ export class ProfileCoursesStore {
       courses: {},
     });
 
-  constructor() {
+  private constructor() {
     makeAutoObservable(this);
     when(
       () => this.profileCoursesPromise?.state === FULFILLED,

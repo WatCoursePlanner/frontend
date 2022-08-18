@@ -18,7 +18,11 @@ interface ICachedCoursesStorage {
 }
 
 export class CachedCoursesStore {
-  static get = singletonGetter(CachedCoursesStore);
+  private static _instance: CachedCoursesStore;
+  public static get(): CachedCoursesStore {
+    return this._instance ||
+      (this._instance = new this());
+  }
 
   @observable
   coursesStorageResponse?: IPromiseBasedObservable<ICachedCoursesStorage>;
@@ -55,7 +59,7 @@ export class CachedCoursesStore {
     return this.coursesMap[courseCode];
   }
 
-  constructor() {
+  private constructor() {
     makeAutoObservable(this);
   }
 

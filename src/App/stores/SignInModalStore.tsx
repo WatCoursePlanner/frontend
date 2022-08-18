@@ -7,12 +7,16 @@ export enum SignInModalType {
 }
 
 export class SignInModalStore {
-  static get = singletonGetter(SignInModalStore);
+  private static _instance: SignInModalStore;
+  public static get(): SignInModalStore {
+    return this._instance ||
+      (this._instance = new this());
+  }
 
   @observable
   currentModal: SignInModalType = SignInModalType.NONE;
 
-  constructor() {
+  private constructor() {
     makeObservable(this);
   }
 

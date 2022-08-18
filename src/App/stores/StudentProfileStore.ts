@@ -84,7 +84,10 @@ interface IRemoveCourseFromTermProps extends IRemoveCourseProps, ITermOperationP
 export const SHORTLIST_TERM_NAME = "shortlist";
 
 export class StudentProfileStore {
-  static get = singletonGetter(StudentProfileStore);
+  private static _instance: StudentProfileStore;
+  public static get(): StudentProfileStore {
+    return this._instance || (this._instance = new this());
+  }
 
   // TODO implement create student profile
   private readonly SampleProfileRequest =
@@ -134,7 +137,7 @@ export class StudentProfileStore {
     });
   }
 
-  constructor() {
+  private constructor() {
     makeAutoObservable(this);
     when(
       () => this.studentProfilePromise?.state === FULFILLED,
