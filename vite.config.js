@@ -9,7 +9,7 @@ export default defineConfig({
     publicDir: 'public/',
     build: {
         // Relative to the root
-        outDir: '../dist',
+        outDir: 'dist',
     },
     resolve:{
         alias:{
